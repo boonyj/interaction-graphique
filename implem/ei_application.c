@@ -1,44 +1,40 @@
-/**
- *  @file	ei_application.h
- *  @brief	Manages the main steps of a graphical application: initialization, main window,
- *		main loop, quitting, resource freeing.
- *
- *  \author
- *  Created by François Bérard on 30.12.11.
- *  Copyright 2011 Ensimag. All rights reserved.
- *
- */
-
-#ifndef EI_APPLICATION_H
-#define EI_APPLICATION_H
-
-
-#include "ei_types.h"
-#include "ei_widget.h"
 #include "ei_application.h"
 
 
-void ei_app_create(ei_size_t main_window_size, bool fullscreen){
-        ei_surface_t			main_window		= NULL;
-        ei_widget_t                     widget_class            = NULL;
-//        if (fullscreen){
-//                main_window_size.height = GetSystemMetrics(SM_CYSCREEN);
-//                main_window_size.width = GetSystemMetrics(SM_CXSCREEN);
-//        }
+ei_widget_t frame_allocfunc (){
+}
 
+void frame_releasefunc (ei_widget_t	widget){
+}
+
+void frame_drawfunc (ei_widget_t		widget,
+                     ei_surface_t		surface,
+                     ei_surface_t		pick_surface,
+                     ei_rect_t*		clipper){
+}
+
+void frame_setdefaultsfunc(ei_widget_t		widget){
+}
+
+void ei_app_create(ei_size_t main_window_size, bool fullscreen){
         hw_init();
-        main_window = hw_create_window(main_window_size, false);
-//        ei_widgetclass_register(widget_class);
-//        ei_widget_create(widget_class);
+        ei_surface_t main_window = hw_create_window(main_window_size, false);
+
+        ei_widgetclass_t frame;
+        frame.allocfunc =  &frame_allocfunc;
+        frame.releasefunc = &frame_releasefunc;
+        frame.drawfunc = &frame_drawfunc;
+        frame.setdefaultsfunc = &frame_setdefaultsfunc;
+        ei_widgetclass_register(&frame);
 
 }
 
 void ei_app_free(void){
-
+        hw_quit();
 }
 
 void ei_app_run(void){
-
+        getchar();
 }
 
 void ei_app_invalidate_rect(const ei_rect_t* rect){
@@ -56,9 +52,3 @@ ei_widget_t ei_app_root_widget(void){
 ei_surface_t ei_app_root_surface(void){
 
 }
-
-
-
-
-#endif
-
