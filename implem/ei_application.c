@@ -22,18 +22,19 @@ void frame_drawfunc (ei_widget_t		widget,
                      ei_surface_t		surface,
                      ei_surface_t		pick_surface,
                      ei_rect_t*		clipper){
-        // Cast widget to the appropriate type if necessary
-        frame_t* frame = (frame_t*)widget;
-
-        ei_widget_t child = frame->widget->children_head;
-        while (child != NULL) {
-                // Call the draw function for each child widget
-                if (child->wclass->drawfunc != NULL) {
-                        child->wclass->drawfunc(child, surface, pick_surface, clipper);
-                }
-                // Move to the next child
-                child = child->next_sibling;
-        }
+//        // Cast widget to the appropriate type if necessary
+//        frame_t* frame = (frame_t*)widget;
+//
+//        ei_widget_t child = frame->widget->children_head;
+//        while (child != NULL) {
+//                // Call the draw function for each child widget
+//                if (child->wclass->drawfunc != NULL) {
+//                        child->wclass->drawfunc(child, surface, pick_surface, clipper);
+//                }
+//                // Move to the next child
+//                child = child->next_sibling;
+//        }
+        printf("%s","Appel Frame_DrawFunc");
 }
 
 void frame_setdefaultsfunc(ei_widget_t		widget){
@@ -64,14 +65,11 @@ void ei_app_run(void){
         // Get the root widget of the application
         ei_widget_t root_widget = ei_app_root_widget();
 
-        // Get the clipper rectangle
-        ei_rect_t clipper = hw_surface_get_rect(main_surface);
-
         hw_surface_lock(main_surface);
 
         // Call the draw function for the root widget to draw the entire widget hierarchy
-        if (root_widget->wclass->drawfunc != NULL) {
-                root_widget->wclass->drawfunc(root_widget, main_surface, NULL, &clipper);
+        if (root_widget->wclass != NULL) {
+                root_widget->wclass->drawfunc(root_widget, main_surface, NULL, NULL);
         }
 
         hw_surface_unlock(main_surface);
