@@ -13,11 +13,18 @@ void			ei_frame_configure		(ei_widget_t		widget,
                                                                ei_surface_t*		img,
                                                                ei_rect_ptr_t*		img_rect,
                                                                ei_anchor_t*		img_anchor){
-        widget->requested_size = *requested_size;
-        widget->pick_color->alpha = color->alpha;
-        widget->pick_color->red = color->red;
-        widget->pick_color->green = color->green;
-        widget->pick_color->blue = color->blue;
+        if (requested_size != NULL){
+                widget->requested_size.height = (*requested_size).height;
+                widget->requested_size.width = (*requested_size).width;
+
+        }
+        if (widget->pick_color != NULL) {
+                widget->pick_color->alpha = color->alpha;
+                widget->pick_color->red = color->red;
+                widget->pick_color->green = color->green;
+                widget->pick_color->blue = color->blue;
+        }
+
 }
 
 void			ei_button_configure		(ei_widget_t		widget,
