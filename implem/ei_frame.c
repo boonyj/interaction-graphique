@@ -35,6 +35,7 @@ void frame_setdefaultsfunc(ei_widget_t		widget){
 
 ei_widgetclass_t create_frame() {
         ei_widgetclass_t frame;
+        strcpy(frame.name, "frame");
         frame.allocfunc =  &frame_allocfunc;
         frame.releasefunc = &frame_releasefunc;
         frame.drawfunc = &frame_drawfunc;

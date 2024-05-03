@@ -9,7 +9,6 @@ ei_widget_t ei_widget_create(ei_const_string_t class_name,
         widget->wclass = malloc(sizeof(struct ei_widgetclass_t)); // Allocate memory for ei_widgetclass_t structure
         widget->pick_color = malloc(sizeof(ei_color_t)); // Allocate memory for ei_color_t structure
 
-        strcpy(widget->wclass->name, class_name); // Copy class_name to widget->wclass->name
         widget->parent = parent; // Assign parent
         widget->user_data = user_data; // Assign user_data
         widget->destructor = destructor; // Assign destructor
@@ -17,7 +16,26 @@ ei_widget_t ei_widget_create(ei_const_string_t class_name,
         widget->children_head = NULL; // Initialize children_head
         widget->children_tail = NULL; // Initialize children_tail
         widget->next_sibling = NULL; // Initialize next_sibling
+        ei_widgetclass_t* type_widget = ei_widgetclass_from_name(class_name);
+        //widget->wclass->drawfunc = type_widget->drawfunc;
 
+        if (parent != NULL) {
+                if (parent->children_head == NULL) {
+                        parent->children_head = widget;
+                }
+                if (parent->children_tail != NULL) {
+                        parent->children_tail->next_sibling = widget;
+                }
+                parent->children_tail = widget;
+
+                if (parent->children_head != widget) {
+                        ei_widget_t prev_sibling = parent->children_head;
+                        while (prev_sibling->next_sibling != NULL) {
+                                prev_sibling = prev_sibling->next_sibling;
+                        }
+                        prev_sibling->next_sibling = widget;
+                }
+        }
         return widget;
 }
 

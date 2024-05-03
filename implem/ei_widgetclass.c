@@ -36,6 +36,7 @@ void ei_widgetclass_register(ei_widgetclass_t* widgetclass) {
 ei_widgetclass_t* ei_widgetclass_from_name(ei_const_string_t name) {
         if (widgetclass_list != NULL) {
                 for (size_t i = 0; widgetclass_list[i] != NULL; ++i) {
+                        printf("%s\n", widgetclass_list[i]->name);
                         if (strcmp(widgetclass_list[i]->name, name) == 0) {
                                 return widgetclass_list[i];
                         }
