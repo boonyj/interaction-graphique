@@ -2,21 +2,16 @@
 #include "ei_implementation.h"
 #include "ei_frame.h"
 
-typedef struct {
-        ei_widget_t widget;
-} frame_t;
-
 ei_surface_t main_surface = NULL;
-ei_widget_t frame_w = NULL;
+ei_widget_t frame_root = NULL;
 
 void ei_app_create(ei_size_t main_window_size, bool fullscreen){
         hw_init();
-        main_surface  = hw_create_window(main_window_size, false);
+        main_surface  = hw_create_window(main_window_size, fullscreen);
 
-        ei_widgetclass_t frame = create_frame();
-        ei_widgetclass_register(&frame);
-        frame_w = ei_widget_create("frame", NULL, NULL, NULL);
-        frame_w->wclass->drawfunc = &frame_drawfunc;
+        ei_widgetclass_t* frame_class = create_frame();
+        ei_widgetclass_register(frame_class);
+        frame_root = ei_widget_create("frame", NULL, NULL, NULL);
 }
 
 void ei_app_free(void){
@@ -65,7 +60,7 @@ void ei_app_quit_request(void){
 }
 
 ei_widget_t ei_app_root_widget(void){
-        return frame_w;
+        return frame_root;
 }
 
 ei_surface_t ei_app_root_surface(void){

@@ -16,8 +16,9 @@ ei_widget_t ei_widget_create(ei_const_string_t class_name,
         widget->children_head = NULL; // Initialize children_head
         widget->children_tail = NULL; // Initialize children_tail
         widget->next_sibling = NULL; // Initialize next_sibling
+
         ei_widgetclass_t* type_widget = ei_widgetclass_from_name(class_name);
-        //widget->wclass->drawfunc = type_widget->drawfunc;
+        widget->wclass->drawfunc = type_widget->drawfunc;
 
         if (parent != NULL) {
                 if (parent->children_head == NULL) {

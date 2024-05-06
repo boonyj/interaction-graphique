@@ -1,11 +1,9 @@
 #include "ei_frame.h"
 
 ei_widget_t frame_allocfunc (){
-        // Allocate the memory
-        // Initialize the memory to 0 (already done by calloc)
-        // ei_widget_t* widget = (ei_widget_t*) calloc(1, (unsigned long) sizeof(frame_t));
+        ei_widget_t widget = malloc(sizeof(struct frame_t));
 
-        // return widget;
+        return widget;
 }
 
 void frame_releasefunc (ei_widget_t	widget){
@@ -33,13 +31,13 @@ void frame_drawfunc (ei_widget_t		widget,
 void frame_setdefaultsfunc(ei_widget_t		widget){
 }
 
-ei_widgetclass_t create_frame() {
-        ei_widgetclass_t frame;
-        strcpy(frame.name, "frame");
-        frame.allocfunc =  &frame_allocfunc;
-        frame.releasefunc = &frame_releasefunc;
-        frame.drawfunc = &frame_drawfunc;
-        frame.setdefaultsfunc = &frame_setdefaultsfunc;
+ei_widgetclass_t* create_frame() {
+        ei_widgetclass_t* frame = malloc(sizeof(ei_widgetclass_t));
+        strcpy(frame->name, "frame");
+        frame->allocfunc =  &frame_allocfunc;
+        frame->releasefunc = &frame_releasefunc;
+        frame->drawfunc = &frame_drawfunc;
+        frame->setdefaultsfunc = &frame_setdefaultsfunc;
 
         return frame;
 }
