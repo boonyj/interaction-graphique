@@ -1,4 +1,5 @@
 #include "ei_frame.h"
+#include "ei_draw.h"
 
 ei_widget_t frame_allocfunc (){
         ei_widget_t widget = malloc(sizeof(struct frame_t));
@@ -14,18 +15,7 @@ void frame_drawfunc (ei_widget_t		widget,
                      ei_surface_t		surface,
                      ei_surface_t		pick_surface,
                      ei_rect_t*		clipper){
-
-        uint32_t* pixel_ptr = (uint32_t*)hw_surface_get_buffer(surface);
-        ei_size_t size = hw_surface_get_size(surface);
-
-        for (int i = 0; i < size.width * size.height; i++) { // Iterate over each pixel in the buffer
-                *pixel_ptr++ = (widget->pick_color->alpha << 24) | // Alpha component
-                               (widget->pick_color->red << 16) |   // Red component
-                               (widget->pick_color->green << 8) |  // Green component
-                               widget->pick_color->blue;           // Blue component
-        }
-
-
+        ei_fill(surface,widget->pick_color,clipper);
 }
 
 void frame_setdefaultsfunc(ei_widget_t		widget){

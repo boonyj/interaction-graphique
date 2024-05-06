@@ -19,7 +19,7 @@ void ei_app_create(ei_size_t main_window_size, bool fullscreen){
         frame_root = ei_widget_create("frame", NULL, NULL, NULL);
 
         // Creation of geometry manager
-        ei_geometrymanager_t* placeur = create_placeur("placeur", NULL,NULL);
+        ei_geometrymanager_t* placeur = create_placeur();
 
         // Register placeur (to be used later)
         ei_geometrymanager_register(placeur);
@@ -46,14 +46,8 @@ void ei_app_run(void){
         while (child != NULL) {
                 // Call the draw function for each child widget
                 if (child->wclass->drawfunc != NULL) {
-                        ei_point_t origin;
-                        origin.x = child->screen_location.top_left.x;
-                        origin.y = child->screen_location.top_left.y;
-                        ei_surface_t surface = hw_surface_create(main_surface,child->requested_size, false);
-                        hw_surface_set_origin(surface, origin);
-                        hw_surface_lock(surface);
-                        child->wclass->drawfunc(child, surface, NULL, NULL);
-                        hw_surface_unlock(surface);
+                        ei_rect_t* clipper = &(child->screen_location);
+                        child->wclass->drawfunc(child, main_surface, NULL, clipper);
 
                 }
                 // Move to the next child

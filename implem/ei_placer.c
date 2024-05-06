@@ -20,8 +20,8 @@ void		ei_place	(ei_widget_t		widget,
         ei_anchor_t anchor_value = (anchor != NULL) ? *anchor : ei_anc_northwest;
         int x_value = (x != NULL) ? *x : 0;
         int y_value = (y != NULL) ? *y : 0;
-        int width_value = (width != NULL) ? *width : 0;
-        int height_value = (height != NULL) ? *height : 0;
+        int width_value = (width != NULL) ? *width : (widget->requested_size.width != NULL) ? widget->requested_size.width: 0;
+        int height_value = (height != NULL) ? *height : (widget->requested_size.height != NULL) ? widget->requested_size.height: 0;
         float rel_x_value = (rel_x != NULL) ? *rel_x : 0.0;
         float rel_y_value = (rel_y != NULL) ? *rel_y : 0.0;
         float rel_width_value = (rel_width != NULL) ? *rel_width : 0.0;

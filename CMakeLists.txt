@@ -76,6 +76,8 @@ set(LIB_EI_SOURCES
 	${SRC}/ei_frame.c
 	${SRC}/ei_placeur.c
 	${SRC}/ei_geometrymanager.c
+	${SRC}/ei_draw.c
+
 )
 
 add_library(ei STATIC			${LIB_EI_SOURCES})
