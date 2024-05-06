@@ -1,17 +1,28 @@
 #include "ei_application.h"
 #include "ei_implementation.h"
 #include "ei_frame.h"
+#include "ei_placeur.h"
 
 ei_surface_t main_surface = NULL;
 ei_widget_t frame_root = NULL;
 
 void ei_app_create(ei_size_t main_window_size, bool fullscreen){
+        // Initialisation of the application
         hw_init();
         main_surface  = hw_create_window(main_window_size, fullscreen);
 
+        // Creation of widget class frame (to be registered later)
         ei_widgetclass_t* frame_class = create_frame();
+
+        // Register the widget class frame (to be used later)
         ei_widgetclass_register(frame_class);
         frame_root = ei_widget_create("frame", NULL, NULL, NULL);
+
+        // Creation of geometry manager
+        ei_geometrymanager_t* placeur = create_placeur("placeur", NULL,NULL);
+
+        // Register placeur (to be used later)
+        ei_geometrymanager_register(placeur);
 }
 
 void ei_app_free(void){
