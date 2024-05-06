@@ -41,17 +41,24 @@ void ei_app_run(void){
 
         }
 
-/*        frame_t* frame = (frame_t*)frame_w;
 
-        ei_widget_t child = frame->widget->children_head;
+        ei_widget_t child = root_widget->children_head;
         while (child != NULL) {
                 // Call the draw function for each child widget
                 if (child->wclass->drawfunc != NULL) {
-                        child->wclass->drawfunc(child, main_surface, NULL, NULL);
+                        ei_point_t origin;
+                        origin.x = child->screen_location.top_left.x;
+                        origin.y = child->screen_location.top_left.y;
+                        ei_surface_t surface = hw_surface_create(main_surface,child->requested_size, false);
+                        hw_surface_set_origin(surface, origin);
+                        hw_surface_lock(surface);
+                        child->wclass->drawfunc(child, surface, NULL, NULL);
+                        hw_surface_unlock(surface);
+
                 }
                 // Move to the next child
                 child = child->next_sibling;
-        }*/
+        }
 
 
         hw_surface_unlock(main_surface);
