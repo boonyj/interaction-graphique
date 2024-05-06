@@ -77,6 +77,7 @@ set(LIB_EI_SOURCES
 	${SRC}/ei_placeur.c
 	${SRC}/ei_geometrymanager.c
 	${SRC}/ei_draw.c
+	${SRC}/ei_implementation.c
 
 )
 

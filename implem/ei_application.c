@@ -40,20 +40,8 @@ void ei_app_run(void){
                 root_widget->wclass->drawfunc(root_widget, main_surface, NULL, NULL);
 
         }
-
-
-        ei_widget_t child = root_widget->children_head;
-        while (child != NULL) {
-                // Call the draw function for each child widget
-                if (child->wclass->drawfunc != NULL) {
-                        ei_rect_t* clipper = &(child->screen_location);
-                        child->wclass->drawfunc(child, main_surface, NULL, clipper);
-
-                }
-                // Move to the next child
-                child = child->next_sibling;
-        }
-
+        ei_rect_t* clipper = &(root_widget->children_head->screen_location);
+        ei_impl_widget_draw_children(root_widget, main_surface, NULL, clipper);
 
         hw_surface_unlock(main_surface);
 
