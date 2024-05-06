@@ -16,6 +16,19 @@ void frame_drawfunc (ei_widget_t		widget,
                      ei_surface_t		pick_surface,
                      ei_rect_t*		clipper){
         ei_fill(surface,widget->pick_color,clipper);
+
+        // //Test polyline (à décommenter pour tester)
+        // // START TEST POLYLINE
+        //   ei_point_t* points = malloc(2*sizeof(ei_point_t));
+        //   points->x = 20;
+        //   points->y = 20;
+        //   points++;
+        //   points->x = 150;
+        //   points->y = 200;
+        //   points--;
+        //   size_t array_size = 2;
+        //   ei_draw_polyline(surface,points,array_size,*(widget->pick_color),clipper);
+        // // END TEST POLYLINE
 }
 
 void frame_setdefaultsfunc(ei_widget_t		widget){
