@@ -29,15 +29,11 @@ void			ei_frame_configure		(ei_widget_t		widget,
                 frame->widget.pick_color->blue = color->blue;
         }
 
-        if (relief == NULL){
-                frame->relief = ei_relief_none;
-        } else {
+        if (relief != NULL){
                 frame->relief = *relief;
         }
 
-        if (border_width == NULL){
-                frame->border_width = 0;
-        } else {
+        if (border_width != NULL){
                 frame->border_width = *border_width;
         }
 }

@@ -2,13 +2,15 @@
 #include "ei_draw.h"
 
 ei_widget_t frame_allocfunc (){
-        ei_widget_t widget = malloc(sizeof(struct frame_t));
-
+        ei_widget_t widget = calloc(1,sizeof(struct frame_t));
         return widget;
 }
 
 void frame_releasefunc (ei_widget_t	widget){
+        free(widget->pick_color);
+        free(widget->pick_color);
 
+        widget = NULL;
 }
 
 void frame_drawfunc (ei_widget_t		widget,
@@ -32,6 +34,10 @@ void frame_drawfunc (ei_widget_t		widget,
 }
 
 void frame_setdefaultsfunc(ei_widget_t		widget){
+        frame_t* frame = (frame_t*) widget;
+        frame->widget = *widget;
+        frame->relief = ei_relief_none;
+        frame->border_width = 0;
 }
 
 ei_widgetclass_t* create_frame() {

@@ -45,7 +45,36 @@ void		ei_impl_widget_draw_children	(ei_widget_t		widget,
                                                         child->widget.pick_color->green = dark(green);
                                                         child->widget.pick_color->blue = dark(blue);
 
-                                                        child->widget.wclass->drawfunc(&(child->widget), surface, NULL, clipper);
+                                                        ei_point_t* points = malloc(5 * sizeof(ei_point_t));
+                                                        points->x = clipper->top_left.x;
+                                                        points->y = clipper->top_left.y + child->widget.requested_size.height;
+                                                        points++;
+                                                        points->x = clipper->top_left.x + child->widget.requested_size.width/3 ;
+                                                        points->y = clipper->top_left.y + child->widget.requested_size.height/2;
+                                                        points++;
+                                                        points->x = clipper->top_left.x + child->widget.requested_size.width*2/3;
+                                                        points->y = clipper->top_left.y + child->widget.requested_size.height/2;
+                                                        points++;
+                                                        points->x = clipper->top_left.x+ child->widget.requested_size.width;
+                                                        points->y = clipper->top_left.y;
+                                                        points++;
+                                                        points->x = clipper->top_left.x;
+                                                        points->y = clipper->top_left.y;
+                                                        points-=4;
+                                                        size_t points_size = 5;
+
+                                                        ei_draw_polygon(surface,points, points_size, *(child->widget.pick_color), clipper);
+
+                                                        child->widget.pick_color->red = light(red);
+                                                        child->widget.pick_color->green = light(green);
+                                                        child->widget.pick_color->blue = light(blue);
+
+                                                        points+=4;
+                                                        points->x = clipper->top_left.x + child->widget.requested_size.width;
+                                                        points->y = clipper->top_left.y + child->widget.requested_size.height;
+                                                        points-=4;
+
+                                                        ei_draw_polygon(surface,points, points_size, *(child->widget.pick_color), clipper);
 
                                                         clipper->size.width -= child->border_width * 2;
                                                         clipper->size.height -= child->border_width * 2;

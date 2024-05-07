@@ -40,9 +40,10 @@ ei_widget_t ei_widget_create(ei_const_string_t class_name,
 
         ei_widgetclass_t* type_widget = ei_widgetclass_from_name(class_name);
         if (strcmp(type_widget->name, "frame") == 0) {
-                frame_t* frame = malloc(sizeof(frame_t));
+                frame_t* frame = (frame_t *) frame_allocfunc();
                 widget->wclass->drawfunc = type_widget->drawfunc;
                 frame->widget = *widget;
+                frame_setdefaultsfunc(widget);
         }
 
         return widget;
