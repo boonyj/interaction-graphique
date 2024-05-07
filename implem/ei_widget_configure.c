@@ -1,6 +1,7 @@
 #include "ei_widget_configure.h"
 #include "ei_implementation.h"
 #include "ei_frame.h"
+#include "ei_widget_attributes.h"
 
 void			ei_frame_configure		(ei_widget_t		widget,
                                                                ei_size_t*		requested_size,
@@ -18,8 +19,7 @@ void			ei_frame_configure		(ei_widget_t		widget,
         frame->widget = *widget;
 
         if (requested_size != NULL){
-                frame->widget.requested_size.height = requested_size->height;
-                frame->widget.requested_size.width = requested_size->width;
+                ei_widget_set_requested_size(&(frame->widget), *requested_size);
         }
 
         if (widget->pick_color != NULL) {
