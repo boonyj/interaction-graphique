@@ -38,7 +38,6 @@ void ei_app_run(void){
         // Call the draw function for the root widget to draw the entire widget hierarchy
         if (root_widget->wclass != NULL) {
                 root_widget->wclass->drawfunc(root_widget, main_surface, NULL, NULL);
-
         }
         ei_rect_t* clipper = &(root_widget->children_head->screen_location);
         ei_impl_widget_draw_children(root_widget, main_surface, NULL, clipper);

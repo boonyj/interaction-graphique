@@ -8,6 +8,7 @@ ei_widget_t ei_widget_create(ei_const_string_t class_name,
         ei_widget_t widget = malloc(sizeof(struct ei_impl_widget_t)); // Allocate memory for ei_widget_t structure
         widget->wclass = malloc(sizeof(struct ei_widgetclass_t)); // Allocate memory for ei_widgetclass_t structure
         widget->pick_color = malloc(sizeof(ei_color_t)); // Allocate memory for ei_color_t structure
+        widget->geom_params = malloc(sizeof(ei_geom_param_t));
 
         widget->parent = parent; // Assign parent
         widget->user_data = user_data; // Assign user_data
