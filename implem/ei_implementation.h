@@ -79,8 +79,6 @@ uint32_t	ei_impl_map_rgba(ei_surface_t surface, ei_color_t color);
  */
 typedef struct ei_impl_geom_param_t {
 	ei_geometrymanager_t*		manager;	///< The geometry managers that manages this widget.
-        int* border_width;
-        ei_relief_t* relief;
 } ei_impl_geom_param_t;
 
 

@@ -1,5 +1,6 @@
 #include "ei_widget_configure.h"
 #include "ei_implementation.h"
+#include "ei_frame.h"
 
 void			ei_frame_configure		(ei_widget_t		widget,
                                                                ei_size_t*		requested_size,
@@ -13,31 +14,32 @@ void			ei_frame_configure		(ei_widget_t		widget,
                                                                ei_surface_t*		img,
                                                                ei_rect_ptr_t*		img_rect,
                                                                ei_anchor_t*		img_anchor){
-        if (requested_size != NULL){
-                widget->requested_size.height = (*requested_size).height;
-                widget->requested_size.width = (*requested_size).width;
+        frame_t* frame = (frame_t*) widget;
+        frame->widget = *widget;
 
+        if (requested_size != NULL){
+                frame->widget.requested_size.height = requested_size->height;
+                frame->widget.requested_size.width = requested_size->width;
         }
 
         if (widget->pick_color != NULL) {
-                widget->pick_color->alpha = color->alpha;
-                widget->pick_color->red = color->red;
-                widget->pick_color->green = color->green;
-                widget->pick_color->blue = color->blue;
+                frame->widget.pick_color->alpha = color->alpha;
+                frame->widget.pick_color->red = color->red;
+                frame->widget.pick_color->green = color->green;
+                frame->widget.pick_color->blue = color->blue;
         }
 
         if (relief == NULL){
-                widget->geom_params->relief = ei_relief_none;
+                frame->relief = ei_relief_none;
         } else {
-                widget->geom_params->relief = relief;
+                frame->relief = *relief;
         }
 
         if (border_width == NULL){
-                widget->geom_params->border_width = 0;
+                frame->border_width = 0;
         } else {
-                widget->geom_params->border_width =border_width;
+                frame->border_width = *border_width;
         }
-
 }
 
 void			ei_button_configure		(ei_widget_t		widget,

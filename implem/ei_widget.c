@@ -1,10 +1,12 @@
 #include "ei_widget.h"
 #include "ei_implementation.h"
+#include "ei_frame.h"
 
 ei_widget_t ei_widget_create(ei_const_string_t class_name,
                              ei_widget_t parent,
                              ei_user_param_t user_data,
                              ei_widget_destructor_t destructor) {
+
         ei_widget_t widget = malloc(sizeof(struct ei_impl_widget_t)); // Allocate memory for ei_widget_t structure
         widget->wclass = malloc(sizeof(struct ei_widgetclass_t)); // Allocate memory for ei_widgetclass_t structure
         widget->pick_color = malloc(sizeof(ei_color_t)); // Allocate memory for ei_color_t structure
@@ -17,9 +19,6 @@ ei_widget_t ei_widget_create(ei_const_string_t class_name,
         widget->children_head = NULL; // Initialize children_head
         widget->children_tail = NULL; // Initialize children_tail
         widget->next_sibling = NULL; // Initialize next_sibling
-
-        ei_widgetclass_t* type_widget = ei_widgetclass_from_name(class_name);
-        widget->wclass->drawfunc = type_widget->drawfunc;
 
         if (parent != NULL) {
                 if (parent->children_head == NULL) {
@@ -38,6 +37,14 @@ ei_widget_t ei_widget_create(ei_const_string_t class_name,
                         prev_sibling->next_sibling = widget;
                 }
         }
+
+        ei_widgetclass_t* type_widget = ei_widgetclass_from_name(class_name);
+        if (strcmp(type_widget->name, "frame") == 0) {
+                frame_t* frame = malloc(sizeof(frame_t));
+                widget->wclass->drawfunc = type_widget->drawfunc;
+                frame->widget = *widget;
+        }
+
         return widget;
 }
 
