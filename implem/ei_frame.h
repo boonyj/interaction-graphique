@@ -6,6 +6,8 @@
 
 typedef struct frame_t {
         ei_widget_t widget;
+        int* border_width;
+        ei_relief_t* relief;
 } frame_t;
 
 ei_widget_t frame_allocfunc ();
