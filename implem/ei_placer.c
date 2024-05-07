@@ -32,6 +32,7 @@ void		ei_place	(ei_widget_t		widget,
         widget->screen_location.size.width = width_value;
         widget->screen_location.size.height = height_value;
 
+
 }
 
 
