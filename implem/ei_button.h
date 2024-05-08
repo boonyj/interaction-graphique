@@ -7,6 +7,10 @@ typedef struct button_t {
         ei_impl_widget_t widget;
         int border_width;
         ei_relief_t relief;
+        int corner_radius;
+        ei_color_t text_color;
+        ei_font_t text_font;
+        ei_string_t text;
 } button_t;
 
 ei_widget_t button_allocfunc ();

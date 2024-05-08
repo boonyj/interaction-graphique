@@ -17,6 +17,12 @@ void button_drawfunc (ei_widget_t		widget,
 }
 
 void button_setdefaultsfunc(ei_widget_t		widget){
+        button_t * button = (button_t*) widget;
+        button->widget = *widget;
+        button->relief = ei_relief_none;
+        button->border_width = 0;
+        button->corner_radius = 0;
+        button->text_color = ei_font_default_color;
 }
 
 ei_widgetclass_t* create_button() {

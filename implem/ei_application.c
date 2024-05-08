@@ -2,9 +2,11 @@
 #include "ei_implementation.h"
 #include "ei_frame.h"
 #include "ei_placeur.h"
+#include "ei_button.h"
 
 ei_surface_t main_surface = NULL;
 ei_widget_t frame_root = NULL;
+ei_widget_t button_root = NULL;
 
 void ei_app_create(ei_size_t main_window_size, bool fullscreen){
         // Initialisation of the application
@@ -13,10 +15,14 @@ void ei_app_create(ei_size_t main_window_size, bool fullscreen){
 
         // Creation of widget class frame (to be registered later)
         ei_widgetclass_t* frame_class = create_frame();
+        ei_widgetclass_t* button_class = create_button();
 
         // Register the widget class frame (to be used later)
         ei_widgetclass_register(frame_class);
+        ei_widgetclass_register(button_class);
+
         frame_root = ei_widget_create("frame", NULL, NULL, NULL);
+        button_root = ei_widget_create("button", NULL, NULL, NULL);
 
         // Creation of geometry manager
         ei_geometrymanager_t* placeur = create_placeur();
@@ -60,6 +66,7 @@ void ei_app_quit_request(void){
 
 ei_widget_t ei_app_root_widget(void){
         return frame_root;
+        //return button_root;
 }
 
 ei_surface_t ei_app_root_surface(void){

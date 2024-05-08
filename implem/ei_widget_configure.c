@@ -2,6 +2,7 @@
 #include "ei_implementation.h"
 #include "ei_frame.h"
 #include "ei_widget_attributes.h"
+#include "ei_button.h"
 
 void			ei_frame_configure		(ei_widget_t		widget,
                                                                ei_size_t*		requested_size,
@@ -53,7 +54,39 @@ void			ei_button_configure		(ei_widget_t		widget,
                                                                 ei_anchor_t*		img_anchor,
                                                                 ei_callback_t*		callback,
                                                                 ei_user_param_t*	user_param){
+        button_t* button = (button_t*) widget;
+        button->widget = *widget;
 
+        if (requested_size != NULL){
+                ei_widget_set_requested_size(&(button->widget), *requested_size);
+        }
+
+        if (widget->pick_color != NULL) {
+                button->widget.pick_color->alpha = color->alpha;
+                button->widget.pick_color->red = color->red;
+                button->widget.pick_color->green = color->green;
+                button->widget.pick_color->blue = color->blue;
+        }
+
+        if (relief != NULL){
+                button->relief = *relief;
+        }
+
+        if (border_width != NULL){
+                button->border_width = *border_width;
+        }
+
+        if (corner_radius != NULL){
+                button->corner_radius = *corner_radius;
+        }
+
+        if (text != NULL){
+                button->text = *text;
+                button->text_color.alpha = text_color->alpha;
+                button->text_color.red = text_color->red;
+                button->text_color.green = text_color->green;
+                button->text_color.blue = text_color->blue;
+        }
 }
 
 void			ei_toplevel_configure		(ei_widget_t		widget,

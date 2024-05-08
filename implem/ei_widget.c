@@ -1,6 +1,7 @@
 #include "ei_widget.h"
 #include "ei_implementation.h"
 #include "ei_frame.h"
+#include "ei_button.h"
 
 ei_widget_t ei_widget_create(ei_const_string_t class_name,
                              ei_widget_t parent,
@@ -11,6 +12,8 @@ ei_widget_t ei_widget_create(ei_const_string_t class_name,
         widget->wclass = malloc(sizeof(struct ei_widgetclass_t)); // Allocate memory for ei_widgetclass_t structure
         widget->pick_color = malloc(sizeof(ei_color_t)); // Allocate memory for ei_color_t structure
         widget->geom_params = malloc(sizeof(ei_geom_param_t));
+        widget->parent = parent; // Assign parent
+        strcpy(widget->wclass->name, class_name);
 
         widget->parent = parent; // Assign parent
         widget->user_data = user_data; // Assign user_data
@@ -44,6 +47,11 @@ ei_widget_t ei_widget_create(ei_const_string_t class_name,
                 widget->wclass->drawfunc = type_widget->drawfunc;
                 frame->widget = *widget;
                 frame_setdefaultsfunc(widget);
+        } else if (strcmp(type_widget->name, "button") == 0){
+                button_t* button = (button_t *) button_allocfunc();
+                widget->wclass->drawfunc = type_widget->drawfunc;
+                button->widget = *widget;
+                button_setdefaultsfunc(widget);
         }
 
         return widget;

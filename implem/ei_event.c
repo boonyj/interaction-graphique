@@ -16,7 +16,9 @@ void		ei_bind			(ei_eventtype_t		eventtype,
                                                     ei_widget_t		widget,
                                                     ei_tag_t		tag,
                                                     ei_callback_t		callback,
-                                                    void*			user_param);
+                                                    void*			user_param){
+
+}
 
 /**
  * \brief	Unbinds a callback from an event type and widget or tag.
@@ -29,4 +31,6 @@ void		ei_unbind		(ei_eventtype_t		eventtype,
                                               ei_widget_t		widget,
                                               ei_tag_t		tag,
                                               ei_callback_t		callback,
-                                              void*			user_param);
+                                              void*			user_param){
+
+}
