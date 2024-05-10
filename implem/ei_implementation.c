@@ -147,90 +147,199 @@ void draw_button (button_t * child,
                                                         break;
 
                                                 case ei_relief_raised :
-                                                        unsigned char red = child->widget.pick_color->red;
-                                                        unsigned char green = child->widget.pick_color->green;
-                                                        unsigned char blue = child->widget.pick_color->blue;
-                                                        child->widget.pick_color->red = dark(red);
-                                                        child->widget.pick_color->green = dark(green);
-                                                        child->widget.pick_color->blue = dark(blue);
+                                                        if (child->corner_radius == 0){
+                                                                unsigned char red = child->widget.pick_color->red;
+                                                                unsigned char green = child->widget.pick_color->green;
+                                                                unsigned char blue = child->widget.pick_color->blue;
+                                                                child->widget.pick_color->red = dark(red);
+                                                                child->widget.pick_color->green = dark(green);
+                                                                child->widget.pick_color->blue = dark(blue);
+                                                                ei_point_t *points = malloc(5 * sizeof(ei_point_t));
+                                                                points[0].x = clipper->top_left.x;
+                                                                points[0].y = clipper->top_left.y +
+                                                                              child->widget.requested_size.height;
+                                                                points[1].x = clipper->top_left.x +
+                                                                              child->widget.requested_size.width / 3;
+                                                                points[1].y = clipper->top_left.y +
+                                                                              child->widget.requested_size.height / 2;
+                                                                points[2].x = clipper->top_left.x +
+                                                                              child->widget.requested_size.width * 2 / 3;
+                                                                points[2].y = clipper->top_left.y +
+                                                                              child->widget.requested_size.height / 2;
+                                                                points[3].x = clipper->top_left.x +
+                                                                              child->widget.requested_size.width;
+                                                                points[3].y = clipper->top_left.y;
+                                                                points[4].x = clipper->top_left.x;
+                                                                points[4].y = clipper->top_left.y;
+                                                                size_t points_size = 5;
+                                                                ei_draw_polygon(surface, points, points_size,
+                                                                                *(child->widget.pick_color), clipper);
 
-                                                        ei_point_t *points = malloc(8 * sizeof(ei_point_t));
-                                                        points->x = clipper->top_left.x;
-                                                        points->y = clipper->top_left.y +
-                                                                    child->widget.requested_size.height;
-                                                        points++;
-                                                        points->x = clipper->top_left.x +
-                                                                    child->widget.requested_size.width / 3;
-                                                        points->y = clipper->top_left.y +
-                                                                    child->widget.requested_size.height / 2;
-                                                        points++;
-                                                        points->x = clipper->top_left.x +
-                                                                    child->widget.requested_size.width * 2 / 3;
-                                                        points->y = clipper->top_left.y +
-                                                                    child->widget.requested_size.height / 2;
-                                                        points++;
-                                                        points->x = clipper->top_left.x +
-                                                                    child->widget.requested_size.width;
-                                                        points->y = clipper->top_left.y;
-                                                        points++;
-                                                        points->x = clipper->top_left.x;
-                                                        points->y = clipper->top_left.y;
-                                                        points -= 4;
-                                                        size_t points_size = 5;
+                                                                child->widget.pick_color->red = light(red);
+                                                                child->widget.pick_color->green = light(green);
+                                                                child->widget.pick_color->blue = light(blue);
+
+                                                                points += 4;
+                                                                points->x = clipper->top_left.x +
+                                                                            child->widget.requested_size.width;
+                                                                points->y = clipper->top_left.y +
+                                                                            child->widget.requested_size.height;
+                                                                points -= 4;
+
+                                                                ei_draw_polygon(surface, points, points_size,
+                                                                                *(child->widget.pick_color), clipper);
+
+                                                                clipper->size.width -= child->border_width * 2;
+                                                                clipper->size.height -= child->border_width * 2;
+                                                                clipper->top_left.x += child->border_width;
+                                                                clipper->top_left.y += child->border_width;
+                                                                child->widget.pick_color->red = red;
+                                                                child->widget.pick_color->green = green;
+                                                                child->widget.pick_color->blue = blue;
+                                                                child->widget.wclass->drawfunc(&(child->widget), surface, NULL,
+                                                                                               clipper);
+                                                        }else{
+                                                                unsigned char red = child->widget.pick_color->red;
+                                                                unsigned char green = child->widget.pick_color->green;
+                                                                unsigned char blue = child->widget.pick_color->blue;
+                                                                child->widget.pick_color->red = dark(red);
+                                                                child->widget.pick_color->green = dark(green);
+                                                                child->widget.pick_color->blue = dark(blue);
+                                                                ei_point_t *points = malloc(26 * sizeof(ei_point_t));
+
+                                                                ei_point_t *center_corner = malloc( sizeof(ei_point_t));
+                                                                center_corner->x = clipper->top_left.x + child->corner_radius;
+                                                                center_corner->y = clipper->top_left.y + child->widget.requested_size.height - child->corner_radius;
+                                                                ei_point_t *points_arc = malloc(8 * sizeof(ei_point_t));
+                                                                int nb_segments = 8;
+                                                                arc(*center_corner, child->corner_radius, 180, 230, nb_segments, &points_arc);
+                                                                for (int i = 0; i < 8; ++i) {
+                                                                        points[i].x = points_arc[i].x;
+                                                                        points[i].y = points_arc[i].y;
+                                                                }
+
+                                                                points[8].x = clipper->top_left.x + child->widget.requested_size.width / 3;
+                                                                points[8].y = clipper->top_left.y + child->widget.requested_size.height / 2;
+
+                                                                points[9].x = clipper->top_left.x + child->widget.requested_size.width * 2 / 3;
+                                                                points[9].y = clipper->top_left.y + child->widget.requested_size.height / 2;
+
+                                                                center_corner->x = clipper->top_left.x + child->widget.requested_size.width - child->corner_radius;
+                                                                center_corner->y = clipper->top_left.y + child->corner_radius;
+
+                                                                arc(*center_corner, child->corner_radius, 40, 90, 8, &points_arc);
+                                                                for (int i = 0; i < 8; ++i) {
+                                                                        points[i + 10].x = points_arc[i].x;
+                                                                        points[i + 10].y = points_arc[i].y;
+                                                                }
+
+                                                                center_corner->x = clipper->top_left.x + child->corner_radius;
+                                                                center_corner->y = clipper->top_left.y + child->corner_radius;
+
+                                                                arc(*center_corner, child->corner_radius, 90, 180, 8, &points_arc);
+                                                                for (int i = 0; i < 8; ++i) {
+                                                                        points[i + 18].x = points_arc[i].x;
+                                                                        points[i + 18].y = points_arc[i].y;
+                                                                }
 
 
-                                                        //test to draw the radius of top left corner
-                                                        /*ei_point_t *center_corner_left = malloc( sizeof(ei_point_t));
-                                                        center_corner_left->x = clipper->top_left.x + child->corner_radius;
-                                                        center_corner_left->y = clipper->top_left.y + child->corner_radius;
-                                                        ei_point_t *points_arc = malloc(10 * sizeof(ei_point_t));
+                                                                size_t points_size = 26;
 
-                                                        arc(*center_corner_left, child->corner_radius, 90, 180, 4, &points_arc);
-                                                        points++;
-                                                        points->x = points_arc->x;
-                                                        points->y = points_arc->y;
-                                                        points_arc++;
-                                                        points++;
-                                                        points->x = points_arc->x;
-                                                        points->y = points_arc->y;
-                                                        points_arc++;
-                                                        points++;
-                                                        points->x = points_arc->x;
-                                                        points->y = points_arc->y;
-                                                        points_arc++;
-                                                        points++;
-                                                        points->x = points_arc->x;
-                                                        points->y = points_arc->y;
-                                                        points_arc++;
-                                                        points -= 7;
-                                                        size_t points_size = 8;*/
+                                                                ei_draw_polygon(surface, points, points_size,
+                                                                                *(child->widget.pick_color), clipper);
 
-                                                        ei_draw_polygon(surface, points, points_size,
-                                                                        *(child->widget.pick_color), clipper);
+                                                                child->widget.pick_color->red = light(red);
+                                                                child->widget.pick_color->green = light(green);
+                                                                child->widget.pick_color->blue = light(blue);
 
-                                                        child->widget.pick_color->red = light(red);
-                                                        child->widget.pick_color->green = light(green);
-                                                        child->widget.pick_color->blue = light(blue);
+                                                                center_corner->x = clipper->top_left.x + child->widget.requested_size.width - child->corner_radius;
+                                                                center_corner->y = clipper->top_left.y + child->corner_radius;
 
-                                                        points += 4;
-                                                        points->x = clipper->top_left.x +
-                                                                    child->widget.requested_size.width;
-                                                        points->y = clipper->top_left.y +
-                                                                    child->widget.requested_size.height;
-                                                        points -= 4;
+                                                                arc(*center_corner, child->corner_radius, 0, 50, 8, &points_arc);
+                                                                for (int i = 0; i < 8; ++i) {
+                                                                        points[i].x = points_arc[i].x;
+                                                                        points[i].y = points_arc[i].y;
+                                                                }
 
-                                                        ei_draw_polygon(surface, points, points_size,
-                                                                        *(child->widget.pick_color), clipper);
+                                                                points[8].x = clipper->top_left.x +
+                                                                            child->widget.requested_size.width * 2 / 3;
+                                                                points[8].y = clipper->top_left.y +
+                                                                            child->widget.requested_size.height / 2;
 
-                                                        clipper->size.width -= child->border_width * 2;
-                                                        clipper->size.height -= child->border_width * 2;
-                                                        clipper->top_left.x += child->border_width;
-                                                        clipper->top_left.y += child->border_width;
-                                                        child->widget.pick_color->red = red;
-                                                        child->widget.pick_color->green = green;
-                                                        child->widget.pick_color->blue = blue;
-                                                        child->widget.wclass->drawfunc(&(child->widget), surface, NULL,
-                                                                                       clipper);
+                                                                points[9].x = clipper->top_left.x +
+                                                                            child->widget.requested_size.width / 3;
+                                                                points[9].y = clipper->top_left.y +
+                                                                            child->widget.requested_size.height / 2;
+
+                                                                center_corner->x = clipper->top_left.x + child->corner_radius;
+                                                                center_corner->y = clipper->top_left.y + child->widget.requested_size.height - child->corner_radius;
+                                                                arc(*center_corner, child->corner_radius, 220, 270, 8, &points_arc);
+                                                                for (int i = 0; i < 8; ++i) {
+                                                                        points[i + 10].x = points_arc[i].x;
+                                                                        points[i + 10].y = points_arc[i].y;
+                                                                }
+
+                                                                center_corner->x = clipper->top_left.x +  child->widget.requested_size.width  - child->corner_radius;
+                                                                center_corner->y = clipper->top_left.y +  child->widget.requested_size.height  - child->corner_radius;
+
+                                                                arc(*center_corner, child->corner_radius, 270, 360, 8, &points_arc);
+                                                                for (int i = 0; i < 8; ++i) {
+                                                                        points[i + 18].x = points_arc[i].x;
+                                                                        points[i + 18].y = points_arc[i].y;
+                                                                }
+
+                                                                ei_draw_polygon(surface, points, points_size,
+                                                                                *(child->widget.pick_color), clipper);
+
+                                                                clipper->size.width -= child->border_width * 2;
+                                                                clipper->size.height -= child->border_width * 2;
+                                                                clipper->top_left.x += child->border_width;
+                                                                clipper->top_left.y += child->border_width;
+                                                                child->widget.pick_color->red = red;
+                                                                child->widget.pick_color->green = green;
+                                                                child->widget.pick_color->blue = blue;
+
+                                                                center_corner->x = clipper->top_left.x +  clipper->size.width  - child->corner_radius;
+                                                                center_corner->y = clipper->top_left.y + child->corner_radius;
+                                                                ei_point_t *pointsinside = malloc(32 * sizeof(ei_point_t));
+                                                                arc(*center_corner, child->corner_radius, 0, 90, 8, &points_arc);
+                                                                for (int i = 0; i < 8; ++i) {
+                                                                        pointsinside[i].x = points_arc[i].x;
+                                                                        pointsinside[i].y = points_arc[i].y;
+                                                                }
+
+                                                                center_corner->x = clipper->top_left.x + child->corner_radius;
+                                                                center_corner->y = clipper->top_left.y + child->corner_radius;
+                                                                arc(*center_corner, child->corner_radius, 90, 180, 8, &points_arc);
+                                                                for (int i = 0; i < 8; ++i) {
+                                                                        pointsinside[i + 8].x = points_arc[i].x;
+                                                                        pointsinside[i + 8].y = points_arc[i].y;
+                                                                }
+
+                                                                center_corner->x = clipper->top_left.x + child->corner_radius;
+                                                                center_corner->y = clipper->top_left.y + clipper->size.height - child->corner_radius;
+                                                                arc(*center_corner, child->corner_radius, 180, 270, 8, &points_arc);
+                                                                for (int i = 0; i < 8; ++i) {
+                                                                        pointsinside[i + 16].x = points_arc[i].x;
+                                                                        pointsinside[i + 16].y = points_arc[i].y;
+                                                                }
+
+                                                                center_corner->x = clipper->top_left.x +  clipper->size.width  - child->corner_radius;
+                                                                center_corner->y = clipper->top_left.y +  clipper->size.height  - child->corner_radius;
+                                                                arc(*center_corner, child->corner_radius, 270, 360, 8, &points_arc);
+                                                                for (int i = 0; i < 8; ++i) {
+                                                                        pointsinside[i + 24].x = points_arc[i].x;
+                                                                        pointsinside[i + 24].y = points_arc[i].y;
+                                                                }
+
+                                                                size_t pointsinside_size = 32;
+                                                                ei_draw_polygon(surface, pointsinside, pointsinside_size,
+                                                                                *(child->widget.pick_color), clipper);
+                                                                if (child->text != NULL){
+                                                                        //ei_draw_text(surface,&clipper->top_left, child->text, NULL, child->text_color, clipper);
+                                                                }
+
+                                                        }
                                                         break;
 
                                                 case ei_relief_sunken :

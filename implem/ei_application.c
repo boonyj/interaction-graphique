@@ -21,7 +21,8 @@ void ei_app_create(ei_size_t main_window_size, bool fullscreen){
         ei_widgetclass_register(frame_class);
         ei_widgetclass_register(button_class);
 
-        frame_root = ei_widget_create("frame", NULL, NULL, NULL);
+        // Can't two root at the same moment (button_root to test button and  frame_root to test_root)
+        //frame_root = ei_widget_create("frame", NULL, NULL, NULL);
         button_root = ei_widget_create("button", NULL, NULL, NULL);
 
         // Creation of geometry manager
@@ -65,8 +66,8 @@ void ei_app_quit_request(void){
 }
 
 ei_widget_t ei_app_root_widget(void){
-        return frame_root;
-        //return button_root;
+        //return frame_root;
+        return button_root;
 }
 
 ei_surface_t ei_app_root_surface(void){
