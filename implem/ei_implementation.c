@@ -376,10 +376,10 @@ void draw_button (button_t * child,
                                                                 int width = 0;
                                                                 int height = 0;
                                                                 hw_text_compute_size(child->text,child->text_font, &width, &height);
-                                                                ei_size_t surface_size = hw_surface_get_size(surface);
-                                                                ei_point_t where;
-                                                                where.x = surface_size.width/2 - width *2;
-                                                                where.y = surface_size.height/2 - height *2;
+                                                                ei_point_t where = child->widget.screen_location.top_left;
+                                                                ei_size_t text_surface_size = hw_surface_get_size(hw_text_create_surface(child->text,child->text_font,child->text_color));
+                                                                where.x += ((child->widget.requested_size.width) - text_surface_size.width)/2;
+                                                                where.y += ((child->widget.requested_size.height) - text_surface_size.height)/2;
                                                                 ei_draw_text(surface, &where, child->text, child->text_font, child->text_color, clipper);
                                                         }
                                                 }

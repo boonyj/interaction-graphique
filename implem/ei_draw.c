@@ -38,8 +38,10 @@ void	ei_draw_text		(ei_surface_t		surface,
 
         ei_surface_t text_surface = hw_text_create_surface(text, font, color);
         ei_rect_t text_surface_rect = hw_surface_get_rect(surface);
-        ei_rect_t surface_rect = hw_surface_get_rect(surface);
-        ei_copy_surface(surface, &surface_rect, text_surface, &text_surface_rect, true);
+        ei_rect_t dst_rect = hw_surface_get_rect(surface);
+        dst_rect.top_left.x = where->x;
+        dst_rect.top_left.y = where->y;
+        ei_copy_surface(surface, &dst_rect, text_surface, &text_surface_rect, true);
 }
 
 int	ei_copy_surface		(ei_surface_t		destination,
