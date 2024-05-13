@@ -21,6 +21,6 @@ void frame_drawfunc (ei_widget_t		widget,
 
 void frame_setdefaultsfunc(ei_widget_t		widget);
 
-ei_widgetclass_t* create_frame();
+ei_widgetclass_t* create_frame_class();
 
 #endif //PROJETC_IG_EI_FRAME_H

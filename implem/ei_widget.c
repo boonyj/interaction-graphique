@@ -7,13 +7,21 @@ ei_widget_t ei_widget_create(ei_const_string_t class_name,
                              ei_widget_t parent,
                              ei_user_param_t user_data,
                              ei_widget_destructor_t destructor) {
+        ei_widgetclass_t* type_widget = ei_widgetclass_from_name(class_name);
+        ei_widget_t widget  = type_widget->allocfunc();
+        widget->wclass = malloc(sizeof(struct ei_widgetclass_t));
+        widget->pick_color = malloc(sizeof(ei_color_t));
+        widget->geom_params = malloc(sizeof (ei_geom_param_t));
 
-        ei_widget_t widget = malloc(sizeof(struct ei_impl_widget_t)); // Allocate memory for ei_widget_t structure
-        widget->wclass = malloc(sizeof(struct ei_widgetclass_t)); // Allocate memory for ei_widgetclass_t structure
-        widget->pick_color = malloc(sizeof(ei_color_t)); // Allocate memory for ei_color_t structure
-        widget->geom_params = malloc(sizeof(ei_geom_param_t));
-        widget->parent = parent; // Assign parent
         strcpy(widget->wclass->name, class_name);
+
+        widget->wclass->allocfunc = type_widget->allocfunc;
+        widget->wclass->drawfunc = type_widget->drawfunc;
+        widget->wclass->releasefunc = type_widget->releasefunc;
+        widget->wclass->setdefaultsfunc = type_widget->setdefaultsfunc;
+        widget->wclass->geomnotifyfunc = type_widget->geomnotifyfunc;
+
+        widget->parent = parent; // Assign parent
 
         widget->parent = parent; // Assign parent
         widget->user_data = user_data; // Assign user_data
@@ -41,18 +49,7 @@ ei_widget_t ei_widget_create(ei_const_string_t class_name,
                 }
         }
 
-        ei_widgetclass_t* type_widget = ei_widgetclass_from_name(class_name);
-        if (strcmp(type_widget->name, "frame") == 0) {
-                frame_t* frame = (frame_t *) frame_allocfunc();
-                widget->wclass->drawfunc = type_widget->drawfunc;
-                frame->widget = *widget;
-                frame_setdefaultsfunc(widget);
-        } else if (strcmp(type_widget->name, "button") == 0){
-                button_t* button = (button_t *) button_allocfunc();
-                widget->wclass->drawfunc = type_widget->drawfunc;
-                button->widget = *widget;
-                button_setdefaultsfunc(widget);
-        }
+        widget->wclass->setdefaultsfunc(widget);
 
         return widget;
 }

@@ -14,8 +14,8 @@ void ei_app_create(ei_size_t main_window_size, bool fullscreen){
         main_surface  = hw_create_window(main_window_size, fullscreen);
 
         // Creation of widget class frame (to be registered later)
-        ei_widgetclass_t* frame_class = create_frame();
-        ei_widgetclass_t* button_class = create_button();
+        ei_widgetclass_t* frame_class = create_frame_class();
+        ei_widgetclass_t* button_class = create_button_class();
 
         // Register the widget class frame (to be used later)
         ei_widgetclass_register(frame_class);
@@ -44,7 +44,9 @@ void ei_app_run(void){
 
         // Call the draw function for the root widget to draw the entire widget hierarchy
         if (root_widget->wclass != NULL) {
-                root_widget->wclass->drawfunc(root_widget, main_surface, NULL, NULL);
+                if (root_widget->wclass->drawfunc != NULL) {
+                        root_widget->wclass->drawfunc(root_widget, main_surface, NULL, NULL);
+                }
         }
         ei_rect_t* clipper = &(root_widget->children_head->screen_location);
         ei_impl_widget_draw_children(root_widget, main_surface, NULL, clipper);

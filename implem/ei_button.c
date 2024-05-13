@@ -28,7 +28,7 @@ void button_setdefaultsfunc(ei_widget_t		widget){
         button->text = NULL;
 }
 
-ei_widgetclass_t* create_button() {
+ei_widgetclass_t* create_button_class() {
         ei_widgetclass_t* button = malloc(sizeof(ei_widgetclass_t));
         strcpy(button->name, "button");
         button->allocfunc =  &button_allocfunc;

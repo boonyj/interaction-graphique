@@ -40,7 +40,7 @@ void frame_setdefaultsfunc(ei_widget_t		widget){
         frame->border_width = 0;
 }
 
-ei_widgetclass_t* create_frame() {
+ei_widgetclass_t* create_frame_class() {
         ei_widgetclass_t* frame = malloc(sizeof(ei_widgetclass_t));
         strcpy(frame->name, "frame");
         frame->allocfunc =  &frame_allocfunc;
