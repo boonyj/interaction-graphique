@@ -23,6 +23,9 @@ void button_setdefaultsfunc(ei_widget_t		widget){
         button->border_width = 0;
         button->corner_radius = 0;
         button->text_color = ei_font_default_color;
+        button->text_anchor = ei_anc_none;
+        button->text_font = ei_default_font;
+        button->text = NULL;
 }
 
 ei_widgetclass_t* create_button() {

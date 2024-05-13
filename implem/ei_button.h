@@ -11,6 +11,7 @@ typedef struct button_t {
         ei_color_t text_color;
         ei_font_t text_font;
         ei_string_t text;
+        ei_anchor_t text_anchor;
 } button_t;
 
 ei_widget_t button_allocfunc ();

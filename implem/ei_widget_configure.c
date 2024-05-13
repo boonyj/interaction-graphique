@@ -82,10 +82,18 @@ void			ei_button_configure		(ei_widget_t		widget,
 
         if (text != NULL){
                 button->text = *text;
-                button->text_color.alpha = text_color->alpha;
-                button->text_color.red = text_color->red;
-                button->text_color.green = text_color->green;
-                button->text_color.blue = text_color->blue;
+                if (text_color !=  NULL){
+                        button->text_color.alpha = text_color->alpha;
+                        button->text_color.red = text_color->red;
+                        button->text_color.green = text_color->green;
+                        button->text_color.blue = text_color->blue;
+                }
+                if (text_font !=  NULL){
+                        button->text_font = *text_font;
+                }
+                if (text_anchor !=  NULL){
+                        button->text_anchor = *text_anchor;
+                }
         }
 }
 
