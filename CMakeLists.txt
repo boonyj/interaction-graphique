@@ -81,6 +81,7 @@ set(LIB_EI_SOURCES
 	${SRC}/ei_widget_attributes.c
 	${SRC}/ei_event.c
 	${SRC}/ei_button.c
+	${SRC}/ei_toplevel.c
 
 )
 

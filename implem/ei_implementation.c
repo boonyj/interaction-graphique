@@ -2,6 +2,7 @@
 #include "ei_frame.h"
 #include "ei_widget_attributes.h"
 #include "ei_button.h"
+#include "ei_toplevel.h"
 #include <math.h>
 
 #define PI 3.14159265
@@ -483,17 +484,29 @@ void draw_button (button_t * child,
         }
 }
 
+void draw_toplevel (toplevel_t * child,
+                 ei_surface_t		surface,
+                 ei_surface_t		pick_surface,
+                 ei_rect_t*		clipper) {
+        child->widget.wclass->drawfunc(&(child->widget), surface, NULL,
+                                       clipper);
+}
+
 void		ei_impl_widget_draw_children	(ei_widget_t		widget,
                                                          ei_surface_t		surface,
                                                          ei_surface_t		pick_surface,
                                                          ei_rect_t*		clipper){
         ei_widget_t type = ei_widget_get_first_child(widget);
+
         if (strcmp(type->wclass->name, "frame") == 0){
                 frame_t* child = (frame_t*) ei_widget_get_first_child(widget);
                 draw_frame(child, surface, pick_surface, clipper);
         } else if (strcmp(type->wclass->name, "button") == 0){
                 button_t* child = (button_t*) ei_widget_get_first_child(widget);
                 draw_button(child, surface, pick_surface, clipper);
+        } else if (strcmp(type->wclass->name, "toplevel") == 0){
+                toplevel_t* child = (toplevel_t*) ei_widget_get_first_child(widget);
+                draw_toplevel(child, surface, pick_surface, clipper);
         }
 
 }

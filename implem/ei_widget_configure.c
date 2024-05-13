@@ -3,6 +3,7 @@
 #include "ei_frame.h"
 #include "ei_widget_attributes.h"
 #include "ei_button.h"
+#include "ei_toplevel.h"
 
 void			ei_frame_configure		(ei_widget_t		widget,
                                                                ei_size_t*		requested_size,
@@ -105,5 +106,17 @@ void			ei_toplevel_configure		(ei_widget_t		widget,
                                                                   bool*			closable,
                                                                   ei_axis_set_t*		resizable,
                                                                   ei_size_ptr_t*		min_size){
+        toplevel_t * toplevel = (toplevel_t*) widget;
+        toplevel->widget = *widget;
 
+        if (requested_size != NULL){
+                ei_widget_set_requested_size(&(toplevel->widget), *requested_size);
+        }
+
+        if (widget->pick_color != NULL) {
+                toplevel->widget.pick_color->alpha = color->alpha;
+                toplevel->widget.pick_color->red = color->red;
+                toplevel->widget.pick_color->green = color->green;
+                toplevel->widget.pick_color->blue = color->blue;
+        }
 }
