@@ -4,6 +4,7 @@
 #include "ei_placeur.h"
 #include "ei_button.h"
 #include "ei_toplevel.h"
+#include "ei_event.h"
 
 ei_surface_t main_surface = NULL;
 ei_widget_t root = NULL;
@@ -57,7 +58,34 @@ void ei_app_run(void){
 
         // Update the screen
         hw_surface_update_rects(main_surface, NULL);
-        getchar();
+
+        //Main loop here
+        ei_event_t event;
+        while((event.type != ei_ev_close)){
+                event.type = ei_ev_none;
+                //Update screen (letak nanti)
+                //Wait for event
+                hw_event_wait_next(&event);
+                //Search for event in list
+
+                // 1. Get widget in cursor position
+                // 2. Search for callback function(s) to be executed (en fonction de widget/tag if available)
+                // 3. Run the callback function(s)
+
+                //Behavioral test (buttonup not detecting)
+//                if (event.type == ei_ev_mouse_buttondown){
+//                        printf("Mouse clicked !");
+//                        hw_event_wait_next(&event);
+//                        while(event.type != ei_ev_mouse_buttonup){
+//                                hw_event_wait_next(&event);
+//                                if(event.type = ei_ev_mouse_move){
+//                                        printf("Cursor is moving !");
+//                                }
+//                                hw_event_wait_next(&event);
+//                        }
+//                        printf("Mouse unclicked !");
+//                }
+        }
 
 }
 
