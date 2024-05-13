@@ -103,9 +103,8 @@ int	ei_copy_surface		(ei_surface_t		destination,
                                         uint8_t* dest_pixel = hw_surface_get_buffer(destination) + (dest_y * dest_size.width + dest_x) * 4; // Assuming 32-bit RGBA
                                         if (alpha) {
                                                 // Alpha blending
-                                                float alpha_value = source_pixel[3] / 255.0f;
                                                 for (int i = 0; i < 3; i++) {
-                                                        dest_pixel[i] = (uint8_t)((1 - alpha_value) * dest_pixel[i] + alpha_value * source_pixel[i]);
+                                                        dest_pixel[i] = (uint8_t)((source_pixel[3] * source_pixel[i] + (255 - source_pixel[3]) * dest_pixel[i])/255);
                                                 }
                                                 dest_pixel[3] = 255; // Set destination alpha to opaque
                                         } else {
