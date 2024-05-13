@@ -119,4 +119,17 @@ void			ei_toplevel_configure		(ei_widget_t		widget,
                 toplevel->widget.pick_color->green = color->green;
                 toplevel->widget.pick_color->blue = color->blue;
         }
+
+        if (border_width != NULL){
+                toplevel->border_width = *border_width;
+        }
+
+        if (title != NULL){
+                toplevel->title = *title;
+                toplevel->title_color.red =  0xff;
+                toplevel->title_color.green =  0xff;
+                toplevel->title_color.blue =  0xff;
+                toplevel->title_color.alpha =  0xff;
+
+        }
 }

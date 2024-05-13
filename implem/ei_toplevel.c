@@ -19,6 +19,9 @@ void toplevel_drawfunc (ei_widget_t		widget,
 void toplevel_setdefaultsfunc(ei_widget_t		widget){
         toplevel_t * toplevel = (toplevel_t*) widget;
         toplevel->widget = *widget;
+        toplevel->title = NULL;
+        toplevel->title_font = ei_default_font;
+        toplevel->title_color = ei_font_default_color;
 }
 
 ei_widgetclass_t* create_toplevel_class() {

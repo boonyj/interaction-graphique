@@ -48,7 +48,7 @@ int main(int argc, char** argv)
 						&(ei_color_t){0x88, 0x88, 0x88, 0xff},
 					 	&(int){6},
 					 	&(int){40},
-					 	&(ei_relief_t){ei_relief_raised},
+					 	&(ei_relief_t){ei_relief_none},
 					 	&(ei_string_t){"Mon premier Bouton !"}, NULL,
 					 	&(ei_color_t){0x00, 0x00, 0x00, 0xff}, NULL, NULL, NULL, NULL,
 					 	&(ei_callback_t){button_press}, NULL);

@@ -278,15 +278,46 @@ void draw_button (button_t * child,
                                 switch (child->relief) {
                                         case ei_relief_none :
                                                 if (child->corner_radius == 0) {
-                                                        child->widget.wclass->drawfunc(&(child->widget),
-                                                                                       surface, NULL,
+
+                                                        child->widget.pick_color->red = dark(red);
+                                                        child->widget.pick_color->green = dark(green);
+                                                        child->widget.pick_color->blue = dark(blue);
+
+                                                        child->widget.wclass->drawfunc(&(child->widget), surface, NULL,
+                                                                                       clipper);
+
+                                                        clipper->size.width -= child->border_width * 2;
+                                                        clipper->size.height -= child->border_width * 2;
+                                                        clipper->top_left.x += child->border_width;
+                                                        clipper->top_left.y += child->border_width;
+                                                        child->widget.pick_color->red = red;
+                                                        child->widget.pick_color->green = green;
+                                                        child->widget.pick_color->blue = blue;
+                                                        child->widget.wclass->drawfunc(&(child->widget), surface, NULL,
                                                                                        clipper);
                                                 } else {
-                                                        int nb_segments = 8;
+                                                        child->widget.pick_color->red = dark(red);
+                                                        child->widget.pick_color->green = dark(green);
+                                                        child->widget.pick_color->blue = dark(blue);
+
+                                                        int nb_segments = 32;
 
                                                         ei_point_t *points = rounded_frame(*clipper, child->corner_radius, 0);
 
                                                         size_t points_size = 4*nb_segments;
+                                                        ei_draw_polygon(surface, points, points_size,
+                                                                        *(child->widget.pick_color), clipper);
+
+                                                        clipper->size.width -= child->border_width * 2;
+                                                        clipper->size.height -= child->border_width * 2;
+                                                        clipper->top_left.x += child->border_width;
+                                                        clipper->top_left.y += child->border_width;
+                                                        child->widget.pick_color->red = red;
+                                                        child->widget.pick_color->green = green;
+                                                        child->widget.pick_color->blue = blue;
+
+                                                        points = rounded_frame(*clipper, child->corner_radius, 0);
+
                                                         ei_draw_polygon(surface, points, points_size,
                                                                         *(child->widget.pick_color), clipper);
                                                 }
@@ -488,8 +519,34 @@ void draw_toplevel (toplevel_t * child,
                  ei_surface_t		surface,
                  ei_surface_t		pick_surface,
                  ei_rect_t*		clipper) {
+        unsigned char red = child->widget.pick_color->red;
+        unsigned char green = child->widget.pick_color->green;
+        unsigned char blue = child->widget.pick_color->blue;
+        child->widget.pick_color->red = dark(red);
+        child->widget.pick_color->green = dark(green);
+        child->widget.pick_color->blue = dark(blue);
+
         child->widget.wclass->drawfunc(&(child->widget), surface, NULL,
                                        clipper);
+
+        clipper->size.width -= child->border_width * 2;
+        clipper->size.height -= child->border_width * 2;
+        clipper->top_left.x += child->border_width;
+        clipper->top_left.y += child->border_width;
+        child->widget.pick_color->red = red;
+        child->widget.pick_color->green = green;
+        child->widget.pick_color->blue = blue;
+        child->widget.wclass->drawfunc(&(child->widget), surface, NULL,
+                                       clipper);
+
+        if (child->title != NULL){
+                int width = 0;
+                int height = 0;
+                hw_text_compute_size(child->title,child->title_font, &width, &height);
+                ei_point_t where = child->widget.screen_location.top_left;
+
+                ei_draw_text(surface, &where, child->title, child->title_font, child->title_color, clipper);
+        }
 }
 
 void		ei_impl_widget_draw_children	(ei_widget_t		widget,
