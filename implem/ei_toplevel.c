@@ -1,7 +1,11 @@
 #include "ei_toplevel.h"
+#include "ei_button.h"
+#include "ei_widget_configure.h"
+#include "ei_placer.h"
 
 ei_widget_t toplevel_allocfunc (){
         ei_widget_t widget = malloc(sizeof(struct toplevel_t ));
+
         return widget;
 }
 
@@ -22,6 +26,18 @@ void toplevel_setdefaultsfunc(ei_widget_t		widget){
         toplevel->title = NULL;
         toplevel->title_font = ei_default_font;
         toplevel->title_color = ei_font_default_color;
+
+        /*ei_widget_t button = ei_widget_create	("button", widget, NULL, NULL);
+        ei_button_configure		(button, &((ei_size_t){10, 10}),
+                                            &(ei_color_t){0x88, 0x88, 0x88, 0xff},
+                                            &(int){0},
+                                            &(int){0},
+                                            &(ei_relief_t){ei_relief_raised},
+                                            &(ei_string_t){"X"}, NULL,
+                                            &(ei_color_t){0x00, 0x00, 0x00, 0xff}, NULL, NULL, NULL, NULL,
+                                            NULL, NULL);
+        ei_place_xy			(button, 0, 0);*/
+
 }
 
 ei_widgetclass_t* create_toplevel_class() {

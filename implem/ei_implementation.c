@@ -526,27 +526,79 @@ void draw_toplevel (toplevel_t * child,
         child->widget.pick_color->green = dark(green);
         child->widget.pick_color->blue = dark(blue);
 
-        child->widget.wclass->drawfunc(&(child->widget), surface, NULL,
-                                       clipper);
+        int width = 0;
+        int height = 0;
+        hw_text_compute_size(child->title,child->title_font, &width, &height);
 
-        clipper->size.width -= child->border_width * 2;
-        clipper->size.height -= child->border_width * 2;
-        clipper->top_left.x += child->border_width;
-        clipper->top_left.y += child->border_width;
+        ei_rect_t* clipper_title = malloc(sizeof (ei_rect_t));
+        clipper_title->top_left.x = clipper->top_left.x;
+        clipper_title->top_left.y = clipper->top_left.y;
+
+        clipper_title->size.width = clipper->size.width;
+        clipper_title->size.height = height;
+        ei_point_t *center_corner = malloc(sizeof(ei_point_t));
+        ei_point_t *points_arc = NULL;
+        ei_point_t *points = NULL;
+        int nb_segments = 32;
+        int radius = 15;
+        points = malloc((2*nb_segments + 2) * sizeof(ei_point_t));
+
+        center_corner->x = clipper_title->top_left.x + clipper_title->size.width;
+        center_corner->y = clipper_title->top_left.y + clipper_title->size.height;
+        points[0].x = center_corner->x;
+        points[0].y = center_corner->y;
+
+        center_corner->x = clipper_title->top_left.x +  clipper_title->size.width  - radius;
+        center_corner->y = clipper_title->top_left.y + radius;
+
+        arc(*center_corner, radius, 0, 90, nb_segments, &points_arc);
+        for (int i = 0; i < nb_segments; ++i) {
+                points[i+1].x = points_arc[i].x;
+                points[i+1].y = points_arc[i].y;
+        }
+
+        center_corner->x = clipper_title->top_left.x + radius;
+        center_corner->y = clipper_title->top_left.y + radius;
+        arc(*center_corner, radius, 90, 180, nb_segments, &points_arc);
+        for (int i = 0; i < nb_segments; ++i) {
+                points[i + nb_segments + 1].x = points_arc[i].x;
+                points[i + nb_segments + 1].y = points_arc[i].y;
+        }
+
+        center_corner->x = clipper_title->top_left.x ;
+        center_corner->y = clipper_title->top_left.y + clipper_title->size.height;
+        points[nb_segments*2 + 1].x = center_corner->x;
+        points[nb_segments*2 + 1].y = center_corner->y;
+        size_t points_size = 2*nb_segments + 2;
+
+        ei_draw_polygon(surface, points, points_size,
+                        *(child->widget.pick_color), clipper);
+
+        ei_rect_t* clipper_content = malloc(sizeof (ei_rect_t));
+        clipper_content->top_left.x = clipper->top_left.x;
+        clipper_content->top_left.y = clipper->top_left.y + height;
+
+        clipper_content->size.width = clipper->size.width;
+        clipper_content->size.height = clipper->size.height - height;
+
+        child->widget.wclass->drawfunc(&(child->widget), surface, NULL,
+                                       clipper_content);
+
+        clipper_content->size.width -= child->border_width * 2;
+        clipper_content->size.height -= child->border_width * 2;
+        clipper_content->top_left.x += child->border_width;
+        clipper_content->top_left.y += child->border_width;
         child->widget.pick_color->red = red;
         child->widget.pick_color->green = green;
         child->widget.pick_color->blue = blue;
         child->widget.wclass->drawfunc(&(child->widget), surface, NULL,
-                                       clipper);
+                                       clipper_content);
 
-        if (child->title != NULL){
-                int width = 0;
-                int height = 0;
-                hw_text_compute_size(child->title,child->title_font, &width, &height);
-                ei_point_t where = child->widget.screen_location.top_left;
 
-                ei_draw_text(surface, &where, child->title, child->title_font, child->title_color, clipper);
-        }
+        ei_point_t where = child->widget.screen_location.top_left;
+        where.x += 30;
+        ei_draw_text(surface, &where, child->title, child->title_font, child->title_color, clipper);
+
 }
 
 void		ei_impl_widget_draw_children	(ei_widget_t		widget,
