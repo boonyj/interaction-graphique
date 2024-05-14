@@ -489,12 +489,18 @@ void draw_toplevel (toplevel_t * child,
         child->widget.wclass->drawfunc(&(child->widget), surface, NULL,
                                        clipper_content);
 
+        child->widget.wclass->drawfunc(&(child->widget), surface, NULL,
+                                       clipper_content);
 
+        clipper_content->size.width -= child->border_width * 2;
+        clipper_content->size.height -= child->border_width * 2;
+        clipper_content->top_left.x += child->border_width;
+        clipper_content->top_left.y += child->border_width;
+        calculate_clipper_sans_border(clipper, child->border_width);
         assertion_color(child->widget.color, color, 0);
 
         child->widget.wclass->drawfunc(&(child->widget), surface, NULL,
                                        clipper_content);
-
 
         ei_point_t where = child->widget.screen_location.top_left;
         where.x += 30;
