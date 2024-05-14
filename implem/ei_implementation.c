@@ -340,6 +340,7 @@ void draw_button (button_t * child,
                                                         points[4].x = clipper->top_left.x;
                                                         points[4].y = clipper->top_left.y;
                                                         size_t points_size = 5;
+
                                                         ei_draw_polygon(surface, points, points_size,
                                                                         *(child->widget.pick_color), clipper);
 
@@ -347,15 +348,12 @@ void draw_button (button_t * child,
                                                         child->widget.pick_color->green = dark(green);
                                                         child->widget.pick_color->blue = dark(blue);
 
-                                                        points += 4;
-                                                        points->x = clipper->top_left.x +
-                                                                    child->widget.requested_size.width;
-                                                        points->y = clipper->top_left.y +
-                                                                    child->widget.requested_size.height;
-                                                        points -= 4;
+                                                        points[4].x = clipper->top_left.x + child->widget.requested_size.width;
+                                                        points[4].y = clipper->top_left.y + child->widget.requested_size.height;
 
                                                         ei_draw_polygon(surface, points, points_size,
                                                                         *(child->widget.pick_color), clipper);
+
 
                                                         clipper->size.width -= child->border_width * 2;
                                                         clipper->size.height -= child->border_width * 2;
@@ -404,16 +402,17 @@ void draw_button (button_t * child,
                                                         points_size = 4*nb_segments;
                                                         ei_draw_polygon(surface, points, points_size,
                                                                         *(child->widget.pick_color), clipper);
-                                                        if (child->text != NULL){
-                                                                int width = 0;
-                                                                int height = 0;
-                                                                hw_text_compute_size(child->text,child->text_font, &width, &height);
-                                                                ei_point_t where = child->widget.screen_location.top_left;
-                                                                where.x += child->widget.screen_location.size.width/2 - width/2;
-                                                                where.y += child->widget.screen_location.size.height/2 - height/2;
 
-                                                                ei_draw_text(surface, &where, child->text, child->text_font, child->text_color, clipper);
-                                                        }
+                                                }
+                                                if (child->text != NULL){
+                                                        int width = 0;
+                                                        int height = 0;
+                                                        hw_text_compute_size(child->text,child->text_font, &width, &height);
+                                                        ei_point_t where = child->widget.screen_location.top_left;
+                                                        where.x += child->widget.screen_location.size.width/2 - width/2;
+                                                        where.y += child->widget.screen_location.size.height/2 - height/2;
+
+                                                        ei_draw_text(surface, &where, child->text, child->text_font, child->text_color, clipper);
                                                 }
                                                 break;
                                         case ei_relief_sunken :
@@ -605,17 +604,17 @@ void		ei_impl_widget_draw_children	(ei_widget_t		widget,
                                                          ei_surface_t		surface,
                                                          ei_surface_t		pick_surface,
                                                          ei_rect_t*		clipper){
-        ei_widget_t type = ei_widget_get_first_child(widget);
-
-        if (strcmp(type->wclass->name, "frame") == 0){
-                frame_t* child = (frame_t*) ei_widget_get_first_child(widget);
-                draw_frame(child, surface, pick_surface, clipper);
-        } else if (strcmp(type->wclass->name, "button") == 0){
-                button_t* child = (button_t*) ei_widget_get_first_child(widget);
-                draw_button(child, surface, pick_surface, clipper);
-        } else if (strcmp(type->wclass->name, "toplevel") == 0){
-                toplevel_t* child = (toplevel_t*) ei_widget_get_first_child(widget);
-                draw_toplevel(child, surface, pick_surface, clipper);
+        ei_widget_t type = (ei_widget_get_first_child(widget));
+        while (type != NULL) {
+                clipper = &(type->screen_location);
+                if (strcmp(type->wclass->name, "frame") == 0) {
+                        draw_frame((frame_t *) type, surface, pick_surface, clipper);
+                } else if (strcmp(type->wclass->name, "button") == 0) {
+                        draw_button((button_t *) type, surface, pick_surface, clipper);
+                } else if (strcmp(type->wclass->name, "toplevel") == 0) {
+                        draw_toplevel((toplevel_t *) type, surface, pick_surface, clipper);
+                }
+                type = ei_widget_get_first_child(type);
         }
 
 }
