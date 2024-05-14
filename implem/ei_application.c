@@ -42,6 +42,22 @@ void ei_app_free(void){
         hw_quit();
 }
 
+bool callback_button_reverse_relief (ei_widget_t widget, ei_event_t* event, ei_user_param_t user_param) {
+        if (event->type == ei_ev_mouse_buttondown || event->type == ei_ev_mouse_buttonup) {
+                button_t *button = (button_t *) widget;
+
+                if(button->relief == ei_relief_sunken){
+                        button->relief = ei_relief_raised;
+                }else{
+                        button->relief = ei_relief_sunken;
+                }
+                draw_button(button, main_surface, NULL, &(button->widget.screen_location));
+
+                return true;
+        } else
+                return false;
+}
+
 void ei_app_run(void) {
         // Get the root widget of the application
         ei_widget_t root_widget = ei_app_root_widget();
@@ -128,20 +144,4 @@ ei_widget_t ei_app_root_widget(void){
 ei_surface_t ei_app_root_surface(void){
         return main_surface;
 
-}
-
-bool callback_button_reverse_relief (ei_widget_t widget, ei_event_t* event, ei_user_param_t user_param) {
-        if (event->type == ei_ev_mouse_buttondown || event->type == ei_ev_mouse_buttonup) {
-                button_t *button = (button_t *) widget;
-
-                if(button->relief == ei_relief_sunken){
-                        button->relief = ei_relief_raised;
-                }else{
-                        button->relief = ei_relief_sunken;
-                }
-                draw_button(button, main_surface, NULL, &(button->widget.screen_location));
-
-                return true;
-        } else
-                return false;
 }

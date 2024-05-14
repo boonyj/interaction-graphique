@@ -53,7 +53,6 @@ void		ei_bind			(ei_eventtype_t		eventtype,
                         event_to_bind->callback = callback;
                         event_to_bind->tag = tag;
                         linked_event_list[linked_event_list_size - 1] = event_to_bind;
-                }
         }
 }
 
