@@ -26,6 +26,9 @@ void button_setdefaultsfunc(ei_widget_t		widget){
         button->text_anchor = ei_anc_none;
         button->text_font = ei_default_font;
         button->text = NULL;
+        button->widget.requested_size.width = 100;
+        button->widget.requested_size.height = 48;
+
 }
 
 ei_widgetclass_t* create_button_class() {

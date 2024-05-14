@@ -29,47 +29,47 @@ void		ei_place	(ei_widget_t		widget,
 
         if(rel_x != NULL || rel_y != NULL){
                 ei_widget_t parent = widget->parent;
-                int parent_width = parent->screen_location.size.width;
-                int parent_height = parent->screen_location.size.height;
+                int parent_width = parent->screen_location.size.width + parent->screen_location.top_left.x;
+                int parent_height = parent->screen_location.size.height + parent->screen_location.top_left.y;
 
                 int parent_coordinate_x = (int)((float)parent_width * rel_x_value);
                 int parent_coordinate_y = (int)((float)parent_height * rel_y_value);
 
                 width_value = (rel_width_value != 0.0) ? (int)((float)parent_width * rel_width_value) : width_value;
-                height_value = (rel_width_value != 0.0) ? (int)((float)parent_height * rel_height_value) : height_value;
+                height_value = (rel_height_value != 0.0) ? (int)((float)parent_height * rel_height_value) : height_value;
 
                 switch (anchor_value) {
                         case ei_anc_center:
-                                widget->screen_location.top_left.x =  widget->screen_location.size.width/2 + x_value +parent_coordinate_x - width_value/2;
-                                widget->screen_location.top_left.y =  widget->screen_location.size.height/2 + y_value +parent_coordinate_y - height_value/2;
+                                widget->screen_location.top_left.x =  x_value +parent_coordinate_x - width_value/2;
+                                widget->screen_location.top_left.y =  y_value +parent_coordinate_y - height_value/2;
                                 break;
                         case ei_anc_north:
-                                widget->screen_location.top_left.x =  widget->screen_location.size.width/2 + x_value +parent_coordinate_x - width_value/2;
+                                widget->screen_location.top_left.x =  x_value +parent_coordinate_x - width_value/2;
                                 widget->screen_location.top_left.y =  y_value +parent_coordinate_y ;
                                 break;
                         case ei_anc_northeast:
-                                widget->screen_location.top_left.x =  widget->screen_location.size.width + x_value +parent_coordinate_x - width_value;
+                                widget->screen_location.top_left.x =  x_value +parent_coordinate_x - width_value;
                                 widget->screen_location.top_left.y =  y_value +parent_coordinate_y;
                                 break;
                         case ei_anc_east:
-                                widget->screen_location.top_left.x =  widget->screen_location.size.width + x_value +parent_coordinate_x - width_value;
-                                widget->screen_location.top_left.y =  widget->screen_location.size.height/2 + y_value +parent_coordinate_y - height_value/2;
+                                widget->screen_location.top_left.x =  x_value +parent_coordinate_x - width_value;
+                                widget->screen_location.top_left.y =  y_value +parent_coordinate_y - height_value/2;
                                 break;
                         case ei_anc_southeast:
-                                widget->screen_location.top_left.x =  widget->screen_location.size.width + x_value +parent_coordinate_x - width_value ;
-                                widget->screen_location.top_left.y =  widget->screen_location.size.height + y_value +parent_coordinate_y - height_value;
+                                widget->screen_location.top_left.x =  x_value +parent_coordinate_x - width_value ;
+                                widget->screen_location.top_left.y =  y_value +parent_coordinate_y - height_value;
                                 break;
                         case ei_anc_south:
-                                widget->screen_location.top_left.x =  widget->screen_location.size.width/2 + x_value +parent_coordinate_x - width_value/2;
-                                widget->screen_location.top_left.y =  widget->screen_location.size.height + y_value +parent_coordinate_y - height_value;
+                                widget->screen_location.top_left.x =  x_value +parent_coordinate_x - width_value/2;
+                                widget->screen_location.top_left.y =  y_value +parent_coordinate_y - height_value;
                                 break;
                         case ei_anc_southwest:
                                 widget->screen_location.top_left.x =  x_value +parent_coordinate_x;
-                                widget->screen_location.top_left.y =  widget->screen_location.size.height + y_value +parent_coordinate_y - height_value;
+                                widget->screen_location.top_left.y =  y_value +parent_coordinate_y - height_value;
                                 break;
                         case ei_anc_west:
                                 widget->screen_location.top_left.x =  x_value +parent_coordinate_x;
-                                widget->screen_location.top_left.y =  widget->screen_location.size.height/2 + y_value +parent_coordinate_y - height_value/2;
+                                widget->screen_location.top_left.y =  y_value +parent_coordinate_y - height_value/2;
                                 break;
                         case ei_anc_northwest:
                                 widget->screen_location.top_left.x =  x_value +parent_coordinate_x;
