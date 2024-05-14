@@ -82,8 +82,7 @@ set(LIB_EI_SOURCES
 	${SRC}/ei_event.c
 	${SRC}/ei_button.c
 	${SRC}/ei_toplevel.c
-		implem/ei_draw_tool.c
-		implem/ei_draw_tool.h
+	${SRC}/ei_draw_tool.c
 
 )
 

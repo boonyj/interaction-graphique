@@ -17,6 +17,7 @@ void ei_app_create(ei_size_t main_window_size, bool fullscreen){
         // Initialisation of the application
         hw_init();
         main_surface  = hw_create_window(main_window_size, fullscreen);
+        //pick_surface  = hw_create_window(main_window_size, fullscreen);
         pick_surface  = hw_surface_create(main_surface, main_window_size, false);
         // Creation of widget class frame (to be registered later)
         ei_widgetclass_t* frame_class = create_frame_class();
@@ -46,7 +47,7 @@ bool callback_buttondown_reverse_relief (ei_widget_t widget, ei_event_t* event, 
         if (event->type == ei_ev_mouse_buttondown) {
                 button_t *button = (button_t *) widget;
                 button->relief = ei_relief_sunken;
-                button->widget.wclass->drawfunc(button, main_surface, NULL, &(button->widget.screen_location));
+                button->widget.wclass->drawfunc(&(button->widget), main_surface, NULL, &(button->widget.screen_location));
                 return true;
         } else
                 return false;
@@ -58,7 +59,7 @@ void draw_buttons (ei_widget_t widget) {
                 if (strcmp(child->wclass->name, "button") == 0) {
                         button_t *button = (button_t *) child;
                         button->relief = ei_relief_raised;
-                        button->widget.wclass->drawfunc(button, main_surface, NULL, &(button->widget.screen_location));
+                        button->widget.wclass->drawfunc(&(button->widget), main_surface, NULL, &(button->widget.screen_location));
                 }
                 // Recursively draw children of the current child widget
                 draw_buttons(child);
@@ -79,12 +80,12 @@ bool callback_buttonup_reverse_relief (ei_widget_t widget, ei_event_t* event, ei
 ei_widget_t find_widget (uint32_t* pixel_pick_surface, ei_widget_t widget) {
         ei_widget_t child = ei_widget_get_first_child(widget);
         while (child != NULL) {
-                printf("Pick id : %d, Pixel : %d \n", child->pick_id, *pixel_pick_surface);
                 if (child->pick_id == *pixel_pick_surface) {
+                        printf("Name: %s, Pick id : %d, Pixel : %d \n", child->wclass->name, child->pick_id, *pixel_pick_surface);
                         return child;
                 }
                 // Recursively draw children of the current child widget
-                find_widget(pixel_pick_surface, child);
+                widget = find_widget(pixel_pick_surface, child);
 
                 // Move to the next sibling
                 child = ei_widget_get_next_sibling(child);
@@ -113,6 +114,7 @@ void ei_app_run(void) {
 
         // Update the screen
         hw_surface_update_rects(main_surface, NULL);
+        //hw_surface_update_rects(pick_surface, NULL);
 
         ei_bind(ei_ev_mouse_buttondown, NULL, "button", callback_buttondown_reverse_relief, NULL);
         ei_bind(ei_ev_mouse_buttonup, NULL, "all", callback_buttonup_reverse_relief, NULL);
@@ -139,6 +141,7 @@ void ei_app_run(void) {
                 pixel_pick_surface += (mouse.where.y * pick_size.width) + (mouse.where.x);
 
                 widget = find_widget(pixel_pick_surface, ei_app_root_widget());
+                printf("Pick_id : %d , Pixel color : %d\n",widget->pick_id, *pixel_pick_surface);
 
                 //Search for event in list
                 for (int i = 0; i < linked_event_list_size; ++i) {
@@ -161,7 +164,7 @@ void ei_app_invalidate_rect(const ei_rect_t* rect){
 }
 
 void ei_app_quit_request(void){
-
+        exit(0);
 }
 
 ei_widget_t ei_app_root_widget(void){

@@ -52,7 +52,7 @@ ei_widget_t ei_widget_create(ei_const_string_t class_name,
                 }
         }
 
-        pick_counter+= 13144;
+        pick_counter+= 1000;
         widget->pick_id = pick_counter;
 
         // Extract red, green, blue, and alpha components
