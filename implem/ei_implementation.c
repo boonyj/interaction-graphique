@@ -456,6 +456,7 @@ void draw_toplevel (toplevel_t * child,
                  ei_surface_t		surface,
                  ei_surface_t		pick_surface,
                  ei_rect_t*		clipper) {
+
         ei_color_t color = {child->widget.color->red, child->widget.color->green, child->widget.color->blue};
 
         assertion_color(child->widget.color, color, 2);
@@ -465,11 +466,19 @@ void draw_toplevel (toplevel_t * child,
         hw_text_compute_size(child->title,child->title_font, &width, &height);
 
         ei_rect_t* clipper_title = malloc(sizeof (ei_rect_t));
+        clipper->size.width += child->border_width*2;
+        clipper->size.height += child->border_width*2+height;
+        clipper->top_left.x -= child->border_width;
+        clipper->top_left.y -= child->border_width +height;
+
+
         clipper_title->top_left.x = clipper->top_left.x;
         clipper_title->top_left.y = clipper->top_left.y;
 
         clipper_title->size.width = clipper->size.width;
         clipper_title->size.height = height;
+
+
         ei_point_t *center_corner = malloc(sizeof(ei_point_t));
         ei_point_t *points = NULL;
         int radius = 15;
@@ -508,17 +517,22 @@ void draw_toplevel (toplevel_t * child,
 
         child->widget.wclass->drawfunc(&(child->widget), surface, pick_surface,
                                        clipper_content);
+        child->widget.wclass->drawfunc(&(child->widget), surface, NULL,
+                                       clipper_content);
 
 
+        calculate_clipper_sans_border(clipper_content, child->border_width);
         assertion_color(child->widget.color, color, 0);
 
         child->widget.wclass->drawfunc(&(child->widget), surface, NULL,
                                        clipper_content);
 
+
         ei_point_t where = child->widget.screen_location.top_left;
         where.x += 30;
         ei_draw_text(surface, &where, child->title, child->title_font, child->title_color, clipper);
         calculate_clipper_avec_border(clipper, child->border_width);
+        child->widget.screen_location.top_left.y += height + 2*child->border_width;
 
 }
 

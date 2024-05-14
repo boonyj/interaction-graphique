@@ -1,6 +1,7 @@
 #include "ei_placer.h"
 #include "ei_implementation.h"
 #include "ei_widget_configure.h"
+#include "ei_toplevel.h"
 
 void		ei_place	(ei_widget_t		widget,
                                      ei_anchor_t*		anchor,
@@ -88,6 +89,13 @@ void		ei_place	(ei_widget_t		widget,
         }
 
         if (strcmp(widget->wclass->name, "toplevel") == 0) {
+                toplevel_t* toplevel = (toplevel_t*) widget;
+                int width = 0;
+                int height = 0;
+                hw_text_compute_size(toplevel->title,toplevel->title_font, &width, &height);
+                toplevel->widget.screen_location.top_left.x += toplevel->border_width;
+                toplevel->widget.screen_location.top_left.y += toplevel->border_width + height;
+
                 ei_widget_t button_round = ei_widget_create	("button", widget, NULL, NULL);
                 ei_button_configure		(button_round, &((ei_size_t){18, 18}),
                                                     &(ei_color_t){0xB2, 0x22, 0x22, 0xff},
@@ -98,7 +106,7 @@ void		ei_place	(ei_widget_t		widget,
                                                     &(ei_color_t){0x00, 0x00, 0x00, 0xff}, NULL, NULL, NULL, NULL,
                                                     NULL, NULL);
                 ei_place			(button_round, &(ei_anchor_t){ei_anc_northwest},
-                                                 &(int){8}, &(int){5}, NULL, NULL,
+                                                 &(int){-(toplevel->border_width)+8}, &(int){-(height+toplevel->border_width)+5}, NULL, NULL,
                                                  &(float){0.0f}, &(float){0.0f},
                                                  NULL, NULL);
 
@@ -112,7 +120,7 @@ void		ei_place	(ei_widget_t		widget,
                                                     &(ei_color_t){0x00, 0x00, 0x00, 0xff}, NULL, NULL, NULL, NULL,
                                                     NULL, NULL);
                 ei_place			(button_square, &(ei_anchor_t){ei_anc_southeast},
-                                                 &(int){-2}, &(int){-2}, NULL, NULL,
+                                                 &(int){0}, &(int){0}, NULL, NULL,
                                                  &(float){1.0f}, &(float){1.0f},
                                                  NULL, NULL);
         }
