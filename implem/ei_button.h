@@ -5,7 +5,6 @@
 
 typedef struct button_t {
         ei_impl_widget_t widget;
-        ei_color_t color;
         int border_width;
         ei_relief_t relief;
         int corner_radius;

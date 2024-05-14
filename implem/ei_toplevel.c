@@ -17,7 +17,7 @@ void toplevel_drawfunc (ei_widget_t		widget,
                       ei_surface_t		surface,
                       ei_surface_t		pick_surface,
                       ei_rect_t*		clipper){
-        ei_fill(surface,&((toplevel_t*) widget)->color,clipper);
+        ei_fill(surface,widget->color,clipper);
 }
 
 void toplevel_setdefaultsfunc(ei_widget_t		widget){

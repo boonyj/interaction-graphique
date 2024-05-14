@@ -11,6 +11,7 @@ ei_widget_t ei_widget_create(ei_const_string_t class_name,
         ei_widget_t widget  = type_widget->allocfunc();
         widget->wclass = malloc(sizeof(struct ei_widgetclass_t));
         widget->pick_color = malloc(sizeof(ei_color_t));
+        widget->color = malloc(sizeof(ei_color_t));
         widget->geom_params = malloc(sizeof (ei_geom_param_t));
 
         strcpy(widget->wclass->name, class_name);

@@ -25,10 +25,10 @@ void			ei_frame_configure		(ei_widget_t		widget,
         }
 
         if (color != NULL) {
-                frame->color.alpha = color->alpha;
-                frame->color.red = color->red;
-                frame->color.green = color->green;
-                frame->color.blue = color->blue;
+                frame->widget.color->alpha = color->alpha;
+                frame->widget.color->red = color->red;
+                frame->widget.color->green = color->green;
+                frame->widget.color->blue = color->blue;
         }
 
         if (relief != NULL){
@@ -63,10 +63,10 @@ void			ei_button_configure		(ei_widget_t		widget,
         }
 
         if (color != NULL) {
-                button->color.alpha = color->alpha;
-                button->color.red = color->red;
-                button->color.green = color->green;
-                button->color.blue = color->blue;
+                button->widget.color->alpha = color->alpha;
+                button->widget.color->red = color->red;
+                button->widget.color->green = color->green;
+                button->widget.color->blue = color->blue;
         }
 
         if (relief != NULL){
@@ -114,10 +114,10 @@ void			ei_toplevel_configure		(ei_widget_t		widget,
         }
 
         if (color != NULL) {
-                toplevel->color.alpha = color->alpha;
-                toplevel->color.red = color->red;
-                toplevel->color.green = color->green;
-                toplevel->color.blue = color->blue;
+                toplevel->widget.color->alpha = color->alpha;
+                toplevel->widget.color->red = color->red;
+                toplevel->widget.color->green = color->green;
+                toplevel->widget.color->blue = color->blue;
         }
 
         if (border_width != NULL){

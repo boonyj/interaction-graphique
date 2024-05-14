@@ -6,9 +6,12 @@
 
 typedef struct frame_t {
         ei_impl_widget_t widget;
-        ei_color_t color;
         int border_width;
         ei_relief_t relief;
+        ei_color_t text_color;
+        ei_font_t text_font;
+        ei_string_t text;
+        ei_anchor_t text_anchor;
 } frame_t;
 
 ei_widget_t frame_allocfunc ();
