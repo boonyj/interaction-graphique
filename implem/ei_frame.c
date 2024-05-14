@@ -7,17 +7,13 @@ ei_widget_t frame_allocfunc (){
 }
 
 void frame_releasefunc (ei_widget_t	widget){
-        free(widget->pick_color);
-        free(widget->pick_color);
-
-        widget = NULL;
 }
 
 void frame_drawfunc (ei_widget_t		widget,
                      ei_surface_t		surface,
                      ei_surface_t		pick_surface,
                      ei_rect_t*		clipper){
-        ei_fill(surface,widget->pick_color,clipper);
+        ei_fill(surface,&((frame_t *) widget)->color,clipper);
 
         // //Test polyline (à décommenter pour tester)
         // // START TEST POLYLINE

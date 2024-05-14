@@ -5,6 +5,7 @@
 
 typedef struct toplevel_t {
         ei_impl_widget_t widget;
+        ei_color_t color;
         int border_width;
         ei_string_t title;
         ei_color_t title_color;

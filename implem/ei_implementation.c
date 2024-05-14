@@ -32,9 +32,9 @@ void draw_frame (frame_t* child,
                  ei_surface_t		pick_surface,
                  ei_rect_t*		clipper){
         if (child->widget.wclass->drawfunc != NULL) {
-                unsigned char red = child->widget.pick_color->red;
-                unsigned char green = child->widget.pick_color->green;
-                unsigned char blue = child->widget.pick_color->blue;
+                unsigned char red = child->color.red;
+                unsigned char green = child->color.green;
+                unsigned char blue = child->color.blue;
 
                 ei_point_t *points = NULL;
                 size_t points_size;
@@ -45,9 +45,9 @@ void draw_frame (frame_t* child,
                                                                clipper);
                                 break;
                         case ei_relief_raised :
-                                child->widget.pick_color->red = light(red);
-                                child->widget.pick_color->green = light(green);
-                                child->widget.pick_color->blue = light(blue);
+                                child->color.red = light(red);
+                                child->color.green = light(green);
+                                child->color.blue = light(blue);
 
                                 points = malloc(5 * sizeof(ei_point_t));
                                 points[0].x = clipper->top_left.x;
@@ -63,25 +63,25 @@ void draw_frame (frame_t* child,
                                 points_size = 5;
 
                                 ei_draw_polygon(surface, points, points_size,
-                                                *(child->widget.pick_color), clipper);
+                                                child->color, clipper);
 
-                                child->widget.pick_color->red = dark(red);
-                                child->widget.pick_color->green = dark(green);
-                                child->widget.pick_color->blue = dark(blue);
+                                child->color.red = dark(red);
+                                child->color.green = dark(green);
+                                child->color.blue = dark(blue);
 
                                 points[4].x = clipper->top_left.x + child->widget.screen_location.size.width;
                                 points[4].y = clipper->top_left.y + child->widget.screen_location.size.height;
 
                                 ei_draw_polygon(surface, points, points_size,
-                                                *(child->widget.pick_color), clipper);
+                                                child->color, clipper);
 
                                 clipper->size.width -= child->border_width * 2;
                                 clipper->size.height -= child->border_width * 2;
                                 clipper->top_left.x += child->border_width;
                                 clipper->top_left.y += child->border_width;
-                                child->widget.pick_color->red = red;
-                                child->widget.pick_color->green = green;
-                                child->widget.pick_color->blue = blue;
+                                child->color.red = red;
+                                child->color.green = green;
+                                child->color.blue = blue;
                                 child->widget.wclass->drawfunc(&(child->widget), surface, NULL,
                                                                clipper);
 
@@ -92,9 +92,9 @@ void draw_frame (frame_t* child,
 
                                 break;
                         case ei_relief_sunken :
-                                child->widget.pick_color->red = dark(red);
-                                child->widget.pick_color->green = dark(green);
-                                child->widget.pick_color->blue = dark(blue);
+                                child->color.red = dark(red);
+                                child->color.green = dark(green);
+                                child->color.blue = dark(blue);
 
                                 points = malloc(5 * sizeof(ei_point_t));
                                 points[0].x = clipper->top_left.x;
@@ -110,25 +110,25 @@ void draw_frame (frame_t* child,
                                 points_size = 5;
 
                                 ei_draw_polygon(surface, points, points_size,
-                                                *(child->widget.pick_color), clipper);
+                                                child->color, clipper);
 
-                                child->widget.pick_color->red = light(red);
-                                child->widget.pick_color->green = light(green);
-                                child->widget.pick_color->blue = light(blue);
+                                child->color.red = light(red);
+                                child->color.green = light(green);
+                                child->color.blue = light(blue);
 
                                 points[4].x = clipper->top_left.x + child->widget.screen_location.size.width;
                                 points[4].y = clipper->top_left.y + child->widget.screen_location.size.height;
 
                                 ei_draw_polygon(surface, points, points_size,
-                                                *(child->widget.pick_color), clipper);
+                                                child->color, clipper);
 
                                 clipper->size.width -= child->border_width * 2;
                                 clipper->size.height -= child->border_width * 2;
                                 clipper->top_left.x += child->border_width;
                                 clipper->top_left.y += child->border_width;
-                                child->widget.pick_color->red = red;
-                                child->widget.pick_color->green = green;
-                                child->widget.pick_color->blue = blue;
+                                child->color.red = red;
+                                child->color.green = green;
+                                child->color.blue = blue;
                                 child->widget.wclass->drawfunc(&(child->widget), surface, NULL,
                                                                clipper);
 
@@ -276,16 +276,16 @@ void draw_button (button_t * child,
         // Call the draw function for each child widget
         if (child->border_width != 0) {
                 if (child->widget.wclass->drawfunc != NULL) {
-                        unsigned char red = child->widget.pick_color->red;
-                        unsigned char green = child->widget.pick_color->green;
-                        unsigned char blue = child->widget.pick_color->blue;
+                        unsigned char red = child->color.red;
+                        unsigned char green = child->color.green;
+                        unsigned char blue = child->color.blue;
                         switch (child->relief) {
                                 case ei_relief_none :
                                         if (child->corner_radius == 0) {
 
-                                                child->widget.pick_color->red = dark(red);
-                                                child->widget.pick_color->green = dark(green);
-                                                child->widget.pick_color->blue = dark(blue);
+                                                child->color.red = dark(red);
+                                                child->color.green = dark(green);
+                                                child->color.blue = dark(blue);
 
                                                 child->widget.wclass->drawfunc(&(child->widget), surface, NULL,
                                                                                clipper);
@@ -294,9 +294,9 @@ void draw_button (button_t * child,
                                                 clipper->size.height -= child->border_width * 2;
                                                 clipper->top_left.x += child->border_width;
                                                 clipper->top_left.y += child->border_width;
-                                                child->widget.pick_color->red = red;
-                                                child->widget.pick_color->green = green;
-                                                child->widget.pick_color->blue = blue;
+                                                child->color.red = red;
+                                                child->color.green = green;
+                                                child->color.blue = blue;
                                                 child->widget.wclass->drawfunc(&(child->widget), surface, NULL,
                                                                                clipper);
 
@@ -306,9 +306,9 @@ void draw_button (button_t * child,
                                                 clipper->top_left.y -= child->border_width;
 
                                         } else {
-                                                child->widget.pick_color->red = dark(red);
-                                                child->widget.pick_color->green = dark(green);
-                                                child->widget.pick_color->blue = dark(blue);
+                                                child->color.red = dark(red);
+                                                child->color.green = dark(green);
+                                                child->color.blue = dark(blue);
 
                                                 int nb_segments = 32;
 
@@ -316,20 +316,20 @@ void draw_button (button_t * child,
 
                                                 size_t points_size = 4*nb_segments;
                                                 ei_draw_polygon(surface, points, points_size,
-                                                                *(child->widget.pick_color), clipper);
+                                                                child->color, clipper);
 
                                                 clipper->size.width -= child->border_width * 2;
                                                 clipper->size.height -= child->border_width * 2;
                                                 clipper->top_left.x += child->border_width;
                                                 clipper->top_left.y += child->border_width;
-                                                child->widget.pick_color->red = red;
-                                                child->widget.pick_color->green = green;
-                                                child->widget.pick_color->blue = blue;
+                                                child->color.red = red;
+                                                child->color.green = green;
+                                                child->color.blue = blue;
 
                                                 points = rounded_frame(*clipper, child->corner_radius, 0);
 
                                                 ei_draw_polygon(surface, points, points_size,
-                                                                *(child->widget.pick_color), clipper);
+                                                                child->color, clipper);
 
                                                 clipper->size.width += child->border_width * 2;
                                                 clipper->size.height += child->border_width * 2;
@@ -339,9 +339,9 @@ void draw_button (button_t * child,
                                         break;
                                 case ei_relief_raised :
                                         if (child->corner_radius == 0){
-                                                child->widget.pick_color->red = light(red);
-                                                child->widget.pick_color->green = light(green);
-                                                child->widget.pick_color->blue = light(blue);
+                                                child->color.red = light(red);
+                                                child->color.green = light(green);
+                                                child->color.blue = light(blue);
 
                                                 ei_point_t *points = malloc(5 * sizeof(ei_point_t));
                                                 points[0].x = clipper->top_left.x;
@@ -357,26 +357,26 @@ void draw_button (button_t * child,
                                                 size_t points_size = 5;
 
                                                 ei_draw_polygon(surface, points, points_size,
-                                                                *(child->widget.pick_color), clipper);
+                                                                child->color, clipper);
 
-                                                child->widget.pick_color->red = dark(red);
-                                                child->widget.pick_color->green = dark(green);
-                                                child->widget.pick_color->blue = dark(blue);
+                                                child->color.red = dark(red);
+                                                child->color.green = dark(green);
+                                                child->color.blue = dark(blue);
 
                                                 points[4].x = clipper->top_left.x + child->widget.screen_location.size.width;
                                                 points[4].y = clipper->top_left.y + child->widget.screen_location.size.height;
 
                                                 ei_draw_polygon(surface, points, points_size,
-                                                                *(child->widget.pick_color), clipper);
+                                                                child->color, clipper);
 
 
                                                 clipper->size.width -= child->border_width * 2;
                                                 clipper->size.height -= child->border_width * 2;
                                                 clipper->top_left.x += child->border_width;
                                                 clipper->top_left.y += child->border_width;
-                                                child->widget.pick_color->red = red;
-                                                child->widget.pick_color->green = green;
-                                                child->widget.pick_color->blue = blue;
+                                                child->color.red = red;
+                                                child->color.green = green;
+                                                child->color.blue = blue;
                                                 child->widget.wclass->drawfunc(&(child->widget), surface, NULL,
                                                                                clipper);
 
@@ -389,40 +389,40 @@ void draw_button (button_t * child,
                                                 int nb_segments = 32;
 
                                                 // Partie haute
-                                                child->widget.pick_color->red = light(red);
-                                                child->widget.pick_color->green = light(green);
-                                                child->widget.pick_color->blue = light(blue);
+                                                child->color.red = light(red);
+                                                child->color.green = light(green);
+                                                child->color.blue = light(blue);
 
                                                 ei_point_t *points = rounded_frame(*clipper, child->corner_radius, 1);
                                                 size_t points_size = 3*nb_segments+2;
 
                                                 ei_draw_polygon(surface, points, points_size,
-                                                                *(child->widget.pick_color), clipper);
+                                                                child->color, clipper);
 
                                                 // Partie basse
-                                                child->widget.pick_color->red = dark(red);
-                                                child->widget.pick_color->green = dark(green);
-                                                child->widget.pick_color->blue = dark(blue);
+                                                child->color.red = dark(red);
+                                                child->color.green = dark(green);
+                                                child->color.blue = dark(blue);
 
                                                 points = rounded_frame(*clipper, child->corner_radius, 2);
 
                                                 ei_draw_polygon(surface, points, points_size,
-                                                                *(child->widget.pick_color), clipper);
+                                                                child->color, clipper);
 
                                                 // Draw inside button
                                                 clipper->size.width -= child->border_width * 2;
                                                 clipper->size.height -= child->border_width * 2;
                                                 clipper->top_left.x += child->border_width;
                                                 clipper->top_left.y += child->border_width;
-                                                child->widget.pick_color->red = red;
-                                                child->widget.pick_color->green = green;
-                                                child->widget.pick_color->blue = blue;
+                                                child->color.red = red;
+                                                child->color.green = green;
+                                                child->color.blue = blue;
 
                                                 points = rounded_frame(*clipper, child->corner_radius, 0);
 
                                                 points_size = 4*nb_segments;
                                                 ei_draw_polygon(surface, points, points_size,
-                                                                *(child->widget.pick_color), clipper);
+                                                                child->color, clipper);
 
                                                 clipper->size.width += child->border_width * 2;
                                                 clipper->size.height += child->border_width * 2;
@@ -443,9 +443,9 @@ void draw_button (button_t * child,
                                         break;
                                 case ei_relief_sunken :
                                         if (child->corner_radius == 0){
-                                                child->widget.pick_color->red = dark(red);
-                                                child->widget.pick_color->green = dark(green);
-                                                child->widget.pick_color->blue = dark(blue);
+                                                child->color.red = dark(red);
+                                                child->color.green = dark(green);
+                                                child->color.blue = dark(blue);
 
                                                 ei_point_t *points = malloc(5 * sizeof(ei_point_t));
                                                 points[0].x = clipper->top_left.x;
@@ -460,11 +460,11 @@ void draw_button (button_t * child,
                                                 points[4].y = clipper->top_left.y;
                                                 size_t points_size = 5;
                                                 ei_draw_polygon(surface, points, points_size,
-                                                                *(child->widget.pick_color), clipper);
+                                                                child->color, clipper);
 
-                                                child->widget.pick_color->red = light(red);
-                                                child->widget.pick_color->green = light(green);
-                                                child->widget.pick_color->blue = light(blue);
+                                                child->color.red = light(red);
+                                                child->color.green = light(green);
+                                                child->color.blue = light(blue);
 
                                                 points += 4;
                                                 points->x = clipper->top_left.x +
@@ -474,15 +474,15 @@ void draw_button (button_t * child,
                                                 points -= 4;
 
                                                 ei_draw_polygon(surface, points, points_size,
-                                                                *(child->widget.pick_color), clipper);
+                                                                child->color, clipper);
 
                                                 clipper->size.width -= child->border_width * 2;
                                                 clipper->size.height -= child->border_width * 2;
                                                 clipper->top_left.x += child->border_width;
                                                 clipper->top_left.y += child->border_width;
-                                                child->widget.pick_color->red = red;
-                                                child->widget.pick_color->green = green;
-                                                child->widget.pick_color->blue = blue;
+                                                child->color.red = red;
+                                                child->color.green = green;
+                                                child->color.blue = blue;
                                                 child->widget.wclass->drawfunc(&(child->widget), surface, NULL,
                                                                                clipper);
 
@@ -494,45 +494,45 @@ void draw_button (button_t * child,
                                         } else {
                                                 int nb_segments = 32;
 
-                                                red = child->widget.pick_color->red;
-                                                green = child->widget.pick_color->green;
-                                                blue = child->widget.pick_color->blue;
+                                                red = child->color.red;
+                                                green = child->color.green;
+                                                blue = child->color.blue;
 
                                                 // Partie haute
-                                                child->widget.pick_color->red = dark(red);
-                                                child->widget.pick_color->green = dark(green);
-                                                child->widget.pick_color->blue = dark(blue);
+                                                child->color.red = dark(red);
+                                                child->color.green = dark(green);
+                                                child->color.blue = dark(blue);
 
                                                 ei_point_t *points = rounded_frame(*clipper, child->corner_radius, 1);
                                                 size_t points_size = 3*nb_segments+2;
 
                                                 ei_draw_polygon(surface, points, points_size,
-                                                                *(child->widget.pick_color), clipper);
+                                                                child->color, clipper);
 
                                                 // Partie basse
-                                                child->widget.pick_color->red = light(red);
-                                                child->widget.pick_color->green = light(green);
-                                                child->widget.pick_color->blue = light(blue);
+                                                child->color.red = light(red);
+                                                child->color.green = light(green);
+                                                child->color.blue = light(blue);
 
                                                 points = rounded_frame(*clipper, child->corner_radius, 2);
 
                                                 ei_draw_polygon(surface, points, points_size,
-                                                                *(child->widget.pick_color), clipper);
+                                                                child->color, clipper);
 
                                                 // Draw inside button
                                                 clipper->size.width -= child->border_width * 2;
                                                 clipper->size.height -= child->border_width * 2;
                                                 clipper->top_left.x += child->border_width;
                                                 clipper->top_left.y += child->border_width;
-                                                child->widget.pick_color->red = red;
-                                                child->widget.pick_color->green = green;
-                                                child->widget.pick_color->blue = blue;
+                                                child->color.red = red;
+                                                child->color.green = green;
+                                                child->color.blue = blue;
 
                                                 points = rounded_frame(*clipper, child->corner_radius, 0);
 
                                                 points_size = 4*nb_segments;
                                                 ei_draw_polygon(surface, points, points_size,
-                                                                *(child->widget.pick_color), clipper);
+                                                                child->color, clipper);
 
                                                 clipper->size.width += child->border_width * 2;
                                                 clipper->size.height += child->border_width * 2;
@@ -560,12 +560,12 @@ void draw_toplevel (toplevel_t * child,
                  ei_surface_t		surface,
                  ei_surface_t		pick_surface,
                  ei_rect_t*		clipper) {
-        unsigned char red = child->widget.pick_color->red;
-        unsigned char green = child->widget.pick_color->green;
-        unsigned char blue = child->widget.pick_color->blue;
-        child->widget.pick_color->red = dark(red);
-        child->widget.pick_color->green = dark(green);
-        child->widget.pick_color->blue = dark(blue);
+        unsigned char red = child->color.red;
+        unsigned char green = child->color.green;
+        unsigned char blue = child->color.blue;
+        child->color.red = dark(red);
+        child->color.green = dark(green);
+        child->color.blue = dark(blue);
 
         int width = 0;
         int height = 0;
@@ -613,7 +613,7 @@ void draw_toplevel (toplevel_t * child,
         size_t points_size = 2*nb_segments + 2;
 
         ei_draw_polygon(surface, points, points_size,
-                        *(child->widget.pick_color), clipper);
+                        child->color, clipper);
 
         ei_rect_t* clipper_content = malloc(sizeof (ei_rect_t));
         clipper_content->top_left.x = clipper->top_left.x;
@@ -629,9 +629,9 @@ void draw_toplevel (toplevel_t * child,
         clipper_content->size.height -= child->border_width * 2;
         clipper_content->top_left.x += child->border_width;
         clipper_content->top_left.y += child->border_width;
-        child->widget.pick_color->red = red;
-        child->widget.pick_color->green = green;
-        child->widget.pick_color->blue = blue;
+        child->color.red = red;
+        child->color.green = green;
+        child->color.blue = blue;
         child->widget.wclass->drawfunc(&(child->widget), surface, NULL,
                                        clipper_content);
 

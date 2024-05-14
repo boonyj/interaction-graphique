@@ -24,11 +24,11 @@ void			ei_frame_configure		(ei_widget_t		widget,
                 ei_widget_set_requested_size(&(frame->widget), *requested_size);
         }
 
-        if (widget->pick_color != NULL) {
-                frame->widget.pick_color->alpha = color->alpha;
-                frame->widget.pick_color->red = color->red;
-                frame->widget.pick_color->green = color->green;
-                frame->widget.pick_color->blue = color->blue;
+        if (color != NULL) {
+                frame->color.alpha = color->alpha;
+                frame->color.red = color->red;
+                frame->color.green = color->green;
+                frame->color.blue = color->blue;
         }
 
         if (relief != NULL){
@@ -62,11 +62,11 @@ void			ei_button_configure		(ei_widget_t		widget,
                 ei_widget_set_requested_size(&(button->widget), *requested_size);
         }
 
-        if (widget->pick_color != NULL) {
-                button->widget.pick_color->alpha = color->alpha;
-                button->widget.pick_color->red = color->red;
-                button->widget.pick_color->green = color->green;
-                button->widget.pick_color->blue = color->blue;
+        if (color != NULL) {
+                button->color.alpha = color->alpha;
+                button->color.red = color->red;
+                button->color.green = color->green;
+                button->color.blue = color->blue;
         }
 
         if (relief != NULL){
@@ -113,11 +113,11 @@ void			ei_toplevel_configure		(ei_widget_t		widget,
                 ei_widget_set_requested_size(&(toplevel->widget), *requested_size);
         }
 
-        if (widget->pick_color != NULL) {
-                toplevel->widget.pick_color->alpha = color->alpha;
-                toplevel->widget.pick_color->red = color->red;
-                toplevel->widget.pick_color->green = color->green;
-                toplevel->widget.pick_color->blue = color->blue;
+        if (color != NULL) {
+                toplevel->color.alpha = color->alpha;
+                toplevel->color.red = color->red;
+                toplevel->color.green = color->green;
+                toplevel->color.blue = color->blue;
         }
 
         if (border_width != NULL){

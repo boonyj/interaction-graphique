@@ -112,7 +112,7 @@ void		ei_place	(ei_widget_t		widget,
                                                     &(ei_color_t){0x00, 0x00, 0x00, 0xff}, NULL, NULL, NULL, NULL,
                                                     NULL, NULL);
                 ei_place			(button_square, &(ei_anchor_t){ei_anc_southeast},
-                                                 &(int){0}, &(int){0}, NULL, NULL,
+                                                 &(int){-2}, &(int){-2}, NULL, NULL,
                                                  &(float){1.0f}, &(float){1.0f},
                                                  NULL, NULL);
         }
