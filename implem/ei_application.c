@@ -46,7 +46,7 @@ bool callback_buttondown_reverse_relief (ei_widget_t widget, ei_event_t* event, 
         if (event->type == ei_ev_mouse_buttondown) {
                 button_t *button = (button_t *) widget;
                 button->relief = ei_relief_sunken;
-                draw_button(button, main_surface, NULL, &(button->widget.screen_location));
+                button->widget.wclass->drawfunc(button, main_surface, NULL, &(button->widget.screen_location));
                 return true;
         } else
                 return false;
@@ -58,7 +58,7 @@ void draw_buttons (ei_widget_t widget) {
                 if (strcmp(child->wclass->name, "button") == 0) {
                         button_t *button = (button_t *) child;
                         button->relief = ei_relief_raised;
-                        draw_button(button, main_surface, NULL, &(button->widget.screen_location));
+                        button->widget.wclass->drawfunc(button, main_surface, NULL, &(button->widget.screen_location));
                 }
                 // Recursively draw children of the current child widget
                 draw_buttons(child);
