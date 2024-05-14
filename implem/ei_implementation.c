@@ -348,8 +348,10 @@ void draw_button (button_t * child,
 
                                                 ei_draw_polygon(surface, points, points_size,
                                                                 *child->widget.color, clipper);
-                                                ei_draw_polygon(pick_surface, points, points_size,
-                                                                *child->widget.pick_color, clipper);
+                                                if (pick_surface != NULL) {
+                                                        ei_draw_polygon(pick_surface, points, points_size,
+                                                                        *child->widget.pick_color, clipper);
+                                                }
 
                                                 calculate_clipper_sans_border(clipper, child->border_width);
 

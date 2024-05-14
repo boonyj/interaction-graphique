@@ -79,6 +79,7 @@ bool callback_buttonup_reverse_relief (ei_widget_t widget, ei_event_t* event, ei
 ei_widget_t find_widget (uint32_t* pixel_pick_surface, ei_widget_t widget) {
         ei_widget_t child = ei_widget_get_first_child(widget);
         while (child != NULL) {
+                printf("Pick id : %d, Pixel : %d \n", child->pick_id, *pixel_pick_surface);
                 if (child->pick_id == *pixel_pick_surface) {
                         return child;
                 }
@@ -124,12 +125,15 @@ void ei_app_run(void) {
                 event.type = ei_ev_none;
                 //Update screen
                 hw_surface_update_rects(main_surface, NULL);
+
+                hw_surface_lock(main_surface);
+                hw_surface_lock(pick_surface);
+
                 //Wait for event
                 hw_event_wait_next(&event);
                 // 1. Get widget in cursor position
                 mouse = event.param.mouse;
 
-                hw_surface_lock(pick_surface);
                 uint32_t* pixel_pick_surface = (uint32_t*)hw_surface_get_buffer(pick_surface);
                 ei_size_t pick_size = hw_surface_get_size(pick_surface);
                 pixel_pick_surface += (mouse.where.y * pick_size.width) + (mouse.where.x);
@@ -147,7 +151,7 @@ void ei_app_run(void) {
                                 }
                         }
                 }
-
+                hw_surface_unlock(main_surface);
                 hw_surface_unlock(pick_surface);
         }
 }
