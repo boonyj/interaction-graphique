@@ -84,6 +84,12 @@ void draw_frame (frame_t* child,
                                 child->widget.pick_color->blue = blue;
                                 child->widget.wclass->drawfunc(&(child->widget), surface, NULL,
                                                                clipper);
+
+                                clipper->size.width += child->border_width * 2;
+                                clipper->size.height += child->border_width * 2;
+                                clipper->top_left.x -= child->border_width;
+                                clipper->top_left.y -= child->border_width;
+
                                 break;
                         case ei_relief_sunken :
                                 child->widget.pick_color->red = dark(red);
@@ -125,6 +131,12 @@ void draw_frame (frame_t* child,
                                 child->widget.pick_color->blue = blue;
                                 child->widget.wclass->drawfunc(&(child->widget), surface, NULL,
                                                                clipper);
+
+                                clipper->size.width += child->border_width * 2;
+                                clipper->size.height += child->border_width * 2;
+                                clipper->top_left.x -= child->border_width;
+                                clipper->top_left.y -= child->border_width;
+
                                 break;
                 }
         }
@@ -287,6 +299,12 @@ void draw_button (button_t * child,
                                                 child->widget.pick_color->blue = blue;
                                                 child->widget.wclass->drawfunc(&(child->widget), surface, NULL,
                                                                                clipper);
+
+                                                clipper->size.width += child->border_width * 2;
+                                                clipper->size.height += child->border_width * 2;
+                                                clipper->top_left.x -= child->border_width;
+                                                clipper->top_left.y -= child->border_width;
+
                                         } else {
                                                 child->widget.pick_color->red = dark(red);
                                                 child->widget.pick_color->green = dark(green);
@@ -312,6 +330,11 @@ void draw_button (button_t * child,
 
                                                 ei_draw_polygon(surface, points, points_size,
                                                                 *(child->widget.pick_color), clipper);
+
+                                                clipper->size.width += child->border_width * 2;
+                                                clipper->size.height += child->border_width * 2;
+                                                clipper->top_left.x -= child->border_width;
+                                                clipper->top_left.y -= child->border_width;
                                         }
                                         break;
                                 case ei_relief_raised :
@@ -356,6 +379,12 @@ void draw_button (button_t * child,
                                                 child->widget.pick_color->blue = blue;
                                                 child->widget.wclass->drawfunc(&(child->widget), surface, NULL,
                                                                                clipper);
+
+                                                clipper->size.width += child->border_width * 2;
+                                                clipper->size.height += child->border_width * 2;
+                                                clipper->top_left.x -= child->border_width;
+                                                clipper->top_left.y -= child->border_width;
+
                                         } else {
                                                 int nb_segments = 32;
 
@@ -394,6 +423,11 @@ void draw_button (button_t * child,
                                                 points_size = 4*nb_segments;
                                                 ei_draw_polygon(surface, points, points_size,
                                                                 *(child->widget.pick_color), clipper);
+
+                                                clipper->size.width += child->border_width * 2;
+                                                clipper->size.height += child->border_width * 2;
+                                                clipper->top_left.x -= child->border_width;
+                                                clipper->top_left.y -= child->border_width;
 
                                         }
                                         if (child->text != NULL){
@@ -451,6 +485,12 @@ void draw_button (button_t * child,
                                                 child->widget.pick_color->blue = blue;
                                                 child->widget.wclass->drawfunc(&(child->widget), surface, NULL,
                                                                                clipper);
+
+                                                clipper->size.width += child->border_width * 2;
+                                                clipper->size.height += child->border_width * 2;
+                                                clipper->top_left.x -= child->border_width;
+                                                clipper->top_left.y -= child->border_width;
+
                                         } else {
                                                 int nb_segments = 32;
 
@@ -493,8 +533,21 @@ void draw_button (button_t * child,
                                                 points_size = 4*nb_segments;
                                                 ei_draw_polygon(surface, points, points_size,
                                                                 *(child->widget.pick_color), clipper);
+
+                                                clipper->size.width += child->border_width * 2;
+                                                clipper->size.height += child->border_width * 2;
+                                                clipper->top_left.x -= child->border_width;
+                                                clipper->top_left.y -= child->border_width;
+
                                                 if (child->text != NULL){
-                                                        //ei_draw_text(surface,&clipper->top_left, child->text, NULL, child->text_color, clipper);
+                                                        int width = 0;
+                                                        int height = 0;
+                                                        hw_text_compute_size(child->text,child->text_font, &width, &height);
+                                                        ei_point_t where = child->widget.screen_location.top_left;
+                                                        where.x += child->widget.screen_location.size.width/2 - width/2;
+                                                        where.y += child->widget.screen_location.size.height/2 - height/2;
+
+                                                        ei_draw_text(surface, &where, child->text, child->text_font, child->text_color, clipper);
                                                 }
                                         }
                                         break;

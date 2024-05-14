@@ -22,18 +22,6 @@ bool static check_if_new_linked_event(ei_eventtype_t eventtype, ei_widget_t widg
         return true;
 }
 
-/**
- * \brief	Binds a callback to an event type and a widget or a tag.
- *
- * @param	eventtype	The type of the event.
- * @param	widget		The callback is only called if the event is related to this widget.
- *				This parameter must be NULL if the "tag" parameter is not NULL.
- * @param	tag		The callback is only called if the event is related to a widget that
- *				has this tag. A tag can be a widget class name, or the tag "all".
- *				This parameter must be NULL is the "widget" parameter is not NULL.
- * @param	callback	The callback (i.e. the function to call).
- * @param	user_param	A user parameter that will be passed to the callback when it is called.
- */
 void		ei_bind			(ei_eventtype_t		eventtype,
                                                     ei_widget_t		widget,
                                                     ei_tag_t		tag,
@@ -56,8 +44,7 @@ void		ei_bind			(ei_eventtype_t		eventtype,
                 event_to_bind->tag = tag;
                 linked_event_list[0] = event_to_bind;
                 linked_event_list_size = 1;
-        } else {
-                if(is_new_linked_event){
+        } else if(is_new_linked_event){
                         linked_event_list = realloc(linked_event_list,(linked_event_list_size+1)*sizeof(ei_linked_event_t*));
                         linked_event_list_size += 1;
                         ei_linked_event_t* event_to_bind = malloc(sizeof(ei_linked_event_t));
@@ -70,13 +57,6 @@ void		ei_bind			(ei_eventtype_t		eventtype,
         }
 }
 
-/**
- * \brief	Unbinds a callback from an event type and widget or tag.
- *
- * @param	eventtype, widget, tag, callback, user_param
- *				All parameters must have the same value as when \ref ei_bind was
- *				called to create the binding.
- */
 void		ei_unbind		(ei_eventtype_t		eventtype,
                                               ei_widget_t		widget,
                                               ei_tag_t		tag,

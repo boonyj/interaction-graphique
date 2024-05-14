@@ -5,6 +5,9 @@
 #include "ei_button.h"
 #include "ei_toplevel.h"
 #include "ei_event.h"
+#include "ei_event.c"
+
+#include "ei_implementation.c"
 
 ei_surface_t main_surface = NULL;
 ei_widget_t root = NULL;
@@ -39,7 +42,7 @@ void ei_app_free(void){
         hw_quit();
 }
 
-void ei_app_run(void){
+void ei_app_run(void) {
         // Get the root widget of the application
         ei_widget_t root_widget = ei_app_root_widget();
 
@@ -51,7 +54,7 @@ void ei_app_run(void){
                         root_widget->wclass->drawfunc(root_widget, main_surface, NULL, NULL);
                 }
         }
-        ei_rect_t* clipper = &(root_widget->children_head->screen_location);
+        ei_rect_t *clipper = &(root_widget->children_head->screen_location);
         ei_impl_widget_draw_children(root_widget, main_surface, NULL, clipper);
 
         hw_surface_unlock(main_surface);
@@ -59,34 +62,54 @@ void ei_app_run(void){
         // Update the screen
         hw_surface_update_rects(main_surface, NULL);
 
+        ei_bind(ei_ev_mouse_buttondown, NULL, "button", callback_button_reverse_relief, NULL);
+        ei_bind(ei_ev_mouse_buttonup, NULL, "button", callback_button_reverse_relief, NULL);
+
         //Main loop here
         ei_event_t event;
-        while((event.type != ei_ev_close)){
+        ei_mouse_event_t mouse;
+        ei_widget_t widget;
+        while ((event.type != ei_ev_close)) {
                 event.type = ei_ev_none;
-                //Update screen (letak nanti)
+                //Update screen
+                hw_surface_update_rects(main_surface, NULL);
                 //Wait for event
                 hw_event_wait_next(&event);
-                //Search for event in list
-
                 // 1. Get widget in cursor position
-                // 2. Search for callback function(s) to be executed (en fonction de widget/tag if available)
-                // 3. Run the callback function(s)
+                ei_widget_t children = ei_app_root_widget()->children_head;
+                widget = NULL;
 
-                //Behavioral test (buttonup not detecting)
-//                if (event.type == ei_ev_mouse_buttondown){
-//                        printf("Mouse clicked !");
-//                        hw_event_wait_next(&event);
-//                        while(event.type != ei_ev_mouse_buttonup){
-//                                hw_event_wait_next(&event);
-//                                if(event.type = ei_ev_mouse_move){
-//                                        printf("Cursor is moving !");
-//                                }
-//                                hw_event_wait_next(&event);
-//                        }
-//                        printf("Mouse unclicked !");
-//                }
+                mouse = event.param.mouse;
+                while (children != NULL) {
+                        // Check if cursor is in a widget (outermost widget)
+                        if (mouse.where.x <= (children->screen_location.top_left.x + children->screen_location.size.width) &&
+                            mouse.where.x >= children->screen_location.top_left.x) {
+                                if (mouse.where.y <= (children->screen_location.top_left.y +
+                                                      children->screen_location.size.height) &&
+                                    mouse.where.y >= children->screen_location.top_left.y) {
+                                        widget = children;
+                                } else {
+                                        widget = NULL;
+                                }
+                        }
+                        children = children->next_sibling;
+                }
+
+                //Search for event in list
+                if (widget != NULL || event.param.key_code == SDLK_ESCAPE) {
+                        printf("escape");
+                        for (int i = 0; i < linked_event_list_size; ++i) {
+                                if (linked_event_list[i]->eventtype == event.type) {
+                                        if (linked_event_list[i]->widget == widget ||
+                                            strcmp(linked_event_list[i]->tag, widget->wclass->name) == 0) {
+                                                // Run the callback function(s)
+                                                linked_event_list[i]->callback(widget, &event, NULL);
+                                        }
+                                }
+                        }
+                }
+
         }
-
 }
 
 void ei_app_invalidate_rect(const ei_rect_t* rect){
@@ -105,4 +128,20 @@ ei_widget_t ei_app_root_widget(void){
 ei_surface_t ei_app_root_surface(void){
         return main_surface;
 
+}
+
+bool callback_button_reverse_relief (ei_widget_t widget, ei_event_t* event, ei_user_param_t user_param) {
+        if (event->type == ei_ev_mouse_buttondown || event->type == ei_ev_mouse_buttonup) {
+                button_t *button = (button_t *) widget;
+
+                if(button->relief == ei_relief_sunken){
+                        button->relief = ei_relief_raised;
+                }else{
+                        button->relief = ei_relief_sunken;
+                }
+                draw_button(button, main_surface, NULL, &(button->widget.screen_location));
+
+                return true;
+        } else
+                return false;
 }
