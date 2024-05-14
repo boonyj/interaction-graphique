@@ -42,17 +42,35 @@ void ei_app_free(void){
         hw_quit();
 }
 
-bool callback_button_reverse_relief (ei_widget_t widget, ei_event_t* event, ei_user_param_t user_param) {
-        if (event->type == ei_ev_mouse_buttondown || event->type == ei_ev_mouse_buttonup) {
+bool callback_buttondown_reverse_relief (ei_widget_t widget, ei_event_t* event, ei_user_param_t user_param) {
+        if (event->type == ei_ev_mouse_buttondown) {
                 button_t *button = (button_t *) widget;
-
-                if(button->relief == ei_relief_sunken){
-                        button->relief = ei_relief_raised;
-                }else{
-                        button->relief = ei_relief_sunken;
-                }
+                button->relief = ei_relief_sunken;
                 draw_button(button, main_surface, NULL, &(button->widget.screen_location));
+                return true;
+        } else
+                return false;
+}
 
+void draw_buttons (ei_widget_t widget) {
+        ei_widget_t child = ei_widget_get_first_child(widget);
+        while (child != NULL) {
+                if (strcmp(child->wclass->name, "button") == 0) {
+                        button_t *button = (button_t *) child;
+                        button->relief = ei_relief_raised;
+                        draw_button(button, main_surface, NULL, &(button->widget.screen_location));
+                }
+                // Recursively draw children of the current child widget
+                draw_buttons(child);
+
+                // Move to the next sibling
+                child = ei_widget_get_next_sibling(child);
+        }
+}
+
+bool callback_buttonup_reverse_relief (ei_widget_t widget, ei_event_t* event, ei_user_param_t user_param) {
+        if (event->type == ei_ev_mouse_buttonup) {
+                draw_buttons(ei_app_root_widget());
                 return true;
         } else
                 return false;
@@ -70,7 +88,7 @@ ei_widget_t find_widget (uint32_t* pixel_pick_surface, ei_widget_t widget) {
                 // Move to the next sibling
                 child = ei_widget_get_next_sibling(child);
         }
-        return NULL;
+        return widget;
 }
 
 void ei_app_run(void) {
@@ -89,16 +107,14 @@ void ei_app_run(void) {
         ei_rect_t *clipper = &(root_widget->children_head->screen_location);
         ei_impl_widget_draw_children(root_widget, main_surface, pick_surface, clipper);
 
-        uint32_t* pixel_pick_surface = (uint32_t*)hw_surface_get_buffer(pick_surface);
-
         hw_surface_unlock(main_surface);
         hw_surface_unlock(pick_surface);
 
         // Update the screen
         hw_surface_update_rects(main_surface, NULL);
 
-        ei_bind(ei_ev_mouse_buttondown, NULL, "button", callback_button_reverse_relief, NULL);
-        ei_bind(ei_ev_mouse_buttonup, NULL, "button", callback_button_reverse_relief, NULL);
+        ei_bind(ei_ev_mouse_buttondown, NULL, "button", callback_buttondown_reverse_relief, NULL);
+        ei_bind(ei_ev_mouse_buttonup, NULL, "all", callback_buttonup_reverse_relief, NULL);
 
         //Main loop here
         ei_event_t event;
@@ -111,41 +127,28 @@ void ei_app_run(void) {
                 //Wait for event
                 hw_event_wait_next(&event);
                 // 1. Get widget in cursor position
-                widget = NULL;
-
                 mouse = event.param.mouse;
 
+                hw_surface_lock(pick_surface);
+                uint32_t* pixel_pick_surface = (uint32_t*)hw_surface_get_buffer(pick_surface);
                 ei_size_t pick_size = hw_surface_get_size(pick_surface);
                 pixel_pick_surface += (mouse.where.y * pick_size.width) + (mouse.where.x);
-                printf("Color %p at position %d\n", pixel_pick_surface, *pixel_pick_surface);
 
-                //widget = find_widget(pixel_pick_surface, ei_app_root_widget());
+                widget = find_widget(pixel_pick_surface, ei_app_root_widget());
 
                 //Search for event in list
-                if (widget != NULL) {
-                        for (int i = 0; i < linked_event_list_size; ++i) {
-                                if (linked_event_list[i]->eventtype == event.type) {
-                                        if (linked_event_list[i]->widget == widget ||
-                                            strcmp(linked_event_list[i]->tag, widget->wclass->name) == 0) {
-                                                // Run the callback function(s)
-                                                linked_event_list[i]->callback(widget, &event, NULL);
-                                        }
+                for (int i = 0; i < linked_event_list_size; ++i) {
+                        if (linked_event_list[i]->eventtype == event.type) {
+                                if (linked_event_list[i]->widget == widget ||
+                                    strcmp(linked_event_list[i]->tag, widget->wclass->name) == 0 ||
+                                        strcmp(linked_event_list[i]->tag, "all") == 0) {
+                                        // Run the callback function(s)
+                                        linked_event_list[i]->callback(widget, &event, NULL);
                                 }
                         }
                 }
 
-                /*// Check if cursor is in a widget (outermost widget)
-                if (mouse.where.x <= (children->screen_location.top_left.x + children->screen_location.size.width) &&
-                    mouse.where.x >= children->screen_location.top_left.x) {
-                        if (mouse.where.y <= (children->screen_location.top_left.y +
-                                              children->screen_location.size.height) &&
-                            mouse.where.y >= children->screen_location.top_left.y) {
-                                widget = children;
-                        } else {
-                                widget = NULL;
-                        }
-                }
-                children = children->next_sibling;*/
+                hw_surface_unlock(pick_surface);
         }
 }
 
