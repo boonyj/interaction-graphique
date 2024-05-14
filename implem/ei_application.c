@@ -28,8 +28,7 @@ void ei_app_create(ei_size_t main_window_size, bool fullscreen){
         ei_widgetclass_register(toplevel_class);
 
         // Can't two root at the same moment (button_root to test button and  frame_root to test_root)
-        //frame_root = ei_widget_create("frame", NULL, NULL, NULL);
-        root = ei_widget_create("toplevel", NULL, NULL, NULL);
+        root = ei_widget_create("frame", NULL, NULL, NULL);
 
         // Creation of geometry manager
         ei_geometrymanager_t* placeur = create_placeur();

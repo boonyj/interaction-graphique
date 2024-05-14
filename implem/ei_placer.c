@@ -1,5 +1,6 @@
 #include "ei_placer.h"
 #include "ei_implementation.h"
+#include "ei_widget_configure.h"
 
 void		ei_place	(ei_widget_t		widget,
                                      ei_anchor_t*		anchor,
@@ -29,11 +30,11 @@ void		ei_place	(ei_widget_t		widget,
 
         if(rel_x != NULL || rel_y != NULL){
                 ei_widget_t parent = widget->parent;
-                int parent_width = parent->screen_location.size.width + parent->screen_location.top_left.x;
-                int parent_height = parent->screen_location.size.height + parent->screen_location.top_left.y;
+                int parent_width = parent->screen_location.size.width ;
+                int parent_height = parent->screen_location.size.height ;
 
-                int parent_coordinate_x = (int)((float)parent_width * rel_x_value);
-                int parent_coordinate_y = (int)((float)parent_height * rel_y_value);
+                int parent_coordinate_x = (int)((float)parent_width * rel_x_value)+ parent->screen_location.top_left.x;
+                int parent_coordinate_y = (int)((float)parent_height * rel_y_value)+ parent->screen_location.top_left.y;
 
                 width_value = (rel_width_value != 0.0) ? (int)((float)parent_width * rel_width_value) : width_value;
                 height_value = (rel_height_value != 0.0) ? (int)((float)parent_height * rel_height_value) : height_value;
@@ -86,6 +87,35 @@ void		ei_place	(ei_widget_t		widget,
                 widget->screen_location.size.height = height_value;
         }
 
+        if (strcmp(widget->wclass->name, "toplevel") == 0) {
+                ei_widget_t button_round = ei_widget_create	("button", widget, NULL, NULL);
+                ei_button_configure		(button_round, &((ei_size_t){18, 18}),
+                                                    &(ei_color_t){0xB2, 0x22, 0x22, 0xff},
+                                                    &(int){3},
+                                                    &(int){9},
+                                                    &(ei_relief_t){ei_relief_raised},
+                                                    NULL, NULL,
+                                                    &(ei_color_t){0x00, 0x00, 0x00, 0xff}, NULL, NULL, NULL, NULL,
+                                                    NULL, NULL);
+                ei_place			(button_round, &(ei_anchor_t){ei_anc_northwest},
+                                                 &(int){8}, &(int){5}, NULL, NULL,
+                                                 &(float){0.0f}, &(float){0.0f},
+                                                 NULL, NULL);
+
+                ei_widget_t button_square = ei_widget_create	("button", widget, NULL, NULL);
+                ei_button_configure		(button_square, &((ei_size_t){12, 12}),
+                                                    &(ei_color_t){0x66, 0x66, 0x66, 0xff},
+                                                    &(int){2},
+                                                    &(int){0},
+                                                    &(ei_relief_t){ei_relief_raised},
+                                                    NULL, NULL,
+                                                    &(ei_color_t){0x00, 0x00, 0x00, 0xff}, NULL, NULL, NULL, NULL,
+                                                    NULL, NULL);
+                ei_place			(button_square, &(ei_anchor_t){ei_anc_southeast},
+                                                 &(int){0}, &(int){0}, NULL, NULL,
+                                                 &(float){1.0f}, &(float){1.0f},
+                                                 NULL, NULL);
+        }
 
 
 }
