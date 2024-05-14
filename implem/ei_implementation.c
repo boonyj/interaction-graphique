@@ -96,7 +96,7 @@ void draw_frame (frame_t* child,
 
                 switch (child->relief) {
                         case ei_relief_none :
-                                child->widget.wclass->drawfunc(&(child->widget), surface, NULL,
+                                child->widget.wclass->drawfunc(&(child->widget), surface, pick_surface,
                                                                clipper);
                                 break;
                         case ei_relief_raised :
@@ -109,6 +109,8 @@ void draw_frame (frame_t* child,
 
                                 ei_draw_polygon(surface, points, points_size,
                                                 *child->widget.color, clipper);
+                                ei_draw_polygon(pick_surface, points, points_size,
+                                                *child->widget.pick_color, clipper);
 
                                 assertion_color(child->widget.color, color, 2);
 
@@ -118,6 +120,8 @@ void draw_frame (frame_t* child,
 
                                 ei_draw_polygon(surface, points, points_size,
                                                 *child->widget.color, clipper);
+                                ei_draw_polygon(pick_surface, points, points_size,
+                                                *child->widget.pick_color, clipper);
 
                                 calculate_clipper_sans_border(clipper, child->border_width);
 
@@ -138,6 +142,8 @@ void draw_frame (frame_t* child,
 
                                 ei_draw_polygon(surface, points, points_size,
                                                 *child->widget.color, clipper);
+                                ei_draw_polygon(pick_surface, points, points_size,
+                                                *child->widget.pick_color, clipper);
 
                                 assertion_color(child->widget.color, color, 1);
 
@@ -147,6 +153,8 @@ void draw_frame (frame_t* child,
 
                                 ei_draw_polygon(surface, points, points_size,
                                                 *child->widget.color, clipper);
+                                ei_draw_polygon(pick_surface, points, points_size,
+                                                *child->widget.pick_color, clipper);
 
                                 calculate_clipper_sans_border(clipper, child->border_width);
 
@@ -279,7 +287,7 @@ void draw_button (button_t * child,
                                         assertion_color(child->widget.color, color, 2);
 
                                         if (child->corner_radius == 0) {
-                                                child->widget.wclass->drawfunc(&(child->widget), surface, NULL,
+                                                child->widget.wclass->drawfunc(&(child->widget), surface, pick_surface,
                                                                                clipper);
 
                                                 calculate_clipper_sans_border(clipper, child->border_width);
@@ -293,6 +301,8 @@ void draw_button (button_t * child,
                                                 size_t points_size = 4*nb_segments;
                                                 ei_draw_polygon(surface, points, points_size,
                                                                 *child->widget.color, clipper);
+                                                ei_draw_polygon(pick_surface, points, points_size,
+                                                                *child->widget.pick_color, clipper);
 
                                                 calculate_clipper_sans_border(clipper, child->border_width);
 
@@ -304,7 +314,6 @@ void draw_button (button_t * child,
                                                                 *child->widget.color, clipper);
                                         }
                                         calculate_clipper_avec_border(clipper, child->border_width);
-
                                         break;
                                 case ei_relief_raised :
                                         assertion_color(child->widget.color, color, 1);
@@ -316,6 +325,8 @@ void draw_button (button_t * child,
 
                                                 ei_draw_polygon(surface, points, points_size,
                                                                 *child->widget.color, clipper);
+                                                ei_draw_polygon(pick_surface, points, points_size,
+                                                                *child->widget.pick_color, clipper);
 
                                                 assertion_color(child->widget.color, color, 2);
 
@@ -325,7 +336,8 @@ void draw_button (button_t * child,
 
                                                 ei_draw_polygon(surface, points, points_size,
                                                                 *child->widget.color, clipper);
-
+                                                ei_draw_polygon(pick_surface, points, points_size,
+                                                                *child->widget.pick_color, clipper);
 
                                                 calculate_clipper_sans_border(clipper, child->border_width);
 
@@ -333,7 +345,6 @@ void draw_button (button_t * child,
 
                                                 child->widget.wclass->drawfunc(&(child->widget), surface, NULL,
                                                                                clipper);
-
                                         } else {
                                                 // Partie haute
                                                 ei_point_t *points = rounded_frame(*clipper, child->corner_radius, 1);
@@ -341,6 +352,8 @@ void draw_button (button_t * child,
 
                                                 ei_draw_polygon(surface, points, points_size,
                                                                 *child->widget.color, clipper);
+                                                ei_draw_polygon(pick_surface, points, points_size,
+                                                                *child->widget.pick_color, clipper);
 
                                                 // Partie basse
                                                 assertion_color(child->widget.color, color, 2);
@@ -349,6 +362,8 @@ void draw_button (button_t * child,
 
                                                 ei_draw_polygon(surface, points, points_size,
                                                                 *child->widget.color, clipper);
+                                                ei_draw_polygon(pick_surface, points, points_size,
+                                                                *child->widget.pick_color, clipper);
 
                                                 // Draw inside button
                                                 calculate_clipper_sans_border(clipper, child->border_width);
@@ -362,7 +377,6 @@ void draw_button (button_t * child,
                                                                 *child->widget.color, clipper);
                                         }
                                         calculate_clipper_avec_border(clipper, child->border_width);
-
                                         break;
                                 case ei_relief_sunken :
                                         assertion_color(child->widget.color, color, 2);
@@ -373,6 +387,8 @@ void draw_button (button_t * child,
                                                 size_t points_size = 5;
                                                 ei_draw_polygon(surface, points, points_size,
                                                                 *child->widget.color, clipper);
+                                                ei_draw_polygon(pick_surface, points, points_size,
+                                                                *child->widget.pick_color, clipper);
 
                                                 assertion_color(child->widget.color, color, 1);
 
@@ -385,6 +401,8 @@ void draw_button (button_t * child,
 
                                                 ei_draw_polygon(surface, points, points_size,
                                                                 *child->widget.color, clipper);
+                                                ei_draw_polygon(pick_surface, points, points_size,
+                                                                *child->widget.pick_color, clipper);
 
                                                 calculate_clipper_sans_border(clipper, child->border_width);
 
@@ -392,7 +410,6 @@ void draw_button (button_t * child,
 
                                                 child->widget.wclass->drawfunc(&(child->widget), surface, NULL,
                                                                                clipper);
-
                                         } else {
                                                 // Partie haute
                                                 ei_point_t *points = rounded_frame(*clipper, child->corner_radius, 1);
@@ -400,6 +417,8 @@ void draw_button (button_t * child,
 
                                                 ei_draw_polygon(surface, points, points_size,
                                                                 *child->widget.color, clipper);
+                                                ei_draw_polygon(pick_surface, points, points_size,
+                                                                *child->widget.pick_color, clipper);
 
                                                 // Partie basse
                                                 assertion_color(child->widget.color, color, 1);
@@ -408,6 +427,8 @@ void draw_button (button_t * child,
 
                                                 ei_draw_polygon(surface, points, points_size,
                                                                 *child->widget.color, clipper);
+                                                ei_draw_polygon(pick_surface, points, points_size,
+                                                                *child->widget.pick_color, clipper);
 
                                                 // Draw inside button
                                                 calculate_clipper_sans_border(clipper, child->border_width);
@@ -419,10 +440,8 @@ void draw_button (button_t * child,
                                                 points_size = 4*nb_segments;
                                                 ei_draw_polygon(surface, points, points_size,
                                                                 *child->widget.color, clipper);
-
                                         }
                                         calculate_clipper_avec_border(clipper, child->border_width);
-
                                         break;
                         }
                         if (child->text != NULL){
@@ -432,7 +451,6 @@ void draw_button (button_t * child,
                 }
         }
 }
-
 
 void draw_toplevel (toplevel_t * child,
                  ei_surface_t		surface,
@@ -478,6 +496,8 @@ void draw_toplevel (toplevel_t * child,
         size_t points_size = 2*nb_segments + 2;
         ei_draw_polygon(surface, points, points_size,
                         *child->widget.color, clipper);
+        ei_draw_polygon(pick_surface, points, points_size,
+                        *child->widget.pick_color, clipper);
 
         ei_rect_t* clipper_content = malloc(sizeof (ei_rect_t));
         clipper_content->top_left.x = clipper->top_left.x;
@@ -486,17 +506,10 @@ void draw_toplevel (toplevel_t * child,
         clipper_content->size.width = clipper->size.width;
         clipper_content->size.height = clipper->size.height - height;
 
-        child->widget.wclass->drawfunc(&(child->widget), surface, NULL,
+        child->widget.wclass->drawfunc(&(child->widget), surface, pick_surface,
                                        clipper_content);
 
-        child->widget.wclass->drawfunc(&(child->widget), surface, NULL,
-                                       clipper_content);
 
-        clipper_content->size.width -= child->border_width * 2;
-        clipper_content->size.height -= child->border_width * 2;
-        clipper_content->top_left.x += child->border_width;
-        clipper_content->top_left.y += child->border_width;
-        calculate_clipper_sans_border(clipper, child->border_width);
         assertion_color(child->widget.color, color, 0);
 
         child->widget.wclass->drawfunc(&(child->widget), surface, NULL,

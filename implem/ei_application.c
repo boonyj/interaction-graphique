@@ -10,13 +10,14 @@
 #include "ei_implementation.c"
 
 ei_surface_t main_surface = NULL;
+ei_surface_t pick_surface = NULL;
 ei_widget_t root = NULL;
 
 void ei_app_create(ei_size_t main_window_size, bool fullscreen){
         // Initialisation of the application
         hw_init();
         main_surface  = hw_create_window(main_window_size, fullscreen);
-
+        pick_surface  = hw_surface_create(main_surface, main_window_size, false);
         // Creation of widget class frame (to be registered later)
         ei_widgetclass_t* frame_class = create_frame_class();
         ei_widgetclass_t* button_class = create_button_class();
@@ -57,22 +58,41 @@ bool callback_button_reverse_relief (ei_widget_t widget, ei_event_t* event, ei_u
                 return false;
 }
 
+ei_widget_t find_widget (uint32_t* pixel_pick_surface, ei_widget_t widget) {
+        ei_widget_t child = ei_widget_get_first_child(widget);
+        while (child != NULL) {
+                if (child->pick_id == *pixel_pick_surface) {
+                        return child;
+                }
+                // Recursively draw children of the current child widget
+                find_widget(pixel_pick_surface, child);
+
+                // Move to the next sibling
+                child = ei_widget_get_next_sibling(child);
+        }
+        return NULL;
+}
+
 void ei_app_run(void) {
         // Get the root widget of the application
         ei_widget_t root_widget = ei_app_root_widget();
 
         hw_surface_lock(main_surface);
+        hw_surface_lock(pick_surface);
 
         // Call the draw function for the root widget to draw the entire widget hierarchy
         if (root_widget->wclass != NULL) {
                 if (root_widget->wclass->drawfunc != NULL) {
-                        root_widget->wclass->drawfunc(root_widget, main_surface, NULL, NULL);
+                        root_widget->wclass->drawfunc(root_widget, main_surface, pick_surface, NULL);
                 }
         }
         ei_rect_t *clipper = &(root_widget->children_head->screen_location);
-        ei_impl_widget_draw_children(root_widget, main_surface, NULL, clipper);
+        ei_impl_widget_draw_children(root_widget, main_surface, pick_surface, clipper);
+
+        uint32_t* pixel_pick_surface = (uint32_t*)hw_surface_get_buffer(pick_surface);
 
         hw_surface_unlock(main_surface);
+        hw_surface_unlock(pick_surface);
 
         // Update the screen
         hw_surface_update_rects(main_surface, NULL);
@@ -91,28 +111,18 @@ void ei_app_run(void) {
                 //Wait for event
                 hw_event_wait_next(&event);
                 // 1. Get widget in cursor position
-                ei_widget_t children = ei_app_root_widget()->children_head;
                 widget = NULL;
 
                 mouse = event.param.mouse;
-                while (children != NULL) {
-                        // Check if cursor is in a widget (outermost widget)
-                        if (mouse.where.x <= (children->screen_location.top_left.x + children->screen_location.size.width) &&
-                            mouse.where.x >= children->screen_location.top_left.x) {
-                                if (mouse.where.y <= (children->screen_location.top_left.y +
-                                                      children->screen_location.size.height) &&
-                                    mouse.where.y >= children->screen_location.top_left.y) {
-                                        widget = children;
-                                } else {
-                                        widget = NULL;
-                                }
-                        }
-                        children = children->next_sibling;
-                }
+
+                ei_size_t pick_size = hw_surface_get_size(pick_surface);
+                pixel_pick_surface += (mouse.where.y * pick_size.width) + (mouse.where.x);
+                printf("Color %p at position %d\n", pixel_pick_surface, *pixel_pick_surface);
+
+                //widget = find_widget(pixel_pick_surface, ei_app_root_widget());
 
                 //Search for event in list
-                if (widget != NULL || event.param.key_code == SDLK_ESCAPE) {
-                        printf("escape");
+                if (widget != NULL) {
                         for (int i = 0; i < linked_event_list_size; ++i) {
                                 if (linked_event_list[i]->eventtype == event.type) {
                                         if (linked_event_list[i]->widget == widget ||
@@ -124,6 +134,18 @@ void ei_app_run(void) {
                         }
                 }
 
+                /*// Check if cursor is in a widget (outermost widget)
+                if (mouse.where.x <= (children->screen_location.top_left.x + children->screen_location.size.width) &&
+                    mouse.where.x >= children->screen_location.top_left.x) {
+                        if (mouse.where.y <= (children->screen_location.top_left.y +
+                                              children->screen_location.size.height) &&
+                            mouse.where.y >= children->screen_location.top_left.y) {
+                                widget = children;
+                        } else {
+                                widget = NULL;
+                        }
+                }
+                children = children->next_sibling;*/
         }
 }
 
