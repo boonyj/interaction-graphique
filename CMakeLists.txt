@@ -83,6 +83,7 @@ set(LIB_EI_SOURCES
 	${SRC}/ei_button.c
 	${SRC}/ei_toplevel.c
 	${SRC}/ei_draw_tool.c
+	${SRC}/ei_global.c
 
 )
 

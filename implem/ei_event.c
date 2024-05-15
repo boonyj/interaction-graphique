@@ -5,6 +5,7 @@ typedef struct ei_linked_event_t{
         ei_widget_t widget;
         ei_callback_t callback;
         ei_tag_t tag;
+        void* user_param;
 }ei_linked_event_t;
 
 static ei_linked_event_t** linked_event_list = NULL;
@@ -42,6 +43,7 @@ void		ei_bind			(ei_eventtype_t		eventtype,
                 event_to_bind->widget = widget;
                 event_to_bind->callback = callback;
                 event_to_bind->tag = tag;
+                event_to_bind->user_param = user_param;
                 linked_event_list[0] = event_to_bind;
                 linked_event_list_size = 1;
         } else if(is_new_linked_event){
@@ -52,6 +54,7 @@ void		ei_bind			(ei_eventtype_t		eventtype,
                         event_to_bind->widget = widget;
                         event_to_bind->callback = callback;
                         event_to_bind->tag = tag;
+                        event_to_bind->user_param = user_param;
                         linked_event_list[linked_event_list_size - 1] = event_to_bind;
         }
 }

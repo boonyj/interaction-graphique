@@ -8,10 +8,7 @@
 #include "ei_event.c"
 #include "ei_draw_tool.c"
 #include "ei_implementation.c"
-
-ei_surface_t main_surface = NULL;
-ei_surface_t pick_surface = NULL;
-ei_widget_t root = NULL;
+#include "ei_global.h"
 
 void ei_app_create(ei_size_t main_window_size, bool fullscreen){
         // Initialisation of the application
@@ -44,11 +41,23 @@ void ei_app_free(void){
         hw_quit();
 }
 
+bool callback_buttonup_reverse_relief (ei_widget_t widget, ei_event_t* event, ei_user_param_t user_param) {
+        if (event->type == ei_ev_mouse_buttonup) {
+                button_t *button = (button_t *) user_param;
+                button->relief = ei_relief_raised;
+                button->widget.wclass->drawfunc(&(button->widget), main_surface, NULL, &(button->widget.screen_location));
+                ei_unbind(ei_ev_mouse_buttonup, NULL, "all", callback_buttonup_reverse_relief, widget);
+                return true;
+        } else
+                return false;
+}
+
 bool callback_buttondown_reverse_relief (ei_widget_t widget, ei_event_t* event, ei_user_param_t user_param) {
         if (event->type == ei_ev_mouse_buttondown) {
                 button_t *button = (button_t *) widget;
                 button->relief = ei_relief_sunken;
                 button->widget.wclass->drawfunc(&(button->widget), main_surface, NULL, &(button->widget.screen_location));
+                ei_bind(ei_ev_mouse_buttonup, NULL, "all", callback_buttonup_reverse_relief, widget);
                 return true;
         } else
                 return false;
@@ -91,14 +100,6 @@ void draw_all_buttons_raised (ei_widget_t widget) {
                 // Move to the next sibling
                 child = ei_widget_get_next_sibling(child);
         }
-}
-
-bool callback_buttonup_reverse_relief (ei_widget_t widget, ei_event_t* event, ei_user_param_t user_param) {
-        if (event->type == ei_ev_mouse_buttonup) {
-                draw_all_buttons_raised(ei_app_root_widget());
-                return true;
-        } else
-                return false;
 }
 
 ei_widget_t find_widget (uint32_t* pixel_pick_surface, ei_widget_t widget) {
@@ -151,7 +152,6 @@ void ei_app_run(void) {
         //hw_surface_update_rects(pick_surface, NULL);
 
         ei_bind(ei_ev_mouse_buttondown, NULL, "button", callback_buttondown_reverse_relief, NULL);
-        ei_bind(ei_ev_mouse_buttonup, NULL, "all", callback_buttonup_reverse_relief, NULL);
         ei_bind(ei_ev_mouse_buttondown, NULL, "toplevel", callback_buttondown_top_level, NULL);
 
         //Main loop here
@@ -183,11 +183,15 @@ void ei_app_run(void) {
                 //Search for event in list
                 for (int i = 0; i < linked_event_list_size; ++i) {
                         if (linked_event_list[i]->eventtype == event.type) {
-                                if (linked_event_list[i]->widget == widget ||
-                                    strcmp(linked_event_list[i]->tag, widget->wclass->name) == 0 ||
-                                        strcmp(linked_event_list[i]->tag, "all") == 0) {
-                                        // Run the callback function(s)
-                                        linked_event_list[i]->callback(widget, &event, NULL);
+                                if(linked_event_list[i]->widget != NULL){
+                                        if(widget == linked_event_list[i]->widget){
+                                                linked_event_list[i]->callback(widget, &event, linked_event_list[i]->user_param);
+                                        }
+                                }else{
+                                        if(strcmp(linked_event_list[i]->tag, widget->wclass->name) == 0 ||
+                                           strcmp(linked_event_list[i]->tag, "all") == 0){
+                                                linked_event_list[i]->callback(widget, &event, linked_event_list[i]->user_param);
+                                        }
                                 }
                         }
                 }

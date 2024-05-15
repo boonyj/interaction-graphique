@@ -5,6 +5,7 @@
 #include "ei_button.h"
 #include "ei_toplevel.h"
 #include "ei_draw_tool.h"
+#include "ei_event.h"
 
 
 void			ei_frame_configure		(ei_widget_t		widget,
@@ -39,6 +40,22 @@ void			ei_frame_configure		(ei_widget_t		widget,
 
         if (border_width != NULL){
                 frame->border_width = *border_width;
+        }
+
+        if (text != NULL){
+                frame->text = *text;
+                if (text_color !=  NULL){
+                        frame->text_color.alpha = text_color->alpha;
+                        frame->text_color.red = text_color->red;
+                        frame->text_color.green = text_color->green;
+                        frame->text_color.blue = text_color->blue;
+                }
+                if (text_font !=  NULL){
+                        frame->text_font = *text_font;
+                }
+                if (text_anchor !=  NULL){
+                        frame->text_anchor = *text_anchor;
+                }
         }
 }
 
@@ -97,6 +114,11 @@ void			ei_button_configure		(ei_widget_t		widget,
                 if (text_anchor !=  NULL){
                         button->text_anchor = *text_anchor;
                 }
+        }
+
+        // To be verified with prof
+        if (callback != NULL) {
+                ei_bind(ei_ev_mouse_buttondown, widget, NULL, *callback, NULL);
         }
 
         if(img != NULL){
