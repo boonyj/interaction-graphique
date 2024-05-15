@@ -21,18 +21,16 @@ void ei_impl_widget_draw_children(ei_widget_t widget,
 
 
 uint32_t ei_impl_map_rgba(ei_surface_t surface, ei_color_t color) {
-
         int ir, ig, ib, ia;
         hw_surface_get_channel_indices(surface, &ir, &ig, &ib, &ia);
-        uint8_t temp[4]	= { 255, 255, 255, 255 };
-        temp[ir] = color.red;
-        temp[ig] = color.green;
-        temp[ib] = color.blue;
-        temp[ia] = color.alpha;
 
+        // Construct the 32-bit integer representation of the color
+        uint32_t pixel = 0;
+        pixel |= (color.red   << (ir * 8));
+        pixel |= (color.green << (ig * 8));
+        pixel |= (color.blue  << (ib * 8));
 
-        // Return the pixel color
-        return *((uint32_t*)temp);
+        return pixel;
 }
 
 

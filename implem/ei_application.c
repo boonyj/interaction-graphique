@@ -17,8 +17,8 @@ void ei_app_create(ei_size_t main_window_size, bool fullscreen){
         // Initialisation of the application
         hw_init();
         main_surface  = hw_create_window(main_window_size, fullscreen);
-        pick_surface  = hw_create_window(main_window_size, fullscreen);
-        //pick_surface  = hw_surface_create(main_surface, main_window_size, false);
+        //pick_surface  = hw_create_window(main_window_size, fullscreen);
+        pick_surface  = hw_surface_create(main_surface, main_window_size, false);
         // Creation of widget class frame (to be registered later)
         ei_widgetclass_t* frame_class = create_frame_class();
         ei_widgetclass_t* button_class = create_button_class();
@@ -78,28 +78,26 @@ bool callback_buttonup_reverse_relief (ei_widget_t widget, ei_event_t* event, ei
 }
 
 ei_widget_t find_widget (uint32_t* pixel_pick_surface, ei_widget_t widget) {
+        // Check the widget itself first
+        if (widget->pick_id == *pixel_pick_surface) {
+                //printf("Name: %s, Pick id : %u, Pixel : %u\n", widget->wclass->name, widget->pick_id, *pixel_pick_surface);
+                return widget;
+        }
+
+        // Recursively search among the widget's children
         ei_widget_t child = ei_widget_get_first_child(widget);
-        ei_widget_t temp;
         while (child != NULL) {
-                uint32_t res =  *pixel_pick_surface;
-                if (child->pick_id == *pixel_pick_surface) {
-                        printf("Name: %s, Pick id : %d, Pixel : %d \n", child->wclass->name, child->pick_id, *pixel_pick_surface);
-                        return child;
+                ei_widget_t found_widget = find_widget(pixel_pick_surface, child);
+                if (found_widget != NULL) {
+                        return found_widget;
                 }
-                // Recursively draw children of the current child widget
-                temp = find_widget(pixel_pick_surface, child);
-
-                if (temp != ei_app_root_widget()){
-                        return temp;
-                }
-
-                // Move to the next sibling
                 child = ei_widget_get_next_sibling(child);
         }
 
-        return ei_app_root_widget();
-
+        // Return NULL if no matching widget is found
+        return NULL;
 }
+
 
 void ei_app_run(void) {
         // Get the root widget of the application
@@ -122,7 +120,7 @@ void ei_app_run(void) {
 
         // Update the screen
         hw_surface_update_rects(main_surface, NULL);
-        hw_surface_update_rects(pick_surface, NULL);
+        //hw_surface_update_rects(pick_surface, NULL);
 
         ei_bind(ei_ev_mouse_buttondown, NULL, "button", callback_buttondown_reverse_relief, NULL);
         ei_bind(ei_ev_mouse_buttonup, NULL, "all", callback_buttonup_reverse_relief, NULL);
@@ -149,31 +147,9 @@ void ei_app_run(void) {
                 ei_size_t pick_size = hw_surface_get_size(pick_surface);
                 pixel_pick_surface += (mouse.where.y * pick_size.width) + (mouse.where.x);
 
-
-                //Convert pixel color
-                uint8_t* pps_8bit = (uint8_t*) pixel_pick_surface;
-                int ir, ig, ib, ia;
-                hw_surface_get_channel_indices(pick_surface, &ir, &ig, &ib, &ia);
-                uint8_t temp[4]	= { 255, 255, 255, 255 };
-
-                temp[ir] = pps_8bit[ir];
-                temp[ig] = pps_8bit[ig];
-                temp[ib] = pps_8bit[ib];
-                temp[ia] = 255;
-
-                printf("Pich : %d:%d:%d:%d \n",temp[ir],temp[ig],temp[ib],temp[ia]);
-
-                uint8_t* res = malloc(4*sizeof(int8_t));
-
-                res[0] = temp[0];
-                res[1] = temp[1];
-                res[2] = temp[2];
-                res[3] = temp[3];
-
-                printf("Res : %d",*((uint32_t*)res));
-
                 widget = find_widget(pixel_pick_surface, ei_app_root_widget());
-                printf("Pick_id : %d , Pixel color : %d\n",widget->pick_id, *(uint32_t*)(res));
+                //printf("Pick_id : %d , Pixel color : %d\n",widget->pick_id, *pixel_pick_surface);
+
 
                 //Search for event in list
                 for (int i = 0; i < linked_event_list_size; ++i) {

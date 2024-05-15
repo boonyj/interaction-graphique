@@ -23,6 +23,21 @@ unsigned char light(unsigned char colorComponent) {
         return (unsigned char)lightComponent;
 }
 
+void assertion_pick_color(ei_widget_t widget, ei_surface_t surface){
+        if(widget->pick_color == NULL){
+                uint8_t *p =  &(widget->pick_id);
+                widget->pick_color = malloc(sizeof(ei_color_t));
+                int ir, ig, ib, ia;
+                hw_surface_get_channel_indices(surface, &ir, &ig, &ib, &ia);
+
+                // Assign extracted components to the pick_color
+                widget->pick_color->red = p[ir];
+                widget->pick_color->green = p[ig];
+                widget->pick_color->blue = p[ib];
+                widget->pick_color->alpha = 255;
+        }
+}
+
 void assertion_color(ei_color_t* child_color, ei_color_t color, int mode){
         if (mode == 0){
                 child_color->red = color.red;

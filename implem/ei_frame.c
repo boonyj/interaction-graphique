@@ -10,107 +10,109 @@ ei_widget_t frame_allocfunc (){
 void frame_releasefunc (ei_widget_t	widget){
 }
 
-void draw_frame (frame_t* child,
+void draw_frame (frame_t* frame,
                  ei_surface_t		surface,
                  ei_surface_t		pick_surface,
                  ei_rect_t*		clipper){
-        if (child->widget.wclass->drawfunc != NULL) {
-                ei_color_t color = {child->widget.color->red, child->widget.color->green, child->widget.color->blue};
+        assertion_pick_color((ei_widget_t) frame, surface);
+
+        if (frame->widget.wclass->drawfunc != NULL) {
+                ei_color_t color = {frame->widget.color->red, frame->widget.color->green, frame->widget.color->blue};
 
                 ei_point_t *points = NULL;
                 size_t points_size;
 
-                switch (child->relief) {
+                switch (frame->relief) {
                         case ei_relief_none :
-                                ei_fill(surface, child->widget.color, clipper);
+                                ei_fill(surface, frame->widget.color, clipper);
                                 if (pick_surface != NULL) {
-                                        ei_fill(pick_surface, child->widget.pick_color, clipper);
+                                        ei_fill(pick_surface, frame->widget.pick_color, clipper);
                                 }
                                 break;
                         case ei_relief_raised :
-                                assertion_color(child->widget.color, color, 1);
+                                assertion_color(frame->widget.color, color, 1);
 
                                 points = malloc(5 * sizeof(ei_point_t));
-                                calculate_haut_sans_corner_radius(points, clipper,child->widget.screen_location.size);
+                                calculate_haut_sans_corner_radius(points, clipper, frame->widget.screen_location.size);
 
                                 points_size = 5;
 
                                 ei_draw_polygon(surface, points, points_size,
-                                                *child->widget.color, clipper);
+                                                *frame->widget.color, clipper);
                                 if (pick_surface != NULL) {
                                         ei_draw_polygon(pick_surface, points, points_size,
-                                                        *child->widget.pick_color, clipper);
+                                                        *frame->widget.pick_color, clipper);
                                 }
 
-                                assertion_color(child->widget.color, color, 2);
+                                assertion_color(frame->widget.color, color, 2);
 
 
-                                points[4].x = clipper->top_left.x + child->widget.screen_location.size.width;
-                                points[4].y = clipper->top_left.y + child->widget.screen_location.size.height;
+                                points[4].x = clipper->top_left.x + frame->widget.screen_location.size.width;
+                                points[4].y = clipper->top_left.y + frame->widget.screen_location.size.height;
 
                                 ei_draw_polygon(surface, points, points_size,
-                                                *child->widget.color, clipper);
+                                                *frame->widget.color, clipper);
                                 if (pick_surface != NULL) {
                                         ei_draw_polygon(pick_surface, points, points_size,
-                                                        *child->widget.pick_color, clipper);
+                                                        *frame->widget.pick_color, clipper);
                                 }
 
-                                calculate_clipper_sans_border(clipper, child->border_width);
+                                calculate_clipper_sans_border(clipper, frame->border_width);
 
-                                assertion_color(child->widget.color, color, 0);
+                                assertion_color(frame->widget.color, color, 0);
 
-                                ei_fill(surface, child->widget.color, clipper);
+                                ei_fill(surface, frame->widget.color, clipper);
 
                                 if (pick_surface != NULL) {
-                                        ei_fill(pick_surface, child->widget.pick_color, clipper);
+                                        ei_fill(pick_surface, frame->widget.pick_color, clipper);
                                 }
 
-                                calculate_clipper_avec_border(clipper, child->border_width);
+                                calculate_clipper_avec_border(clipper, frame->border_width);
                                 break;
                         case ei_relief_sunken :
-                                assertion_color(child->widget.color, color, 2);
+                                assertion_color(frame->widget.color, color, 2);
 
                                 points = malloc(5 * sizeof(ei_point_t));
-                                calculate_haut_sans_corner_radius(points, clipper,child->widget.screen_location.size);
+                                calculate_haut_sans_corner_radius(points, clipper, frame->widget.screen_location.size);
 
                                 points_size = 5;
 
                                 ei_draw_polygon(surface, points, points_size,
-                                                *child->widget.color, clipper);
+                                                *frame->widget.color, clipper);
                                 if (pick_surface != NULL) {
                                         ei_draw_polygon(pick_surface, points, points_size,
-                                                        *child->widget.pick_color, clipper);
+                                                        *frame->widget.pick_color, clipper);
                                 }
 
-                                assertion_color(child->widget.color, color, 1);
+                                assertion_color(frame->widget.color, color, 1);
 
 
-                                points[4].x = clipper->top_left.x + child->widget.screen_location.size.width;
-                                points[4].y = clipper->top_left.y + child->widget.screen_location.size.height;
+                                points[4].x = clipper->top_left.x + frame->widget.screen_location.size.width;
+                                points[4].y = clipper->top_left.y + frame->widget.screen_location.size.height;
 
                                 ei_draw_polygon(surface, points, points_size,
-                                                *child->widget.color, clipper);
+                                                *frame->widget.color, clipper);
                                 if (pick_surface != NULL) {
                                         ei_draw_polygon(pick_surface, points, points_size,
-                                                        *child->widget.pick_color, clipper);
+                                                        *frame->widget.pick_color, clipper);
                                 }
 
-                                calculate_clipper_sans_border(clipper, child->border_width);
+                                calculate_clipper_sans_border(clipper, frame->border_width);
 
-                                assertion_color(child->widget.color, color, 0);
+                                assertion_color(frame->widget.color, color, 0);
 
-                                ei_fill(surface, child->widget.color, clipper);
+                                ei_fill(surface, frame->widget.color, clipper);
 
                                 if (pick_surface != NULL) {
-                                        ei_fill(pick_surface, child->widget.pick_color, clipper);
+                                        ei_fill(pick_surface, frame->widget.pick_color, clipper);
                                 }
 
-                                calculate_clipper_avec_border(clipper, child->border_width);
+                                calculate_clipper_avec_border(clipper, frame->border_width);
                                 break;
                 }
-                if (child->text != NULL){
-                        draw_text(child->text, child->text_font, child->text_color, child->widget.screen_location.top_left,
-                                  child->widget.screen_location.size, surface, clipper);
+                if (frame->text != NULL){
+                        draw_text(frame->text, frame->text_font, frame->text_color, frame->widget.screen_location.top_left,
+                                  frame->widget.screen_location.size, surface, clipper);
                 }
         }
 }
