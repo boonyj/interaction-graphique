@@ -70,12 +70,12 @@ void draw_toplevel (toplevel_t * toplevel,
                                 *toplevel->widget.pick_color, clipper);
         }
 
-        ei_rect_t* clipper_content = malloc(sizeof (ei_rect_t));
+        ei_rect_t* clipper_content = toplevel->widget.content_rect;
         clipper_content->top_left.x = clipper->top_left.x;
         clipper_content->top_left.y = clipper->top_left.y + height;
 
-        clipper_content->size.width = clipper->size.width;
-        clipper_content->size.height = clipper->size.height - height;
+        clipper_content->size.width += 2 * toplevel->border_width;
+        clipper_content->size.height += 2 * toplevel->border_width;
 
         ei_fill(surface, toplevel->widget.color, clipper_content);
         if (pick_surface != NULL) {
@@ -90,7 +90,7 @@ void draw_toplevel (toplevel_t * toplevel,
         ei_point_t where = toplevel->widget.screen_location.top_left;
         where.x += 30;
         ei_draw_text(surface, &where, toplevel->title, toplevel->title_font, toplevel->title_color, clipper);
-        calculate_clipper_avec_border(clipper, toplevel->border_width);
+        //calculate_clipper_avec_border(clipper, toplevel->border_width);
         toplevel->widget.screen_location.top_left.y += height + 2*toplevel->border_width;
 
 }

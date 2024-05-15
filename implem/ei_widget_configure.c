@@ -110,6 +110,8 @@ void			ei_toplevel_configure		(ei_widget_t		widget,
         toplevel->widget = *widget;
 
         if (requested_size != NULL){
+                toplevel->widget.content_rect = malloc(sizeof (ei_rect_t));
+                toplevel->widget.content_rect->size = *requested_size;
                 ei_widget_set_requested_size(&(toplevel->widget), *requested_size);
         }
 
