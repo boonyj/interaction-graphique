@@ -1,4 +1,5 @@
 #include "ei_geometrymanager.h"
+#include "ei_implementation.h"
 
 static ei_geometrymanager_t** geo_mgr_list = NULL;
 static size_t geo_mgr_list_size = 0;
@@ -10,7 +11,7 @@ void	ei_geometry_run_finalize(ei_widget_t widget, ei_rect_t* new_screen_location
                 // Gérer l'erreur ou retourner
                 return;
         }
-
+        widget->screen_location = *new_screen_location;
 }
 
 void	ei_geometrymanager_register	(ei_geometrymanager_t* geometrymanager){

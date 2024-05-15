@@ -1,7 +1,5 @@
 #include "ei_widget.h"
 #include "ei_implementation.h"
-#include "ei_frame.h"
-#include "ei_button.h"
 
 static uint32_t pick_counter = 0;
 
@@ -14,10 +12,9 @@ ei_widget_t ei_widget_create(ei_const_string_t class_name,
         widget->wclass = malloc(sizeof(struct ei_widgetclass_t));
         widget->pick_color = NULL;
         widget->color = malloc(sizeof(ei_color_t));
-        widget->geom_params = malloc(sizeof (ei_geom_param_t));
+        widget->geom_params = NULL;
 
         strcpy(widget->wclass->name, class_name);
-
         widget->wclass->allocfunc = type_widget->allocfunc;
         widget->wclass->drawfunc = type_widget->drawfunc;
         widget->wclass->releasefunc = type_widget->releasefunc;

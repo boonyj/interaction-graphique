@@ -63,10 +63,6 @@ void draw_frame (frame_t* frame,
 
                                 ei_fill(surface, frame->widget.color, clipper);
 
-                                if (pick_surface != NULL) {
-                                        ei_fill(pick_surface, frame->widget.pick_color, clipper);
-                                }
-
                                 calculate_clipper_avec_border(clipper, frame->border_width);
                                 break;
                         case ei_relief_sunken :
@@ -102,10 +98,6 @@ void draw_frame (frame_t* frame,
                                 assertion_color(frame->widget.color, color, 0);
 
                                 ei_fill(surface, frame->widget.color, clipper);
-
-                                if (pick_surface != NULL) {
-                                        ei_fill(pick_surface, frame->widget.pick_color, clipper);
-                                }
 
                                 calculate_clipper_avec_border(clipper, frame->border_width);
                                 break;
