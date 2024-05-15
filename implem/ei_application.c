@@ -6,7 +6,7 @@
 #include "ei_toplevel.h"
 #include "ei_event.h"
 #include "ei_event.c"
-
+#include "ei_draw_tool.c"
 #include "ei_implementation.c"
 
 ei_surface_t main_surface = NULL;
@@ -29,14 +29,15 @@ void ei_app_create(ei_size_t main_window_size, bool fullscreen){
         ei_widgetclass_register(button_class);
         ei_widgetclass_register(toplevel_class);
 
-        // Can't two root at the same moment (button_root to test button and  frame_root to test_root)
-        root = ei_widget_create("frame", NULL, NULL, NULL);
 
         // Creation of geometry manager
-        ei_geometrymanager_t* placeur = create_placeur();
+        ei_geometrymanager_t* placeur_mng = create_placeur_mng();
 
         // Register placeur (to be used later)
-        ei_geometrymanager_register(placeur);
+        ei_geometrymanager_register(placeur_mng);
+
+        // Can't two root at the same moment (button_root to test button and  frame_root to test_root)
+        root = ei_widget_create("frame", NULL, NULL, NULL);
 }
 
 void ei_app_free(void){
@@ -53,7 +54,30 @@ bool callback_buttondown_reverse_relief (ei_widget_t widget, ei_event_t* event, 
                 return false;
 }
 
-void draw_buttons (ei_widget_t widget) {
+bool callback_move_top_level (ei_widget_t widget, ei_event_t* event, ei_user_param_t user_param) {
+        printf("Moving toplevel window !\n");
+        return true;
+}
+
+bool callback_move_top_level_end (ei_widget_t widget, ei_event_t* event, ei_user_param_t user_param) {
+        printf("Move toplevel end !\n");
+        ei_unbind(ei_ev_mouse_move, NULL, "all", callback_move_top_level, NULL);
+        ei_unbind(ei_ev_mouse_buttonup, NULL, "all", callback_move_top_level_end, NULL);
+        return true;
+}
+
+bool callback_buttondown_top_level (ei_widget_t widget, ei_event_t* event, ei_user_param_t user_param) {
+        if (event->type == ei_ev_mouse_buttondown) {
+                toplevel_t *toplevel = (toplevel_t *) widget;
+                printf("Clicked !\n");
+                ei_bind(ei_ev_mouse_move, NULL, "all", callback_move_top_level, NULL);
+                ei_bind(ei_ev_mouse_buttonup, NULL, "all", callback_move_top_level_end, NULL);
+                return true;
+        } else
+                return false;
+}
+
+void draw_all_buttons_raised (ei_widget_t widget) {
         ei_widget_t child = ei_widget_get_first_child(widget);
         while (child != NULL) {
                 if (strcmp(child->wclass->name, "button") == 0) {
@@ -62,7 +86,7 @@ void draw_buttons (ei_widget_t widget) {
                         button->widget.wclass->drawfunc(&(button->widget), main_surface, NULL, &(button->widget.screen_location));
                 }
                 // Recursively draw children of the current child widget
-                draw_buttons(child);
+                draw_all_buttons_raised(child);
 
                 // Move to the next sibling
                 child = ei_widget_get_next_sibling(child);
@@ -71,7 +95,7 @@ void draw_buttons (ei_widget_t widget) {
 
 bool callback_buttonup_reverse_relief (ei_widget_t widget, ei_event_t* event, ei_user_param_t user_param) {
         if (event->type == ei_ev_mouse_buttonup) {
-                draw_buttons(ei_app_root_widget());
+                draw_all_buttons_raised(ei_app_root_widget());
                 return true;
         } else
                 return false;
@@ -115,6 +139,10 @@ void ei_app_run(void) {
         ei_rect_t *clipper = &(root_widget->children_head->screen_location);
         ei_impl_widget_draw_children(root_widget, main_surface, pick_surface, clipper);
 
+        ei_rect_t main_surface_rect = hw_surface_get_rect(main_surface);
+        //ei_draw_image(main_surface, &(main_surface_rect.top_left),&main_surface_rect, "misc/sadio.jpg");
+
+
         hw_surface_unlock(main_surface);
         hw_surface_unlock(pick_surface);
 
@@ -124,6 +152,7 @@ void ei_app_run(void) {
 
         ei_bind(ei_ev_mouse_buttondown, NULL, "button", callback_buttondown_reverse_relief, NULL);
         ei_bind(ei_ev_mouse_buttonup, NULL, "all", callback_buttonup_reverse_relief, NULL);
+        ei_bind(ei_ev_mouse_buttondown, NULL, "toplevel", callback_buttondown_top_level, NULL);
 
         //Main loop here
         ei_event_t event;
