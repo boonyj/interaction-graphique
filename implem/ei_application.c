@@ -79,18 +79,26 @@ bool callback_buttonup_reverse_relief (ei_widget_t widget, ei_event_t* event, ei
 
 ei_widget_t find_widget (uint32_t* pixel_pick_surface, ei_widget_t widget) {
         ei_widget_t child = ei_widget_get_first_child(widget);
+        ei_widget_t temp;
         while (child != NULL) {
+                uint32_t res =  *pixel_pick_surface;
                 if (child->pick_id == *pixel_pick_surface) {
                         printf("Name: %s, Pick id : %d, Pixel : %d \n", child->wclass->name, child->pick_id, *pixel_pick_surface);
                         return child;
                 }
                 // Recursively draw children of the current child widget
-                widget = find_widget(pixel_pick_surface, child);
+                temp = find_widget(pixel_pick_surface, child);
+
+                if (temp != ei_app_root_widget()){
+                        return temp;
+                }
 
                 // Move to the next sibling
                 child = ei_widget_get_next_sibling(child);
         }
-        return widget;
+
+        return ei_app_root_widget();
+
 }
 
 void ei_app_run(void) {
@@ -136,21 +144,36 @@ void ei_app_run(void) {
                 // 1. Get widget in cursor position
                 mouse = event.param.mouse;
 
+                //Move to current pixel
                 uint32_t* pixel_pick_surface = (uint32_t*)hw_surface_get_buffer(pick_surface);
                 ei_size_t pick_size = hw_surface_get_size(pick_surface);
                 pixel_pick_surface += (mouse.where.y * pick_size.width) + (mouse.where.x);
+
+
+                //Convert pixel color
+                uint8_t* pps_8bit = (uint8_t*) pixel_pick_surface;
                 int ir, ig, ib, ia;
                 hw_surface_get_channel_indices(pick_surface, &ir, &ig, &ib, &ia);
                 uint8_t temp[4]	= { 255, 255, 255, 255 };
 
-                temp[ir] = pixel_pick_surface[ir];
-                temp[ig] = pixel_pick_surface[ig];
-                temp[ib] = pixel_pick_surface[ib];
+                temp[ir] = pps_8bit[ir];
+                temp[ig] = pps_8bit[ig];
+                temp[ib] = pps_8bit[ib];
+                temp[ia] = 255;
 
                 printf("Pich : %d:%d:%d:%d \n",temp[ir],temp[ig],temp[ib],temp[ia]);
 
-                widget = find_widget(((uint32_t*)temp), ei_app_root_widget());
-                printf("Pick_id : %d , Pixel color : %d\n",widget->pick_id, *((uint32_t*)temp));
+                uint8_t* res = malloc(4*sizeof(int8_t));
+
+                res[0] = temp[0];
+                res[1] = temp[1];
+                res[2] = temp[2];
+                res[3] = temp[3];
+
+                printf("Res : %d",*((uint32_t*)res));
+
+                widget = find_widget(pixel_pick_surface, ei_app_root_widget());
+                printf("Pick_id : %d , Pixel color : %d\n",widget->pick_id, *(uint32_t*)(res));
 
                 //Search for event in list
                 for (int i = 0; i < linked_event_list_size; ++i) {
