@@ -3,7 +3,7 @@
 #include "ei_frame.h"
 #include "ei_button.h"
 
-static uint32_t pick_counter = 1000;
+static uint32_t pick_counter = 0;
 
 ei_widget_t ei_widget_create(ei_const_string_t class_name,
                              ei_widget_t parent,
@@ -12,7 +12,7 @@ ei_widget_t ei_widget_create(ei_const_string_t class_name,
         ei_widgetclass_t* type_widget = ei_widgetclass_from_name(class_name);
         ei_widget_t widget  = type_widget->allocfunc();
         widget->wclass = malloc(sizeof(struct ei_widgetclass_t));
-        widget->pick_color = malloc(sizeof(ei_color_t));
+        widget->pick_color = NULL;
         widget->color = malloc(sizeof(ei_color_t));
         widget->geom_params = malloc(sizeof (ei_geom_param_t));
 
@@ -52,10 +52,11 @@ ei_widget_t ei_widget_create(ei_const_string_t class_name,
                 }
         }
 
-        pick_counter+= 1000;
+        pick_counter+= 1;
         widget->pick_id = pick_counter;
 
-        // Extract red, green, blue, and alpha components
+
+        /*// Extract red, green, blue, and alpha components
         uint8_t red = (widget->pick_id >> 16) & 0xFF;
         uint8_t green = (widget->pick_id >> 8) & 0xFF;
         uint8_t blue = widget->pick_id & 0xFF;
@@ -64,7 +65,7 @@ ei_widget_t ei_widget_create(ei_const_string_t class_name,
         widget->pick_color->red = red;
         widget->pick_color->green = green;
         widget->pick_color->blue = blue;
-        widget->pick_color->alpha = 255;
+        widget->pick_color->alpha = 255;*/
 
 
         widget->wclass->setdefaultsfunc(widget);

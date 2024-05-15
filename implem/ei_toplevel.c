@@ -17,7 +17,22 @@ void draw_toplevel (toplevel_t * child,
                     ei_surface_t		surface,
                     ei_surface_t		pick_surface,
                     ei_rect_t*		clipper) {
+        if(child->widget.pick_color == NULL){
+                uint8_t *p =  &(child->widget.pick_id);
+                child->widget.pick_color = malloc(sizeof(ei_color_t));
+                int ir, ig, ib, ia;
+                hw_surface_get_channel_indices(surface, &ir, &ig, &ib, &ia);
+                uint8_t temp[4]	= { 255, 255, 255, 255 };
+                temp[ir] = p[ir];
+                temp[ig] = p[ig];
+                temp[ib] = p[ib];
 
+                // Assign extracted components to the pick_color
+                child->widget.pick_color->red = temp[ir];
+                child->widget.pick_color->green = temp[ig];
+                child->widget.pick_color->blue = temp[ib];
+                child->widget.pick_color->alpha = 255;
+        }
         ei_color_t color = {child->widget.color->red, child->widget.color->green, child->widget.color->blue};
 
         assertion_color(child->widget.color, color, 2);
