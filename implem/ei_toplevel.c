@@ -108,7 +108,8 @@ void toplevel_setdefaultsfunc(ei_widget_t		widget){
         toplevel->title = NULL;
         toplevel->title_font = ei_default_font;
         toplevel->title_color = ei_font_default_color;
-
+        toplevel->widget.requested_size.width = 320;
+        toplevel->widget.requested_size.height = 240;
 }
 
 ei_widgetclass_t* create_toplevel_class() {

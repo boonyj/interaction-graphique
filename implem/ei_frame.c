@@ -4,6 +4,7 @@
 
 ei_widget_t frame_allocfunc (){
         ei_widget_t widget = calloc(1,sizeof(struct frame_t));
+
         return widget;
 }
 
@@ -102,10 +103,14 @@ void draw_frame (frame_t* frame,
                                 calculate_clipper_avec_border(clipper, frame->border_width);
                                 break;
                 }
-                if (frame->text != NULL){
-                        draw_text(frame->text, frame->text_font, frame->text_color, frame->widget.screen_location.top_left,
-                                  frame->widget.screen_location.size, surface, clipper);
-                }
+                if ((frame->text) != NULL){
+                        printf("%p ", (frame->text));
+                        printf("%c", *(frame->text));
+                        if (*(frame->text) != NULL){
+                                //ei_draw_text(surface,&(frame->widget.screen_location.top_left), (ei_string_t){"2"}, frame->text_font, frame->text_color, clipper);
+                               draw_text((frame->text), frame->text_font, frame->text_color, frame->widget.screen_location.top_left,
+                                         frame->widget.screen_location.size, surface, clipper);}
+                        }
         }
 }
 
@@ -121,6 +126,16 @@ void frame_setdefaultsfunc(ei_widget_t		widget){
         frame->widget = *widget;
         frame->relief = ei_relief_none;
         frame->border_width = 0;
+        frame->text_color = ei_font_default_color;
+        frame->text_anchor = ei_anc_none;
+        frame->text_font = ei_default_font;
+        frame->text = NULL;
+        frame->widget.requested_size.width = 300;
+        frame->widget.requested_size.height = 200;
+        frame->widget.color->red = ei_default_background_color.red;
+        frame->widget.color->green = ei_default_background_color.green;
+        frame->widget.color->blue = ei_default_background_color.blue;
+        frame->widget.color->alpha = ei_default_background_color.alpha;
 }
 
 ei_widgetclass_t* create_frame_class() {

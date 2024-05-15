@@ -25,6 +25,7 @@ void			ei_frame_configure		(ei_widget_t		widget,
 
         if (requested_size != NULL){
                 ei_widget_set_requested_size(&(frame->widget), *requested_size);
+                frame->widget.screen_location.size = *requested_size;
         }
 
         if (color != NULL) {
@@ -42,8 +43,11 @@ void			ei_frame_configure		(ei_widget_t		widget,
                 frame->border_width = *border_width;
         }
 
-        if (text != NULL){
+        if (text != NULL ){
+                printf("%p %s\n",text, *text);
                 frame->text = *text;
+                printf("%p %c\n",frame->text, *frame->text);
+
                 if (text_color !=  NULL){
                         frame->text_color.alpha = text_color->alpha;
                         frame->text_color.red = text_color->red;
@@ -79,6 +83,7 @@ void			ei_button_configure		(ei_widget_t		widget,
 
         if (requested_size != NULL){
                 ei_widget_set_requested_size(&(button->widget), *requested_size);
+                button->widget.screen_location.size = *requested_size;
         }
 
         if (color != NULL) {
@@ -118,7 +123,7 @@ void			ei_button_configure		(ei_widget_t		widget,
 
         // To be verified with prof
         if (callback != NULL) {
-                ei_bind(ei_ev_mouse_buttondown, widget, NULL, *callback, NULL);
+                //ei_bind(ei_ev_mouse_buttondown, widget, NULL, *callback, NULL);
         }
 
         if(img != NULL){
@@ -141,6 +146,7 @@ void			ei_toplevel_configure		(ei_widget_t		widget,
                 toplevel->widget.content_rect = malloc(sizeof (ei_rect_t));
                 toplevel->widget.content_rect->size = *requested_size;
                 ei_widget_set_requested_size(&(toplevel->widget), *requested_size);
+                toplevel->widget.screen_location.size = *requested_size;
         }
 
         if (color != NULL) {
