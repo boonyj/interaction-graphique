@@ -12,6 +12,10 @@ typedef struct button_t {
         ei_font_t text_font;
         ei_string_t text;
         ei_anchor_t text_anchor;
+        ei_rect_ptr_t img_rect;
+        ei_anchor_t img_anchor;
+        ei_callback_t callback;
+        ei_user_param_t	user_param;
 } button_t;
 
 ei_widget_t button_allocfunc ();

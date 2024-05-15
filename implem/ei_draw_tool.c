@@ -55,15 +55,17 @@ void assertion_color(ei_color_t* child_color, ei_color_t color, int mode){
 
 }
 
-void draw_text(ei_string_t text, ei_font_t text_font, ei_color_t text_color, ei_point_t top_left, ei_size_t size, ei_surface_t surface, ei_rect_t* clipper){
-        int width = 0;
-        int height = 0;
-        hw_text_compute_size(text,text_font, &width, &height);
-        ei_point_t where = top_left;
-        where.x += size.width/2 - width/2;
-        where.y += size.height/2 - height/2;
+void draw_image_from_surface(ei_surface_t surface, ei_surface_t image,  ei_point_t* where, const ei_rect_t*	clipper){
+        ei_rect_t image_rect = hw_surface_get_rect(image);
+        ei_rect_t dst_rect = hw_surface_get_rect(surface);
+        dst_rect.top_left.x = where->x;
+        dst_rect.top_left.y = where->y;
 
-        ei_draw_text(surface, &where, text, text_font, text_color, clipper);
+        //Auto clipper if necessary
+        dst_rect.size.width = image_rect.size.width;
+        dst_rect.size.height = image_rect.size.height;
+
+        ei_copy_surface(surface, &dst_rect, image, &image_rect, true);
 }
 
 void ei_draw_image(ei_surface_t		surface,  ei_point_t* where, const ei_rect_t*	clipper, ei_const_string_t filename){
@@ -79,6 +81,18 @@ void ei_draw_image(ei_surface_t		surface,  ei_point_t* where, const ei_rect_t*	c
 
         ei_copy_surface(surface, &dst_rect, image, &image_rect, true);
 }
+
+void draw_text(ei_string_t text, ei_font_t text_font, ei_color_t text_color, ei_point_t top_left, ei_size_t size, ei_surface_t surface, ei_rect_t* clipper){
+        int width = 0;
+        int height = 0;
+        hw_text_compute_size(text,text_font, &width, &height);
+        ei_point_t where = top_left;
+        where.x += size.width/2 - width/2;
+        where.y += size.height/2 - height/2;
+
+        ei_draw_text(surface, &where, text, text_font, text_color, clipper);
+}
+
 
 void calculate_clipper_sans_border(ei_rect_t*	clipper, int border_width){
         clipper->size.width -= border_width * 2;

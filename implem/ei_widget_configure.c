@@ -4,6 +4,8 @@
 #include "ei_widget_attributes.h"
 #include "ei_button.h"
 #include "ei_toplevel.h"
+#include "ei_draw_tool.h"
+
 
 void			ei_frame_configure		(ei_widget_t		widget,
                                                                ei_size_t*		requested_size,
@@ -95,6 +97,10 @@ void			ei_button_configure		(ei_widget_t		widget,
                 if (text_anchor !=  NULL){
                         button->text_anchor = *text_anchor;
                 }
+        }
+
+        if(img != NULL){
+                draw_image_from_surface(ei_app_root_surface(),*img,&(button->widget.screen_location.top_left),button->widget.parent->content_rect);
         }
 }
 
