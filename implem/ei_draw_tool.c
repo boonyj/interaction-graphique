@@ -66,6 +66,20 @@ void draw_text(ei_string_t text, ei_font_t text_font, ei_color_t text_color, ei_
         ei_draw_text(surface, &where, text, text_font, text_color, clipper);
 }
 
+void ei_draw_image(ei_surface_t		surface,  ei_point_t* where, const ei_rect_t*	clipper, ei_const_string_t filename){
+        ei_surface_t image = hw_image_load(filename, surface);
+        ei_rect_t image_rect = hw_surface_get_rect(image);
+        ei_rect_t dst_rect = hw_surface_get_rect(surface);
+        dst_rect.top_left.x = where->x;
+        dst_rect.top_left.y = where->y;
+
+        //Auto clipper if necessary
+        dst_rect.size.width = image_rect.size.width;
+        dst_rect.size.height = image_rect.size.height;
+
+        ei_copy_surface(surface, &dst_rect, image, &image_rect, true);
+}
+
 void calculate_clipper_sans_border(ei_rect_t*	clipper, int border_width){
         clipper->size.width -= border_width * 2;
         clipper->size.height -= border_width * 2;
