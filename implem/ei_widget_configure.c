@@ -6,6 +6,7 @@
 #include "ei_toplevel.h"
 #include "ei_draw_tool.h"
 #include "ei_event.h"
+#include "ei_global.h"
 
 
 void			ei_frame_configure		(ei_widget_t		widget,
@@ -127,10 +128,11 @@ void			ei_button_configure		(ei_widget_t		widget,
         }
 
         if(img != NULL){
-                button->img = malloc(sizeof(ei_surface_t));
-                button->img = img;
+                ei_size_t img_size= hw_surface_get_size(*img);
+                button->img = hw_surface_create(main_surface,img_size,true );
+                ei_rect_t t= hw_surface_get_rect(*img);
+                ei_copy_surface(button->img, &t,*img,&t, true);
                 button->img_rect = **img_rect;
-                //draw_image_from_surface(ei_app_root_surface(),*img,&(button->widget.screen_location.top_left),button->widget.parent->content_rect);
         }
 }
 

@@ -11,6 +11,9 @@ typedef struct frame_t {
         ei_font_t text_font;
         ei_string_t text;
         ei_anchor_t text_anchor;
+        ei_surface_t img;
+        ei_rect_t img_rect;
+        ei_anchor_t img_anchor;
 } frame_t;
 
 ei_widget_t frame_allocfunc ();

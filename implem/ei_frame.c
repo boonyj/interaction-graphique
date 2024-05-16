@@ -107,6 +107,9 @@ void draw_frame (frame_t* frame,
                        draw_text((frame->text), frame->text_font, frame->text_color, frame->widget.screen_location.top_left,
                                  frame->widget.screen_location.size, surface, clipper);}
                 }
+                if (frame->img != NULL){
+                        draw_image_from_surface(surface, frame->img, &(frame->widget.screen_location.top_left), &(frame->img_rect));
+                }
 }
 
 void frame_drawfunc (ei_widget_t		widget,

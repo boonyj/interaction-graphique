@@ -17,7 +17,7 @@ void assertion_pick_color(ei_widget_t widget, ei_surface_t surface);
 
 void draw_text(ei_string_t text, ei_font_t text_font, ei_color_t text_color, ei_point_t top_left, ei_size_t size, ei_surface_t surface, ei_rect_t* clipper);
 
-void draw_image_from_surface(ei_surface_t surface, ei_surface_t image,  ei_point_t* where, const ei_rect_t* clipper, ei_rect_ptr_t img_rect);
+void draw_image_from_surface(ei_surface_t surface, ei_surface_t image,  ei_point_t* where, ei_rect_ptr_t img_rect);
 
 void ei_draw_image(ei_surface_t	surface,  ei_point_t* where, const ei_rect_t*	clipper, ei_const_string_t filename);
 

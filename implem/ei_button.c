@@ -1,8 +1,6 @@
 #include "ei_button.h"
 #include "ei_draw_tool.h"
 
-static int i = 0;
-
 ei_widget_t button_allocfunc (){
         ei_widget_t widget = malloc(sizeof(struct button_t));
         return widget;
@@ -208,13 +206,7 @@ void draw_button (button_t * button,
                                   button->widget.screen_location.size, surface, clipper);
                 }
                 if (button->img != NULL){
-                        printf("%d   %p\n", i, &(button->img));
-                        printf("%d   %d\n", i,button->img_rect.top_left.x);
-                        printf("%d   %d\n", i,button->img_rect.top_left.y);
-                        printf("%d   %d\n", i,button->img_rect.size.width);
-                        printf("%d   %d\n", i,button->img_rect.size.height);
-                        i++;
-                        draw_image_from_surface(surface, button->img, &(button->widget.screen_location.top_left), clipper, &(button->img_rect));
+                        draw_image_from_surface(surface, button->img, &(button->widget.screen_location.top_left), &(button->img_rect));
                 }
         }
 }

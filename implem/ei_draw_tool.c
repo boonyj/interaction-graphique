@@ -1,5 +1,6 @@
 #include <math.h>
 #include "ei_draw_tool.h"
+#include "ei_global.h"
 
 int nb_segments = 32;
 
@@ -54,16 +55,15 @@ void assertion_color(ei_color_t* child_color, ei_color_t color, int mode){
         }
 
 }
+void draw_image_from_surface(ei_surface_t surface, ei_surface_t image, ei_point_t* where,
+                             ei_rect_t* img_rect) {
 
-void draw_image_from_surface(ei_surface_t surface, ei_surface_t image,  ei_point_t* where,
-                             const ei_rect_t* clipper, ei_rect_ptr_t img_rect ){
         ei_rect_t dst_rect = hw_surface_get_rect(surface);
         dst_rect.top_left.x = where->x;
         dst_rect.top_left.y = where->y;
 
-        //Auto clipper if necessary
         dst_rect.size.width = img_rect->size.width;
-        dst_rect.size.height = img_rect->size.height + 100;
+        dst_rect.size.height = img_rect->size.height;
 
         ei_copy_surface(surface, &dst_rect, image, img_rect, true);
 }
