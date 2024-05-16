@@ -191,8 +191,7 @@ void			ei_toplevel_configure		(ei_widget_t		widget,
         }
 
         if (title != NULL){
-                toplevel->title = malloc(sizeof (char*));
-                strcpy(toplevel->title, *title);
+                toplevel->title = *title;
                 toplevel->title_color.red =  0xff;
                 toplevel->title_color.green =  0xff;
                 toplevel->title_color.blue =  0xff;

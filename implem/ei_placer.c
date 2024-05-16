@@ -32,6 +32,7 @@ void		ei_place	(ei_widget_t		widget,
         placeur_param* placeur = (placeur_param*) widget->geom_params;
 
         placeur->anchor = (anchor != NULL) ? *anchor : ei_anc_northwest;
+        printf("Valeur x : %d\n",*x);
         placeur->x = (x != NULL) ? *x : 0;
         placeur->y = (y != NULL) ? *y : 0;
         placeur->width = (width != NULL) ? *width : (widget->requested_size.width != 0) ? widget->requested_size.width: 0;
@@ -42,6 +43,7 @@ void		ei_place	(ei_widget_t		widget,
         placeur->rel_height = (rel_height != NULL) ? *rel_height : 0.0;
 
         placeur->geom_mng.manager->runfunc(widget);
+        printf("x : %d, y : %d\n",placeur->x, placeur->y);
 
         if (strcmp(widget->wclass->name, "toplevel") == 0) {
                 toplevel_t* toplevel = (toplevel_t*) widget;

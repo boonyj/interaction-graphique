@@ -11,6 +11,11 @@
 #include "ei_implementation.c"
 #include "ei_global.h"
 
+typedef struct ei_event_bind_widget_t{
+        ei_event_t* event;
+        ei_impl_widget_t* widget;
+}ei_event_bind_widget_t;
+
 void ei_app_create(ei_size_t main_window_size, bool fullscreen){
         // Initialisation of the application
         hw_init();
@@ -68,27 +73,41 @@ bool callback_move_top_level (ei_widget_t widget, ei_event_t* event, ei_user_par
 
         printf("Moving toplevel window!\n");
 
-        // Cast widget to toplevel_t pointer
-        toplevel_t *toplevel = (toplevel_t *) widget;
-
         // Retrieve initial mouse position from user_param
-        ei_event_t* initial_event = (ei_event_t*) user_param;
-        ei_mouse_event_t initial_mouse = initial_event->param.mouse;
+        ei_event_bind_widget_t* initial_event_bind = (ei_event_bind_widget_t*) user_param;
+        ei_mouse_event_t initial_mouse = initial_event_bind->event->param.mouse;
         ei_mouse_event_t mouse = event->param.mouse;
+
+        widget = initial_event_bind->widget;
+
 
         // Calculate movement since initial position
         int dx = mouse.where.x - initial_mouse.where.x;
         int dy = mouse.where.y - initial_mouse.where.y;
 
         // Calculate new position of toplevel widget
-        int final_x = toplevel->widget.screen_location.top_left.x + dx;
-        int final_y = toplevel->widget.screen_location.top_left.y + dy;
+        int* final_x = malloc(sizeof(int));
+        int* final_y = malloc(sizeof(int));
 
-        printf("New position: x = %d, y = %d\n", final_x, final_y);
+        *final_x = widget->screen_location.top_left.x + dx;
+        *final_y = widget->screen_location.top_left.y + dy;
 
+        printf("Toplevel topleft (%s): x = %d, y = %d\n", widget->wclass->name,widget->screen_location.top_left.x, widget->screen_location.top_left.y);
+        printf("New position: x = %d, y = %d\n", *final_x, *final_y);
+        printf("New Initial position: x = %d, y = %d\n", initial_mouse.where.x, initial_mouse.where.y);
         // Update position of the toplevel widget
-        ei_place(&toplevel->widget, NULL, &final_x, &final_y, NULL, NULL, NULL, NULL, NULL, NULL);
+        ei_place(widget, NULL, final_x, final_y, NULL, NULL, NULL, NULL, NULL, NULL);
 
+//        ei_widget_t sibling = toplevel->widget.children_head->next_sibling;
+//
+//        while (sibling != NULL){
+//                ei_place(sibling->next_sibling, NULL, &final_x, &final_y, NULL, NULL, NULL, NULL, NULL, NULL);
+//                sibling = ei_widget_get_next_sibling(sibling);
+//        }
+
+        root->wclass->drawfunc(root, main_surface, pick_surface, NULL);
+        ei_rect_t *clipper = &(root->children_head->screen_location);
+        ei_impl_widget_draw_children(root, main_surface, pick_surface, clipper);
 
         return true;
 }
@@ -96,7 +115,7 @@ bool callback_move_top_level (ei_widget_t widget, ei_event_t* event, ei_user_par
 
 bool callback_move_top_level_end (ei_widget_t widget, ei_event_t* event, ei_user_param_t user_param) {
         printf("Move toplevel end !\n");
-        ei_unbind(ei_ev_mouse_move, NULL, "all", callback_move_top_level, event);
+        ei_unbind(ei_ev_mouse_move, NULL, "all", callback_move_top_level, user_param);
         ei_unbind(ei_ev_mouse_buttonup, NULL, "all", callback_move_top_level_end, NULL);
         return true;
 }
@@ -108,9 +127,11 @@ bool callback_buttondown_top_level (ei_widget_t widget, ei_event_t* event, ei_us
                 event_tbs->type = event->type;
                 event_tbs->param = event->param;
                 event_tbs->modifier_mask = event->modifier_mask;
-                ei_bind(ei_ev_mouse_move, NULL, "all", callback_move_top_level, event_tbs);
+                ei_event_bind_widget_t* param = malloc(sizeof(ei_event_bind_widget_t));
+                param->event = event_tbs;
+                param->widget = widget;
+                ei_bind(ei_ev_mouse_move, NULL, "all", callback_move_top_level, param);
                 ei_bind(ei_ev_mouse_buttonup, NULL, "all", callback_move_top_level_end, NULL);
-
                 return true;
         } else
                 return false;
@@ -170,9 +191,6 @@ void ei_app_run(void) {
         ei_rect_t *clipper = &(root_widget->children_head->screen_location);
         ei_impl_widget_draw_children(root_widget, main_surface, pick_surface, clipper);
 
-        ei_rect_t main_surface_rect = hw_surface_get_rect(main_surface);
-        //ei_draw_image(main_surface, &(main_surface_rect.top_left),&main_surface_rect, "misc/sadio.jpg");
-
 
         hw_surface_unlock(main_surface);
         hw_surface_unlock(pick_surface);
@@ -191,10 +209,6 @@ void ei_app_run(void) {
         while ((event.type != ei_ev_close)) {
                 event.type = ei_ev_none;
                 //Update screen
-                root->wclass->drawfunc(root, main_surface, pick_surface, NULL);
-                ei_rect_t *clipper = &(root->children_head->screen_location);
-                ei_impl_widget_draw_children(root, main_surface, pick_surface, clipper);
-
                 hw_surface_update_rects(main_surface, NULL);
 
                 hw_surface_lock(main_surface);
