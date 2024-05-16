@@ -127,6 +127,9 @@ void			ei_button_configure		(ei_widget_t		widget,
         }
 
         if(img != NULL){
+                button->img = malloc(sizeof(ei_surface_t));
+                button->img = img;
+                button->img_rect = **img_rect;
                 //draw_image_from_surface(ei_app_root_surface(),*img,&(button->widget.screen_location.top_left),button->widget.parent->content_rect);
         }
 }

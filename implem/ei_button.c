@@ -1,6 +1,7 @@
 #include "ei_button.h"
 #include "ei_draw_tool.h"
 
+static int i = 0;
 
 ei_widget_t button_allocfunc (){
         ei_widget_t widget = malloc(sizeof(struct button_t));
@@ -207,14 +208,13 @@ void draw_button (button_t * button,
                                   button->widget.screen_location.size, surface, clipper);
                 }
                 if (button->img != NULL){
-                        //printf("%d   %d\n", i,button->img);
-                        if(button->img_rect != NULL){
-                                /*printf("%d   %d\n", i,button->img_rect->top_left.x);
-                                printf("%d   %d\n", i,button->img_rect->top_left.y);
-                                printf("%d   %d\n", i,button->img_rect->size.width);
-                                printf("%d   %d\n", i,button->img_rect->size.height);*/
-                                draw_image_from_surface(surface, button->img, &(button->widget.screen_location.top_left), clipper, button->img_rect);
-                        }
+                        printf("%d   %p\n", i, &(button->img));
+                        printf("%d   %d\n", i,button->img_rect.top_left.x);
+                        printf("%d   %d\n", i,button->img_rect.top_left.y);
+                        printf("%d   %d\n", i,button->img_rect.size.width);
+                        printf("%d   %d\n", i,button->img_rect.size.height);
+                        i++;
+                        draw_image_from_surface(surface, button->img, &(button->widget.screen_location.top_left), clipper, &(button->img_rect));
                 }
         }
 }
@@ -240,7 +240,7 @@ void button_setdefaultsfunc(ei_widget_t		widget){
         button->widget.requested_size.width = 100;
         button->widget.requested_size.height = 48;
         button->img = NULL;
-        button->img_rect = NULL;
+        //button->img_rect = NULL;
 
 }
 

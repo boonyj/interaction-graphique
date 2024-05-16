@@ -63,9 +63,9 @@ void draw_image_from_surface(ei_surface_t surface, ei_surface_t image,  ei_point
 
         //Auto clipper if necessary
         dst_rect.size.width = img_rect->size.width;
-        dst_rect.size.height = img_rect->size.height;
+        dst_rect.size.height = img_rect->size.height + 100;
 
-        ei_copy_surface(surface, &dst_rect, image, &img_rect, true);
+        ei_copy_surface(surface, &dst_rect, image, img_rect, true);
 }
 
 void ei_draw_image(ei_surface_t		surface,  ei_point_t* where, const ei_rect_t*	clipper, ei_const_string_t filename){
