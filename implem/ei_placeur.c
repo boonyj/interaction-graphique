@@ -64,6 +64,8 @@ void placeur_runfunc(ei_widget_t widget){
                                 printf("NEW LOCATION : x = %d, y = %d\n",new_location->top_left.x,new_location->top_left.y);
                                 break;
                         case ei_anc_none:
+                                new_location->top_left.x = placeur->x;
+                                new_location->top_left.y = placeur->y;
                                 break;
                 }
                 new_location->size.width = placeur->width;

@@ -16,6 +16,11 @@ typedef struct ei_event_bind_widget_t{
         ei_impl_widget_t* widget;
 }ei_event_bind_widget_t;
 
+typedef struct widget_list_t {
+        ei_widget_t widget;
+        struct widget_list_t* next;
+} widget_list_t;
+
 void ei_app_create(ei_size_t main_window_size, bool fullscreen){
         // Initialisation of the application
         hw_init();
@@ -137,6 +142,31 @@ bool callback_buttondown_top_level (ei_widget_t widget, ei_event_t* event, ei_us
                 return false;
 }*/
 
+// Function to add a widget to the list
+void add_widget_to_list(widget_list_t** list, ei_widget_t widget) {
+        widget_list_t* new_node = (widget_list_t*)malloc(sizeof(widget_list_t));
+        new_node->widget = widget;
+        new_node->next = *list;
+        *list = new_node;
+}
+
+// Recursive function to find all widgets with the class name "button"
+void find_all_buttons(ei_widget_t widget, widget_list_t** list) {
+        if (widget == NULL) return;
+
+        // Check if the current widget has the class name "button"
+        if (strcmp(widget->wclass->name, "button") == 0) {
+                add_widget_to_list(list, widget);
+        }
+
+        // Recursively search among the widget's children
+        ei_widget_t child = ei_widget_get_first_child(widget);
+        while (child != NULL) {
+                find_all_buttons(child, list);
+                child = ei_widget_get_next_sibling(child);
+        }
+}
+
 bool callback_move_toplevel(ei_widget_t widget, ei_event_t* event, ei_user_param_t user_param) {
         // Only proceed if the event is a mouse button down event
         if (event->type == ei_ev_mouse_move) {
@@ -155,7 +185,19 @@ bool callback_move_toplevel(ei_widget_t widget, ei_event_t* event, ei_user_param
                         // Calculate the offset between the mouse position and the toplevel position
                         int dx = mouse_position.x - toplevel->screen_location.top_left.x -(initial_mouse.where.x-toplevel->screen_location.top_left.x);
                         int dy = mouse_position.y - toplevel->screen_location.top_left.y -(initial_mouse.where.y-toplevel->screen_location.top_left.y);
-                        ei_place(widget, NULL, &dx, &dy, NULL, NULL, NULL, NULL, NULL, NULL);
+                        ei_place_xy(widget, dx, dy);
+                        // Calculate the offset between the mouse position and the buttons positions
+                        widget_list_t* button_list = NULL;
+                        find_all_buttons(root, &button_list);
+                        widget_list_t* current = button_list;
+                        while (current != NULL) {
+                                if (current->widget->pick_id != 3 && current->widget->pick_id != 4) {
+                                        int bx = mouse_position.x - current->widget->screen_location.top_left.x -(initial_mouse.where.x-current->widget->screen_location.top_left.x);
+                                        int by = mouse_position.y - current->widget->screen_location.top_left.y -(initial_mouse.where.y-current->widget->screen_location.top_left.y);
+                                        ei_place_xy(current->widget, bx, by);
+                                }
+                                current = current->next;
+                        }
                         //ei_place(widget->children_head->next_sibling->next_sibling, NULL, &dx, &dy, NULL, NULL, NULL, NULL, NULL, NULL);
 
                        if (root->wclass != NULL) {
@@ -236,7 +278,6 @@ ei_widget_t find_widget (uint32_t* pixel_pick_surface, ei_widget_t widget) {
         // Return NULL if no matching widget is found
         return NULL;
 }
-
 
 void ei_app_run(void) {
         // Get the root widget of the application
