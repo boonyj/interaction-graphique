@@ -207,7 +207,6 @@ void draw_button (button_t * button,
                                   button->widget.screen_location.size, surface, clipper);
                 }
                 if (button->img != NULL){
-                        i++;
                         //printf("%d   %d\n", i,button->img);
                         if(button->img_rect != NULL){
                                 /*printf("%d   %d\n", i,button->img_rect->top_left.x);

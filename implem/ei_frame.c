@@ -104,14 +104,9 @@ void draw_frame (frame_t* frame,
                                 break;
                 }
                 if ((frame->text) != NULL){
-                        printf("%p ", &(frame->text));
-                        printf("%s", (frame->text));
-                        if (*(frame->text) != NULL){
-                                //ei_draw_text(surface,&(frame->widget.screen_location.top_left), (ei_string_t){"2"}, frame->text_font, frame->text_color, clipper);
-                               draw_text((frame->text), frame->text_font, frame->text_color, frame->widget.screen_location.top_left,
-                                         frame->widget.screen_location.size, surface, clipper);}
-                        }
-        }
+                       draw_text((frame->text), frame->text_font, frame->text_color, frame->widget.screen_location.top_left,
+                                 frame->widget.screen_location.size, surface, clipper);}
+                }
 }
 
 void frame_drawfunc (ei_widget_t		widget,
