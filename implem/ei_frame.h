@@ -9,7 +9,7 @@ typedef struct frame_t {
         ei_relief_t relief;
         ei_color_t text_color;
         ei_font_t text_font;
-        ei_string_t text;
+        char* text;
         ei_anchor_t text_anchor;
         ei_surface_t img;
         ei_rect_t img_rect;
@@ -26,6 +26,8 @@ void frame_drawfunc (ei_widget_t		widget,
                      ei_rect_t*		clipper);
 
 void frame_setdefaultsfunc(ei_widget_t		widget);
+
+void frame_geomnotifyfunc(ei_widget_t		widget);
 
 ei_widgetclass_t* create_frame_class();
 

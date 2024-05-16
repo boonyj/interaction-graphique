@@ -135,6 +135,11 @@ void frame_setdefaultsfunc(ei_widget_t		widget){
         frame->widget.color->alpha = ei_default_background_color.alpha;
 }
 
+void frame_geomnotifyfunc(ei_widget_t		widget){
+
+}
+
+
 ei_widgetclass_t* create_frame_class() {
         ei_widgetclass_t* frame = malloc(sizeof(ei_widgetclass_t));
         strcpy(frame->name, "frame");
@@ -142,6 +147,7 @@ ei_widgetclass_t* create_frame_class() {
         frame->releasefunc = &frame_releasefunc;
         frame->drawfunc = &frame_drawfunc;
         frame->setdefaultsfunc = &frame_setdefaultsfunc;
+        frame->geomnotifyfunc = &frame_geomnotifyfunc;
 
         return frame;
 }

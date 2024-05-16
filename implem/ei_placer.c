@@ -45,26 +45,7 @@ void		ei_place	(ei_widget_t		widget,
         placeur->geom_mng.manager->runfunc(widget);
         printf("x : %d, y : %d\n",placeur->x, placeur->y);
 
-        if (strcmp(widget->wclass->name, "toplevel") == 0) {
-                toplevel_t* toplevel = (toplevel_t*) widget;
-                int width = 0;
-                int height = 0;
-                hw_text_compute_size(toplevel->title,toplevel->title_font, &width, &height);
-                toplevel->widget.screen_location.top_left.x += toplevel->border_width;
-                toplevel->widget.screen_location.top_left.y += toplevel->border_width + height;
 
-
-                ei_place			(toplevel->widget.children_head, &(ei_anchor_t){ei_anc_northwest},
-                                                 &(int){-(toplevel->border_width)+8}, &(int){-(height+toplevel->border_width)+5}, NULL, NULL,
-                                                 &(float){0.0f}, &(float){0.0f},
-                                                 NULL, NULL);
-
-
-                ei_place			(toplevel->widget.children_head->next_sibling, &(ei_anchor_t){ei_anc_southeast},
-                                                 &(int){0}, &(int){0}, NULL, NULL,
-                                                 &(float){1.0f}, &(float){1.0f},
-                                                 NULL, NULL);
-        }
 }
 
 

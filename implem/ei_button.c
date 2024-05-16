@@ -233,6 +233,9 @@ void button_setdefaultsfunc(ei_widget_t		widget){
         button->widget.requested_size.height = 48;
         button->img = NULL;
         //button->img_rect = NULL;
+}
+
+void button_geomnotifyfunc(ei_widget_t		widget){
 
 }
 
@@ -243,6 +246,7 @@ ei_widgetclass_t* create_button_class() {
         button->releasefunc = &button_releasefunc;
         button->drawfunc = &button_drawfunc;
         button->setdefaultsfunc = &button_setdefaultsfunc;
+        button->geomnotifyfunc = &button_geomnotifyfunc;
 
         return button;
 }

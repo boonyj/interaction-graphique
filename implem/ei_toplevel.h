@@ -22,6 +22,8 @@ void toplevel_drawfunc (ei_widget_t		widget,
 
 void toplevel_setdefaultsfunc(ei_widget_t		widget);
 
+void toplevel_geomnotifyfunc(ei_widget_t		widget);
+
 ei_widgetclass_t* create_toplevel_class();
 
 #endif //PROJETC_IG_TOPLEVEL_H

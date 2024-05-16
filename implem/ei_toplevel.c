@@ -2,6 +2,7 @@
 #include "ei_widget_configure.h"
 #include "ei_draw_tool.h"
 #include "ei_draw.h"
+#include "ei_placer.h"
 
 ei_widget_t toplevel_allocfunc (){
         ei_widget_t widget = malloc(sizeof(struct toplevel_t ));
@@ -114,6 +115,25 @@ void toplevel_setdefaultsfunc(ei_widget_t		widget){
         toplevel->widget.requested_size.height = 240;
 }
 
+void toplevel_geomnotifyfunc(ei_widget_t		widget){
+        toplevel_t * toplevel = (toplevel_t*) widget;
+        int width = 0;
+        int height = 0;
+        hw_text_compute_size(toplevel->title,toplevel->title_font, &width, &height);
+        toplevel->widget.screen_location.top_left.x += toplevel->border_width;
+        toplevel->widget.screen_location.top_left.y += toplevel->border_width + height;
+
+        ei_place			(toplevel->widget.children_head, &(ei_anchor_t){ei_anc_northwest},
+                                         &(int){-(toplevel->border_width)+8}, &(int){-(height+toplevel->border_width)+5}, NULL, NULL,
+                                         &(float){0.0f}, &(float){0.0f},
+                                         NULL, NULL);
+
+        ei_place			(toplevel->widget.children_head->next_sibling, &(ei_anchor_t){ei_anc_southeast},
+                                         &(int){0}, &(int){0}, NULL, NULL,
+                                         &(float){1.0f}, &(float){1.0f},
+                                         NULL, NULL);
+}
+
 ei_widgetclass_t* create_toplevel_class() {
         ei_widgetclass_t* toplevel = malloc(sizeof(ei_widgetclass_t));
         strcpy(toplevel->name, "toplevel");
@@ -121,6 +141,7 @@ ei_widgetclass_t* create_toplevel_class() {
         toplevel->releasefunc = &toplevel_releasefunc;
         toplevel->drawfunc = &toplevel_drawfunc;
         toplevel->setdefaultsfunc = &toplevel_setdefaultsfunc;
+        toplevel->geomnotifyfunc = &toplevel_geomnotifyfunc;
 
         return toplevel;
 }

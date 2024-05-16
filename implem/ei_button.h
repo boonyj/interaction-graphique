@@ -30,6 +30,8 @@ void button_drawfunc (ei_widget_t		widget,
 
 void button_setdefaultsfunc(ei_widget_t		widget);
 
+void button_geomnotifyfunc(ei_widget_t		widget);
+
 ei_widgetclass_t* create_button_class();
 
 #endif //PROJETC_IG_EI_BUTTON_H
