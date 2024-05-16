@@ -69,7 +69,7 @@ bool callback_buttondown_reverse_relief (ei_widget_t widget, ei_event_t* event, 
                 return false;
 }
 
-bool callback_move_top_level (ei_widget_t widget, ei_event_t* event, ei_user_param_t user_param) {
+/*bool callback_move_top_level (ei_widget_t widget, ei_event_t* event, ei_user_param_t user_param) {
 
         printf("Moving toplevel window!\n");
 
@@ -131,6 +131,69 @@ bool callback_buttondown_top_level (ei_widget_t widget, ei_event_t* event, ei_us
                 param->event = event_tbs;
                 param->widget = widget;
                 ei_bind(ei_ev_mouse_move, NULL, "all", callback_move_top_level, param);
+                ei_bind(ei_ev_mouse_buttonup, NULL, "all", callback_move_top_level_end, NULL);
+                return true;
+        } else
+                return false;
+}*/
+
+bool callback_move_toplevel(ei_widget_t widget, ei_event_t* event, ei_user_param_t user_param) {
+        // Only proceed if the event is a mouse button down event
+        if (event->type == ei_ev_mouse_move) {
+                // Cast the widget to a toplevel widget
+                ei_event_bind_widget_t* initial_event_bind = (ei_event_bind_widget_t*) user_param;
+                ei_mouse_event_t initial_mouse = initial_event_bind->event->param.mouse;
+                ei_mouse_event_t mouse = event->param.mouse;
+
+                ei_widget_t toplevel = (ei_widget_t) initial_event_bind->widget;
+
+                // Check if the clicked widget is the toplevel widget
+                if (widget == toplevel) {
+                        // Get the current mouse position
+                        ei_point_t mouse_position = event->param.mouse.where;
+
+                        // Calculate the offset between the mouse position and the toplevel position
+                        int dx = mouse_position.x - toplevel->screen_location.top_left.x -(initial_mouse.where.x-toplevel->screen_location.top_left.x);
+                        int dy = mouse_position.y - toplevel->screen_location.top_left.y -(initial_mouse.where.y-toplevel->screen_location.top_left.y);
+                        ei_place(widget, NULL, &dx, &dy, NULL, NULL, NULL, NULL, NULL, NULL);
+                        //ei_place(widget->children_head->next_sibling->next_sibling, NULL, &dx, &dy, NULL, NULL, NULL, NULL, NULL, NULL);
+
+                       if (root->wclass != NULL) {
+                                if (root->wclass->drawfunc != NULL) {
+                                        root->wclass->drawfunc(root, main_surface, pick_surface, NULL);
+                                }
+                        }
+                        ei_rect_t *clipper = &(root->children_head->screen_location);
+                        ei_impl_widget_draw_children(root, main_surface, pick_surface, clipper);
+                        // Return true to indicate that the event was handled
+                        return true;
+                }
+        }
+
+        // Return false if the event was not handled
+        return false;
+}
+
+bool callback_move_top_level_end (ei_widget_t widget, ei_event_t* event, ei_user_param_t user_param) {
+        printf("Move toplevel end !\n");
+        ei_unbind(ei_ev_mouse_move, NULL, "all", callback_move_toplevel, user_param);
+        ei_unbind(ei_ev_mouse_buttonup, NULL, "all", callback_move_top_level_end, NULL);
+        return true;
+}
+
+
+bool callback_buttondown_top_level (ei_widget_t widget, ei_event_t* event, ei_user_param_t user_param) {
+        if (event->type == ei_ev_mouse_buttondown) {
+                printf("Clicked !\n");
+                ei_event_t* event_tbs = malloc(sizeof(ei_event_t));
+                event_tbs->type = event->type;
+                event_tbs->param = event->param;
+                event_tbs->modifier_mask = event->modifier_mask;
+                ei_event_bind_widget_t* param = malloc(sizeof(ei_event_bind_widget_t));
+                param->event = event_tbs;
+                param->widget = widget;
+
+                ei_bind(ei_ev_mouse_move, NULL, "all", callback_move_toplevel, param);
                 ei_bind(ei_ev_mouse_buttonup, NULL, "all", callback_move_top_level_end, NULL);
                 return true;
         } else
@@ -200,6 +263,9 @@ void ei_app_run(void) {
         //hw_surface_update_rects(pick_surface, NULL);
 
         ei_bind(ei_ev_mouse_buttondown, NULL, "button", callback_buttondown_reverse_relief, NULL);
+        // Bind the callback function to the mouse button down event on the frame widget
+        //ei_bind(ei_ev_mouse_buttondown, NULL, "toplevel", callback_move_toplevel, toplevel_widget);
+
         ei_bind(ei_ev_mouse_buttondown, NULL, "toplevel", callback_buttondown_top_level, NULL);
 
         //Main loop here

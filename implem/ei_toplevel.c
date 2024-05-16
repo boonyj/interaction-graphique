@@ -132,6 +132,7 @@ void toplevel_geomnotifyfunc(ei_widget_t		widget){
                                          &(int){0}, &(int){0}, NULL, NULL,
                                          &(float){1.0f}, &(float){1.0f},
                                          NULL, NULL);
+
 }
 
 ei_widgetclass_t* create_toplevel_class() {
