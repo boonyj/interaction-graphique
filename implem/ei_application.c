@@ -2,6 +2,7 @@
 #include "ei_implementation.h"
 #include "ei_frame.h"
 #include "ei_placeur.h"
+#include "ei_placer.h"
 #include "ei_button.h"
 #include "ei_toplevel.h"
 #include "ei_event.h"
@@ -65,22 +66,39 @@ bool callback_buttondown_reverse_relief (ei_widget_t widget, ei_event_t* event, 
 
 bool callback_move_top_level (ei_widget_t widget, ei_event_t* event, ei_user_param_t user_param) {
         printf("Moving toplevel window !\n");
+        toplevel_t *toplevel = (toplevel_t *) widget;
+        ei_event_t* initial_event = (ei_event_t*) user_param;
+        ei_mouse_event_t initial_mouse = initial_event->param.mouse;
+        ei_mouse_event_t mouse = event->param.mouse;
+        int initial_x = initial_mouse.where.x;
+        int initial_y = initial_mouse.where.y;
+        printf("Initial mouse position : x = %d , y = %d", initial_x, initial_y);
+        int final_x = toplevel->widget.screen_location.top_left.x + (mouse.where.x - initial_x);
+        int final_y = toplevel->widget.screen_location.top_left.y + (mouse.where.y - initial_y);
+        ei_place(widget, NULL, &final_x, &final_y, NULL, NULL, NULL, NULL, NULL, NULL);
+        root->wclass->drawfunc(root, main_surface, pick_surface, NULL);
+        ei_rect_t *clipper = &(root->children_head->screen_location);
+        ei_impl_widget_draw_children(root, main_surface, pick_surface, clipper);
         return true;
 }
 
 bool callback_move_top_level_end (ei_widget_t widget, ei_event_t* event, ei_user_param_t user_param) {
         printf("Move toplevel end !\n");
-        ei_unbind(ei_ev_mouse_move, NULL, "all", callback_move_top_level, NULL);
+        ei_unbind(ei_ev_mouse_move, NULL, "all", callback_move_top_level, event);
         ei_unbind(ei_ev_mouse_buttonup, NULL, "all", callback_move_top_level_end, NULL);
         return true;
 }
 
 bool callback_buttondown_top_level (ei_widget_t widget, ei_event_t* event, ei_user_param_t user_param) {
         if (event->type == ei_ev_mouse_buttondown) {
-                toplevel_t *toplevel = (toplevel_t *) widget;
                 printf("Clicked !\n");
-                ei_bind(ei_ev_mouse_move, NULL, "all", callback_move_top_level, NULL);
+                ei_event_t* event_tbs = malloc(sizeof(ei_event_t));
+                event_tbs->type = event->type;
+                event_tbs->param = event->param;
+                event_tbs->modifier_mask = event->modifier_mask;
+                ei_bind(ei_ev_mouse_move, NULL, "all", callback_move_top_level, event_tbs);
                 ei_bind(ei_ev_mouse_buttonup, NULL, "all", callback_move_top_level_end, NULL);
+
                 return true;
         } else
                 return false;

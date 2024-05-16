@@ -2,7 +2,7 @@
 #include "ei_draw_tool.h"
 #include "ei_global.h"
 
-int nb_segments = 32;
+int nb_segments = 8;
 
 unsigned char dark(unsigned char colorComponent) {
         double darkComponent = colorComponent * 0.6;
