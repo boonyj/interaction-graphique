@@ -104,8 +104,8 @@ void draw_frame (frame_t* frame,
                                 break;
                 }
                 if ((frame->text) != NULL){
-                        printf("%p ", (frame->text));
-                        printf("%c", *(frame->text));
+                        printf("%p ", &(frame->text));
+                        printf("%s", (frame->text));
                         if (*(frame->text) != NULL){
                                 //ei_draw_text(surface,&(frame->widget.screen_location.top_left), (ei_string_t){"2"}, frame->text_font, frame->text_color, clipper);
                                draw_text((frame->text), frame->text_font, frame->text_color, frame->widget.screen_location.top_left,
@@ -129,7 +129,6 @@ void frame_setdefaultsfunc(ei_widget_t		widget){
         frame->text_color = ei_font_default_color;
         frame->text_anchor = ei_anc_none;
         frame->text_font = ei_default_font;
-        frame->text = NULL;
         frame->widget.requested_size.width = 300;
         frame->widget.requested_size.height = 200;
         frame->widget.color->red = ei_default_background_color.red;

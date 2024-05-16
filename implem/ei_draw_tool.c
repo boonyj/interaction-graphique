@@ -25,7 +25,7 @@ unsigned char light(unsigned char colorComponent) {
 
 void assertion_pick_color(ei_widget_t widget, ei_surface_t surface){
         if(widget->pick_color == NULL){
-                uint8_t *p =  &(widget->pick_id);
+                uint8_t *p = (uint8_t *) &(widget->pick_id);
                 widget->pick_color = malloc(sizeof(ei_color_t));
                 int ir, ig, ib, ia;
                 hw_surface_get_channel_indices(surface, &ir, &ig, &ib, &ia);
@@ -55,17 +55,17 @@ void assertion_color(ei_color_t* child_color, ei_color_t color, int mode){
 
 }
 
-void draw_image_from_surface(ei_surface_t surface, ei_surface_t image,  ei_point_t* where, const ei_rect_t*	clipper){
-        ei_rect_t image_rect = hw_surface_get_rect(image);
+void draw_image_from_surface(ei_surface_t surface, ei_surface_t image,  ei_point_t* where,
+                             const ei_rect_t* clipper, ei_rect_ptr_t img_rect ){
         ei_rect_t dst_rect = hw_surface_get_rect(surface);
         dst_rect.top_left.x = where->x;
         dst_rect.top_left.y = where->y;
 
         //Auto clipper if necessary
-        dst_rect.size.width = image_rect.size.width;
-        dst_rect.size.height = image_rect.size.height;
+        dst_rect.size.width = img_rect->size.width;
+        dst_rect.size.height = img_rect->size.height;
 
-        ei_copy_surface(surface, &dst_rect, image, &image_rect, true);
+        ei_copy_surface(surface, &dst_rect, image, &img_rect, true);
 }
 
 void ei_draw_image(ei_surface_t		surface,  ei_point_t* where, const ei_rect_t*	clipper, ei_const_string_t filename){

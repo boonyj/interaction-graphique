@@ -44,9 +44,8 @@ void			ei_frame_configure		(ei_widget_t		widget,
         }
 
         if (text != NULL ){
-                printf("%p %s\n",text, *text);
-                frame->text = *text;
-                printf("%p %c\n",frame->text, *frame->text);
+                frame->text = malloc(sizeof (char*));
+                strcpy(frame->text, *text);
 
                 if (text_color !=  NULL){
                         frame->text_color.alpha = text_color->alpha;
@@ -106,7 +105,8 @@ void			ei_button_configure		(ei_widget_t		widget,
         }
 
         if (text != NULL){
-                button->text = *text;
+                button->text = malloc(sizeof (char*));
+                strcpy(button->text, *text);
                 if (text_color !=  NULL){
                         button->text_color.alpha = text_color->alpha;
                         button->text_color.red = text_color->red;
@@ -127,7 +127,7 @@ void			ei_button_configure		(ei_widget_t		widget,
         }
 
         if(img != NULL){
-                draw_image_from_surface(ei_app_root_surface(),*img,&(button->widget.screen_location.top_left),button->widget.parent->content_rect);
+                //draw_image_from_surface(ei_app_root_surface(),*img,&(button->widget.screen_location.top_left),button->widget.parent->content_rect);
         }
 }
 
@@ -161,7 +161,8 @@ void			ei_toplevel_configure		(ei_widget_t		widget,
         }
 
         if (title != NULL){
-                toplevel->title = *title;
+                toplevel->title = malloc(sizeof (char*));
+                strcpy(toplevel->title, *title);
                 toplevel->title_color.red =  0xff;
                 toplevel->title_color.green =  0xff;
                 toplevel->title_color.blue =  0xff;

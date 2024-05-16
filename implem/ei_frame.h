@@ -1,7 +1,6 @@
 #ifndef PROJETC_IG_EI_FRAME_H
 #define PROJETC_IG_EI_FRAME_H
 
-#include "ei_application.h"
 #include "ei_implementation.h"
 
 typedef struct frame_t {

@@ -203,8 +203,19 @@ void draw_button (button_t * button,
                                 break;
                 }
                 if (button->text != NULL){
-                        draw_text(button->text, button->text_font, button->text_color, button->widget.screen_location.top_left,
+                        draw_text((button->text), button->text_font, button->text_color, button->widget.screen_location.top_left,
                                   button->widget.screen_location.size, surface, clipper);
+                }
+                if (button->img != NULL){
+                        i++;
+                        //printf("%d   %d\n", i,button->img);
+                        if(button->img_rect != NULL){
+                                /*printf("%d   %d\n", i,button->img_rect->top_left.x);
+                                printf("%d   %d\n", i,button->img_rect->top_left.y);
+                                printf("%d   %d\n", i,button->img_rect->size.width);
+                                printf("%d   %d\n", i,button->img_rect->size.height);*/
+                                draw_image_from_surface(surface, button->img, &(button->widget.screen_location.top_left), clipper, button->img_rect);
+                        }
                 }
         }
 }
@@ -229,6 +240,8 @@ void button_setdefaultsfunc(ei_widget_t		widget){
         button->text = NULL;
         button->widget.requested_size.width = 100;
         button->widget.requested_size.height = 48;
+        button->img = NULL;
+        button->img_rect = NULL;
 
 }
 
