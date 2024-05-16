@@ -65,22 +65,34 @@ bool callback_buttondown_reverse_relief (ei_widget_t widget, ei_event_t* event, 
 }
 
 bool callback_move_top_level (ei_widget_t widget, ei_event_t* event, ei_user_param_t user_param) {
-        printf("Moving toplevel window !\n");
+
+        printf("Moving toplevel window!\n");
+
+        // Cast widget to toplevel_t pointer
         toplevel_t *toplevel = (toplevel_t *) widget;
+
+        // Retrieve initial mouse position from user_param
         ei_event_t* initial_event = (ei_event_t*) user_param;
         ei_mouse_event_t initial_mouse = initial_event->param.mouse;
         ei_mouse_event_t mouse = event->param.mouse;
-        int initial_x = initial_mouse.where.x;
-        int initial_y = initial_mouse.where.y;
-        printf("Initial mouse position : x = %d , y = %d", initial_x, initial_y);
-        int final_x = toplevel->widget.screen_location.top_left.x + (mouse.where.x - initial_x);
-        int final_y = toplevel->widget.screen_location.top_left.y + (mouse.where.y - initial_y);
-        ei_place(widget, NULL, &final_x, &final_y, NULL, NULL, NULL, NULL, NULL, NULL);
-        root->wclass->drawfunc(root, main_surface, pick_surface, NULL);
-        ei_rect_t *clipper = &(root->children_head->screen_location);
-        ei_impl_widget_draw_children(root, main_surface, pick_surface, clipper);
+
+        // Calculate movement since initial position
+        int dx = mouse.where.x - initial_mouse.where.x;
+        int dy = mouse.where.y - initial_mouse.where.y;
+
+        // Calculate new position of toplevel widget
+        int final_x = toplevel->widget.screen_location.top_left.x + dx;
+        int final_y = toplevel->widget.screen_location.top_left.y + dy;
+
+        printf("New position: x = %d, y = %d\n", final_x, final_y);
+
+        // Update position of the toplevel widget
+        ei_place(&toplevel->widget, NULL, &final_x, &final_y, NULL, NULL, NULL, NULL, NULL, NULL);
+
+
         return true;
 }
+
 
 bool callback_move_top_level_end (ei_widget_t widget, ei_event_t* event, ei_user_param_t user_param) {
         printf("Move toplevel end !\n");
@@ -179,6 +191,10 @@ void ei_app_run(void) {
         while ((event.type != ei_ev_close)) {
                 event.type = ei_ev_none;
                 //Update screen
+                root->wclass->drawfunc(root, main_surface, pick_surface, NULL);
+                ei_rect_t *clipper = &(root->children_head->screen_location);
+                ei_impl_widget_draw_children(root, main_surface, pick_surface, clipper);
+
                 hw_surface_update_rects(main_surface, NULL);
 
                 hw_surface_lock(main_surface);

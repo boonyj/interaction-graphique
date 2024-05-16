@@ -90,9 +90,11 @@ void draw_toplevel (toplevel_t * toplevel,
         ei_point_t where = toplevel->widget.screen_location.top_left;
         where.x += 30;
         ei_draw_text(surface, &where, toplevel->title, toplevel->title_font, toplevel->title_color, clipper);
-        //calculate_clipper_avec_border(clipper, toplevel->border_width);
-        toplevel->widget.screen_location.top_left.y += height + 2*toplevel->border_width;
 
+        clipper->size.width -= toplevel->border_width*2;
+        clipper->size.height -= toplevel->border_width*2+height;
+        clipper->top_left.x += toplevel->border_width;
+        clipper->top_left.y += toplevel->border_width +height;
 }
 
 void toplevel_drawfunc (ei_widget_t		widget,
