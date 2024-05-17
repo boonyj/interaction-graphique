@@ -24,6 +24,4 @@ bool callback_buttondown_top_level (ei_widget_t widget, ei_event_t* event, ei_us
 
 bool callback_move_resizing_toplevel(ei_widget_t widget, ei_event_t* event, ei_user_param_t user_param);
 
-bool callback_buttonup_resize_toplevel_end (ei_widget_t widget, ei_event_t* event, ei_user_param_t user_param);
-
 bool callback_buttondown_resize_toplevel_start (ei_widget_t widget, ei_event_t* event, ei_user_param_t user_param);

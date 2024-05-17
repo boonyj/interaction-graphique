@@ -32,12 +32,20 @@ void	ei_geometry_run_finalize(ei_widget_t widget, ei_rect_t* new_screen_location
                 if (new_screen_location->top_left.y + new_screen_location->size.height > root_size->height) {
                         new_screen_location->top_left.y = root_size->height - new_screen_location->size.height;
                 }
+
                 if (new_screen_location->size.height > 500) {
                         new_screen_location->size.height = 500;
+                }else if(new_screen_location->size.height < 150) {
+                        new_screen_location->size.height = 150;
                 }
+
                 if (new_screen_location->size.width > 500) {
                         new_screen_location->size.width = 500;
+                }else if(new_screen_location->size.width < 150) {
+                        new_screen_location->size.width = 150;
                 }
+                widget->content_rect->size.width = new_screen_location->size.width;
+                widget->content_rect->size.height = new_screen_location->size.height;
         }
         widget->screen_location = *new_screen_location;
         printf("New Screen Location (%s) : h = %d, w = %d, x = %d , y = %d \n",widget->wclass->name,new_screen_location->size.height,new_screen_location->size.width,new_screen_location->top_left.x,new_screen_location->top_left.y);

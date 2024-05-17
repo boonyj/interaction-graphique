@@ -104,46 +104,44 @@ bool callback_move_resizing_toplevel(ei_widget_t widget, ei_event_t* event, ei_u
 
                 ei_widget_t toplevel = (ei_widget_t) initial_event_bind->widget;
 
-                if (widget == toplevel) {
-                        // Get the current mouse position
-                        ei_point_t mouse_position = event->param.mouse.where;
+                // Get the current mouse position
+                ei_point_t mouse_position = event->param.mouse.where;
 
-                        // Calculate the offset between the mouse position and the toplevel position
-                        int dx = mouse_position.x - initial_mouse.where.x;
-                        int dy = mouse_position.y - initial_mouse.where.y;
-                        // ei_place_xy(widget, dx, dy);
+                // Calculate the offset between the mouse position and the toplevel position
+                int dx = mouse_position.x - initial_mouse.where.x;
+                int dy = mouse_position.y - initial_mouse.where.y;
+                // ei_place_xy(widget, dx, dy);
 
-                        toplevel->screen_location.size.width += dx;
-                        toplevel->screen_location.size.height += dy;
-                        // placeur_param* placeur = (placeur_param*)widget->geom_params;
-                        // placeur->width = toplevel->screen_location.size.width;
-                        // placeur->height = toplevel->screen_location.size.height;
+                toplevel->screen_location.size.width += dx;
+                toplevel->screen_location.size.height += dy;
+                toplevel->content_rect->size.width += dx;
+                toplevel->content_rect->size.height += dy;
+                // placeur_param* placeur = (placeur_param*)widget->geom_params;
+                // placeur->width = toplevel->screen_location.size.width;
+                // placeur->height = toplevel->screen_location.size.height;
 
-                        run_all_ei_place(root);
+                run_all_ei_place(root);
 
-                       if (root->wclass != NULL) {
-                                if (root->wclass->drawfunc != NULL) {
-                                        root->wclass->drawfunc(root, main_surface, pick_surface, NULL);
-                                }
+                printf("AFTER EI_PLACE : w = %d , h = %d\n",toplevel->screen_location.size.width,toplevel->screen_location.size.height);
+
+               if (root->wclass != NULL) {
+                        if (root->wclass->drawfunc != NULL) {
+                                root->wclass->drawfunc(root, main_surface, pick_surface, NULL);
                         }
-                        ei_rect_t *clipper = &(root->children_head->screen_location);
-                        ei_impl_widget_draw_children(root, main_surface, pick_surface, clipper);
-                        // Return true to indicate that the event was handled
-                        return true;
                 }
+                ei_rect_t *clipper = &(root->children_head->screen_location);
+                ei_impl_widget_draw_children(root, main_surface, pick_surface, clipper);
+                // Return true to indicate that the event was handled
+                return true;
+        }else if (event->type == ei_ev_mouse_buttonup) {
+                printf("Resizing disabled !\n");
+                ei_unbind(ei_ev_mouse_move, NULL, "all", callback_move_resizing_toplevel, user_param);
+                ei_unbind(ei_ev_mouse_buttonup, NULL, "all", callback_move_resizing_toplevel, NULL);
+                return true;
         }
 
         // Return false if the event was not handled
         return false;
-}
-
-bool callback_buttonup_resize_toplevel_end (ei_widget_t widget, ei_event_t* event, ei_user_param_t user_param) {
-        printf("Resizing disabled !\n");
-        root->screen_location.top_left.x = 0;
-        root->screen_location.top_left.y = 0;
-        ei_unbind(ei_ev_mouse_move, NULL, "all", callback_move_resizing_toplevel, user_param);
-        ei_unbind(ei_ev_mouse_buttonup, NULL, "all", callback_buttonup_resize_toplevel_end, NULL);
-        return true;
 }
 
 bool callback_buttondown_resize_toplevel_start (ei_widget_t widget, ei_event_t* event, ei_user_param_t user_param) {
@@ -160,7 +158,7 @@ bool callback_buttondown_resize_toplevel_start (ei_widget_t widget, ei_event_t* 
         param->widget = widget->parent;
 
         ei_bind(ei_ev_mouse_move, NULL, "all", callback_move_resizing_toplevel, param);
-        ei_bind(ei_ev_mouse_buttonup, NULL, "all", callback_buttonup_resize_toplevel_end, NULL);
+        ei_bind(ei_ev_mouse_buttonup, NULL, "all", callback_move_resizing_toplevel, NULL);
         return true;
     } else
         return false;
