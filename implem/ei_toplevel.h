@@ -9,6 +9,9 @@ typedef struct toplevel_t {
         ei_string_t title;
         ei_color_t title_color;
         ei_font_t title_font;
+        bool closable;
+        ei_axis_set_t resizable;
+        ei_size_t min_size;
 } toplevel_t;
 
 ei_widget_t toplevel_allocfunc ();
