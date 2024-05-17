@@ -19,7 +19,6 @@ void ei_impl_widget_draw_children(ei_widget_t widget,
         }
 }
 
-
 uint32_t ei_impl_map_rgba(ei_surface_t surface, ei_color_t color) {
         int ir, ig, ib, ia;
         hw_surface_get_channel_indices(surface, &ir, &ig, &ib, &ia);
@@ -33,4 +32,19 @@ uint32_t ei_impl_map_rgba(ei_surface_t surface, ei_color_t color) {
         return pixel;
 }
 
+void free_widget_and_siblings(ei_widget_t widget, bool is_root) {
+        if (widget == NULL) return;
 
+        // Recursively free all children and their siblings
+        ei_widget_t child = widget->children_head;
+        while (child != NULL) {
+                ei_widget_t next_sibling = child->next_sibling;
+                free_widget_and_siblings(child, false);
+                child = next_sibling;
+        }
+
+        // Free the current widget unless it's the root widget passed as the parameter
+        if (!is_root) {
+                free(widget);
+        }
+}

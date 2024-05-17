@@ -52,19 +52,6 @@ ei_widget_t ei_widget_create(ei_const_string_t class_name,
         pick_counter+= 1;
         widget->pick_id = pick_counter;
 
-
-        /*// Extract red, green, blue, and alpha components
-        uint8_t red = (widget->pick_id >> 16) & 0xFF;
-        uint8_t green = (widget->pick_id >> 8) & 0xFF;
-        uint8_t blue = widget->pick_id & 0xFF;
-
-        // Assign extracted components to the pick_color
-        widget->pick_color->red = red;
-        widget->pick_color->green = green;
-        widget->pick_color->blue = blue;
-        widget->pick_color->alpha = 255;*/
-
-
         widget->wclass->setdefaultsfunc(widget);
 
         return widget;

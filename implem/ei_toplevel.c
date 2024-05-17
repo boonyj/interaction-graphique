@@ -3,6 +3,7 @@
 #include "ei_draw_tool.h"
 #include "ei_draw.h"
 #include "ei_placer.h"
+#include "ei_implementation.h"
 
 ei_widget_t toplevel_allocfunc (){
         ei_widget_t widget = malloc(sizeof(struct toplevel_t ));
@@ -11,7 +12,13 @@ ei_widget_t toplevel_allocfunc (){
 }
 
 void toplevel_releasefunc (ei_widget_t	widget){
-
+        free(widget->user_data);
+        free(widget->color);
+        free(widget->pick_color);
+        free(widget->geom_params);
+        free(widget->wclass);
+        free(widget->content_rect);
+        free_widget_and_siblings(widget, true);
 }
 
 void draw_toplevel (toplevel_t * toplevel,

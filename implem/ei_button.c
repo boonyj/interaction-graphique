@@ -1,5 +1,6 @@
 #include "ei_button.h"
 #include "ei_draw_tool.h"
+#include "ei_implementation.h"
 
 ei_widget_t button_allocfunc (){
         ei_widget_t widget = malloc(sizeof(struct button_t));
@@ -7,7 +8,13 @@ ei_widget_t button_allocfunc (){
 }
 
 void button_releasefunc (ei_widget_t	widget){
-
+        free(widget->user_data);
+        free(widget->color);
+        free(widget->pick_color);
+        free(widget->geom_params);
+        free(widget->wclass);
+        free(widget->content_rect);
+        free_widget_and_siblings(widget, true);
 }
 
 void draw_button (button_t * button,

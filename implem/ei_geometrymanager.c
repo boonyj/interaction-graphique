@@ -79,21 +79,19 @@ void			ei_geometrymanager_unmap	(ei_widget_t widget){
 }
 
 ei_geometrymanager_t*	ei_widget_get_geom_manager	(ei_widget_t widget){
-
+        return widget->geom_params->manager;
 }
 
-
 void			ei_widget_set_geom_manager	(ei_widget_t widget, ei_geometrymanager_t* manager){
-
+        widget->geom_params->manager = manager;
 }
 
 ei_geom_param_t		ei_widget_get_geom_params	(ei_widget_t widget){
-
+        return widget->geom_params;
 }
 
-
 void			ei_widget_set_geom_params	(ei_widget_t widget, ei_geom_param_t geom_param){
-
+        widget->geom_params = geom_param;
 }
 
 
