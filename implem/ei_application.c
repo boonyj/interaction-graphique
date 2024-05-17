@@ -224,7 +224,6 @@ bool callback_move_top_level_end (ei_widget_t widget, ei_event_t* event, ei_user
         return true;
 }
 
-
 bool callback_buttondown_top_level (ei_widget_t widget, ei_event_t* event, ei_user_param_t user_param) {
         if (event->type == ei_ev_mouse_buttondown) {
                 printf("Clicked !\n");
@@ -309,7 +308,6 @@ void ei_app_run(void) {
         ei_bind(ei_ev_mouse_buttondown, NULL, "button", callback_buttondown_reverse_relief, NULL);
         // Bind the callback function to the mouse button down event on the frame widget
         //ei_bind(ei_ev_mouse_buttondown, NULL, "toplevel", callback_move_toplevel, toplevel_widget);
-
         ei_bind(ei_ev_mouse_buttondown, NULL, "toplevel", callback_buttondown_top_level, NULL);
 
         //Main loop here
@@ -337,22 +335,36 @@ void ei_app_run(void) {
                 widget = find_widget(pixel_pick_surface, ei_app_root_widget());
                 //printf("Pick_id : %d , Pixel color : %d\n",widget->pick_id, *pixel_pick_surface);
 
-
                 //Search for event in list
+                // Flag to check if a specific widget's callback has been executed
+                bool specific_widget_handled = false;
+
+                // First, handle events for the specific widget
                 for (int i = 0; i < linked_event_list_size; ++i) {
                         if (linked_event_list[i]->eventtype == event.type) {
-                                if(linked_event_list[i]->widget != NULL){
-                                        if(widget == linked_event_list[i]->widget){
-                                                linked_event_list[i]->callback(widget, &event, linked_event_list[i]->user_param);
-                                        }
-                                }else{
-                                        if(strcmp(linked_event_list[i]->tag, widget->wclass->name) == 0 ||
-                                           strcmp(linked_event_list[i]->tag, "all") == 0){
-                                                linked_event_list[i]->callback(widget, &event, linked_event_list[i]->user_param);
+                                if (linked_event_list[i]->widget != NULL && widget == linked_event_list[i]->widget) {
+                                        linked_event_list[i]->callback(widget, &event, linked_event_list[i]->user_param);
+                                        specific_widget_handled = true;
+                                        break;  // Exit the loop once a specific widget's callback is found and executed
+                                }
+                        }
+                }
+
+                // If no specific widget's callback was found, handle events for the "all" tag and other matching tags
+                if (!specific_widget_handled) {
+                        for (int i = 0; i < linked_event_list_size; ++i) {
+                                if (linked_event_list[i]->eventtype == event.type) {
+                                        if (linked_event_list[i]->widget == NULL) {
+                                                if (strcmp(linked_event_list[i]->tag, widget->wclass->name) == 0 ||
+                                                    strcmp(linked_event_list[i]->tag, "all") == 0) {
+                                                        linked_event_list[i]->callback(widget, &event, linked_event_list[i]->user_param);
+                                                }
                                         }
                                 }
                         }
                 }
+
+
                 hw_surface_unlock(main_surface);
                 hw_surface_unlock(pick_surface);
         }
@@ -367,7 +379,6 @@ void ei_app_quit_request(void){
 }
 
 ei_widget_t ei_app_root_widget(void){
-        //return frame_root;
         return root;
 }
 
