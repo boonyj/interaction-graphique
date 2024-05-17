@@ -192,9 +192,9 @@ bool callback_move_toplevel(ei_widget_t widget, ei_event_t* event, ei_user_param
                         widget_list_t* current = button_list;
                         while (current != NULL) {
                                 if (current->widget->pick_id != 3 && current->widget->pick_id != 4) {
-                                        int bx = mouse_position.x - current->widget->screen_location.top_left.x -(initial_mouse.where.x-current->widget->screen_location.top_left.x);
-                                        int by = mouse_position.y - current->widget->screen_location.top_left.y -(initial_mouse.where.y-current->widget->screen_location.top_left.y);
-                                        ei_place_xy(current->widget, bx, by);
+                                        /*int bx = mouse_position.x - current->widget->screen_location.top_left.x -(initial_mouse.where.x-current->widget->screen_location.top_left.x);
+                                        int by = mouse_position.y - current->widget->screen_location.top_left.y -(initial_mouse.where.y-current->widget->screen_location.top_left.y);*/
+                                        ei_place(current->widget, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
                                 }
                                 current = current->next;
                         }

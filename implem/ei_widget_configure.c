@@ -198,8 +198,7 @@ void			ei_toplevel_configure		(ei_widget_t		widget,
                 toplevel->title_color.alpha =  0xff;
 
         }
-        ei_widget_t button_round = ei_widget_create	("button", toplevel, NULL, NULL);
-
+        ei_widget_t button_round = ei_widget_create	("button", &(toplevel->widget), NULL, NULL);
         ei_button_configure		(button_round, &((ei_size_t){18, 18}),
                                             &(ei_color_t){0xB2, 0x22, 0x22, 0xff},
                                             &(int){3},
@@ -209,7 +208,7 @@ void			ei_toplevel_configure		(ei_widget_t		widget,
                                             &(ei_color_t){0x00, 0x00, 0x00, 0xff}, NULL, NULL, NULL, NULL,
                                             &(ei_callback_t){callback_toplevel_close}, NULL);
 
-        ei_widget_t button_square = ei_widget_create	("button", toplevel, NULL, NULL);
+        ei_widget_t button_square = ei_widget_create	("button", &(toplevel->widget), NULL, NULL);
         ei_button_configure		(button_square, &((ei_size_t){12, 12}),
                                             &(ei_color_t){0x66, 0x66, 0x66, 0xff},
                                             &(int){2},
