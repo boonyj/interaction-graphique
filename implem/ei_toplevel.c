@@ -122,8 +122,8 @@ void toplevel_geomnotifyfunc(ei_widget_t		widget){
         int width = 0;
         int height = 0;
         hw_text_compute_size(toplevel->title,toplevel->title_font, &width, &height);
-        toplevel->widget.screen_location.top_left.x += toplevel->border_width;
-        toplevel->widget.screen_location.top_left.y += toplevel->border_width + height;
+        /*toplevel->widget.screen_location.top_left.x += toplevel->border_width;
+        toplevel->widget.screen_location.top_left.y += toplevel->border_width + height;*/
 
         ei_place			(toplevel->widget.children_head, &(ei_anchor_t){ei_anc_northwest},
                                          &(int){-(toplevel->border_width)+8}, &(int){-(height+toplevel->border_width)+5}, NULL, NULL,

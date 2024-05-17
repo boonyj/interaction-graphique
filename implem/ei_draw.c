@@ -4,24 +4,25 @@
 void	ei_fill			(ei_surface_t		surface,
                                             const ei_color_t*	color,
                                             const ei_rect_t*	clipper){
-
         uint32_t* pixel_ptr = (uint32_t*)hw_surface_get_buffer(surface);
         ei_size_t size = hw_surface_get_size(surface);
-        if(clipper == NULL){
-                for (int i = 0; i < size.width * size.height; i++) { // Iterate over each pixel in the buffer
-                        *pixel_ptr++ = ei_impl_map_rgba(surface, *color);
+
+        uint32_t color_mapped = ei_impl_map_rgba(surface, *color);
+
+        if (clipper == NULL) {
+                for (int i = 0; i < size.width * size.height; i++) {
+                        *pixel_ptr++ = color_mapped;
                 }
         } else {
-                for (int i = 0; i < clipper->top_left.y * size.width; i++) {
-                        pixel_ptr++;
-                }
-                for (int j = 0; j < clipper->size.height; j++) {
-                        pixel_ptr += clipper->top_left.x;
-                        for (int k = 0; k < clipper->size.width; k++) {
-                                *pixel_ptr++= ei_impl_map_rgba(surface, *color);
-                        }
-                        pixel_ptr += size.width - (clipper->top_left.x + clipper->size.width);
+                // Calculate the initial offset to start filling pixels
+                uint32_t* start_ptr = pixel_ptr + clipper->top_left.y * size.width + clipper->top_left.x;
+                int remaining_width = size.width - clipper->size.width;
 
+                for (int j = 0; j < clipper->size.height; j++) {
+                        for (int k = 0; k < clipper->size.width; k++) {
+                                *start_ptr++ = color_mapped;
+                        }
+                        start_ptr += remaining_width;
                 }
         }
 
