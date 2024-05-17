@@ -27,6 +27,9 @@ void ei_app_create(ei_size_t main_window_size, bool fullscreen){
         main_surface  = hw_create_window(main_window_size, fullscreen);
         //pick_surface  = hw_create_window(main_window_size, fullscreen);
         pick_surface  = hw_surface_create(main_surface, main_window_size, false);
+        root_size = malloc(sizeof(ei_size_t));
+        root_size->width = main_window_size.width;
+        root_size->height = main_window_size.height;
         // Creation of widget class frame (to be registered later)
         ei_widgetclass_t* frame_class = create_frame_class();
         ei_widgetclass_t* button_class = create_button_class();
