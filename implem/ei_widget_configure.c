@@ -60,6 +60,17 @@ void			ei_frame_configure		(ei_widget_t		widget,
                 if (text_anchor !=  NULL){
                         frame->text_anchor = *text_anchor;
                 }
+
+                if(img != NULL){
+                        ei_size_t img_size= hw_surface_get_size(*img);
+                        frame->img = hw_surface_create(main_surface,img_size,true );
+                        ei_rect_t t= hw_surface_get_rect(*img);
+                        ei_copy_surface(frame->img, &t,*img,&t, true);
+                        frame->img_rect = **img_rect;
+                        if (img_anchor != NULL) {
+                                frame->img_anchor = *img_anchor;
+                        }
+                }
         }
 }
 
@@ -133,6 +144,13 @@ void			ei_button_configure		(ei_widget_t		widget,
                 ei_rect_t t= hw_surface_get_rect(*img);
                 ei_copy_surface(button->img, &t,*img,&t, true);
                 button->img_rect = **img_rect;
+                if (img_anchor != NULL) {
+                        button->img_anchor = *img_anchor;
+                }
+        }
+
+        if (user_param != NULL) {
+                button->widget.user_data = user_param;
         }
 }
 
@@ -198,6 +216,19 @@ void			ei_toplevel_configure		(ei_widget_t		widget,
                 toplevel->title_color.alpha =  0xff;
 
         }
+
+        if (closable != NULL) {
+                toplevel->closable = *closable;
+        }
+
+        if (resizable != NULL) {
+                toplevel->resizable = *resizable;
+        }
+
+        if (min_size != NULL) {
+                toplevel->min_size = **min_size;
+        }
+
         ei_widget_t button_round = ei_widget_create	("button", &(toplevel->widget), NULL, NULL);
         ei_button_configure		(button_round, &((ei_size_t){18, 18}),
                                             &(ei_color_t){0xB2, 0x22, 0x22, 0xff},
