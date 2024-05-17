@@ -151,18 +151,18 @@ void add_widget_to_list(widget_list_t** list, ei_widget_t widget) {
 }
 
 // Recursive function to find all widgets with the class name "button"
-void find_all_buttons(ei_widget_t widget, widget_list_t** list) {
+void find_all_buttons_and_frames(ei_widget_t widget, widget_list_t** list) {
         if (widget == NULL) return;
 
         // Check if the current widget has the class name "button"
-        if (strcmp(widget->wclass->name, "button") == 0) {
+        if (strcmp(widget->wclass->name, "button") == 0 || strcmp(widget->wclass->name, "frame") == 0) {
                 add_widget_to_list(list, widget);
         }
 
         // Recursively search among the widget's children
         ei_widget_t child = ei_widget_get_first_child(widget);
         while (child != NULL) {
-                find_all_buttons(child, list);
+                find_all_buttons_and_frames(child, list);
                 child = ei_widget_get_next_sibling(child);
         }
 }
@@ -183,15 +183,15 @@ bool callback_move_toplevel(ei_widget_t widget, ei_event_t* event, ei_user_param
                         ei_point_t mouse_position = event->param.mouse.where;
 
                         // Calculate the offset between the mouse position and the toplevel position
-                        int dx = mouse_position.x - toplevel->screen_location.top_left.x -(initial_mouse.where.x-toplevel->screen_location.top_left.x);
-                        int dy = mouse_position.y - toplevel->screen_location.top_left.y -(initial_mouse.where.y-toplevel->screen_location.top_left.y);
+                        int dx = mouse_position.x - initial_mouse.where.x;
+                        int dy = mouse_position.y - initial_mouse.where.y;
                         ei_place_xy(widget, dx, dy);
-                        // Calculate the offset between the mouse position and the buttons positions
+                        // Calculate the offset between the mouse position and the buttons and frames positions
                         widget_list_t* button_list = NULL;
-                        find_all_buttons(root, &button_list);
+                        find_all_buttons_and_frames(root, &button_list);
                         widget_list_t* current = button_list;
                         while (current != NULL) {
-                                if (current->widget->pick_id != 3 && current->widget->pick_id != 4) {
+                                if (current->widget->pick_id != 3 && current->widget->pick_id != 4) { // Condition a gerer
                                         /*int bx = mouse_position.x - current->widget->screen_location.top_left.x -(initial_mouse.where.x-current->widget->screen_location.top_left.x);
                                         int by = mouse_position.y - current->widget->screen_location.top_left.y -(initial_mouse.where.y-current->widget->screen_location.top_left.y);*/
                                         ei_place(current->widget, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
@@ -218,6 +218,8 @@ bool callback_move_toplevel(ei_widget_t widget, ei_event_t* event, ei_user_param
 
 bool callback_move_top_level_end (ei_widget_t widget, ei_event_t* event, ei_user_param_t user_param) {
         printf("Move toplevel end !\n");
+        root->screen_location.top_left.x = 0;
+        root->screen_location.top_left.y = 0;
         ei_unbind(ei_ev_mouse_move, NULL, "all", callback_move_toplevel, user_param);
         ei_unbind(ei_ev_mouse_buttonup, NULL, "all", callback_move_top_level_end, NULL);
         return true;
@@ -233,6 +235,8 @@ bool callback_buttondown_top_level (ei_widget_t widget, ei_event_t* event, ei_us
                 event_tbs->modifier_mask = event->modifier_mask;
                 ei_event_bind_widget_t* param = malloc(sizeof(ei_event_bind_widget_t));
                 param->event = event_tbs;
+                root->screen_location.top_left.x = widget->screen_location.top_left.x;
+                root->screen_location.top_left.y = widget->screen_location.top_left.y;
                 param->widget = widget;
 
                 ei_bind(ei_ev_mouse_move, NULL, "all", callback_move_toplevel, param);
