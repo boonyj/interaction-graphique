@@ -134,10 +134,12 @@ void			ei_button_configure		(ei_widget_t		widget,
 
         if (callback != NULL) {
                 if (user_param != NULL) {
+                        button->widget.user_data = *user_param;
                         ei_bind(ei_ev_mouse_buttondown, widget, NULL, *callback, user_param);
                 } else {
                         ei_bind(ei_ev_mouse_buttondown, widget, NULL, *callback, NULL);
                 }
+
         }
 
         if(img != NULL){
@@ -151,9 +153,6 @@ void			ei_button_configure		(ei_widget_t		widget,
                 }
         }
 
-        if (user_param != NULL) {
-                button->widget.user_data = user_param;
-        }
 }
 
 //Callback function for close button in toplevel

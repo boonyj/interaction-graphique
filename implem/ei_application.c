@@ -77,73 +77,6 @@ bool callback_buttondown_reverse_relief (ei_widget_t widget, ei_event_t* event, 
                 return false;
 }
 
-/*bool callback_move_top_level (ei_widget_t widget, ei_event_t* event, ei_user_param_t user_param) {
-
-        printf("Moving toplevel window!\n");
-
-        // Retrieve initial mouse position from user_param
-        ei_event_bind_widget_t* initial_event_bind = (ei_event_bind_widget_t*) user_param;
-        ei_mouse_event_t initial_mouse = initial_event_bind->event->param.mouse;
-        ei_mouse_event_t mouse = event->param.mouse;
-
-        widget = initial_event_bind->widget;
-
-
-        // Calculate movement since initial position
-        int dx = mouse.where.x - initial_mouse.where.x;
-        int dy = mouse.where.y - initial_mouse.where.y;
-
-        // Calculate new position of toplevel widget
-        int* final_x = malloc(sizeof(int));
-        int* final_y = malloc(sizeof(int));
-
-        *final_x = widget->screen_location.top_left.x + dx;
-        *final_y = widget->screen_location.top_left.y + dy;
-
-        printf("Toplevel topleft (%s): x = %d, y = %d\n", widget->wclass->name,widget->screen_location.top_left.x, widget->screen_location.top_left.y);
-        printf("New position: x = %d, y = %d\n", *final_x, *final_y);
-        printf("New Initial position: x = %d, y = %d\n", initial_mouse.where.x, initial_mouse.where.y);
-        // Update position of the toplevel widget
-        ei_place(widget, NULL, final_x, final_y, NULL, NULL, NULL, NULL, NULL, NULL);
-
-//        ei_widget_t sibling = toplevel->widget.children_head->next_sibling;
-//
-//        while (sibling != NULL){
-//                ei_place(sibling->next_sibling, NULL, &final_x, &final_y, NULL, NULL, NULL, NULL, NULL, NULL);
-//                sibling = ei_widget_get_next_sibling(sibling);
-//        }
-
-        root->wclass->drawfunc(root, main_surface, pick_surface, NULL);
-        ei_rect_t *clipper = &(root->children_head->screen_location);
-        ei_impl_widget_draw_children(root, main_surface, pick_surface, clipper);
-
-        return true;
-}
-
-
-bool callback_move_top_level_end (ei_widget_t widget, ei_event_t* event, ei_user_param_t user_param) {
-        printf("Move toplevel end !\n");
-        ei_unbind(ei_ev_mouse_move, NULL, "all", callback_move_top_level, user_param);
-        ei_unbind(ei_ev_mouse_buttonup, NULL, "all", callback_move_top_level_end, NULL);
-        return true;
-}
-
-bool callback_buttondown_top_level (ei_widget_t widget, ei_event_t* event, ei_user_param_t user_param) {
-        if (event->type == ei_ev_mouse_buttondown) {
-                printf("Clicked !\n");
-                ei_event_t* event_tbs = malloc(sizeof(ei_event_t));
-                event_tbs->type = event->type;
-                event_tbs->param = event->param;
-                event_tbs->modifier_mask = event->modifier_mask;
-                ei_event_bind_widget_t* param = malloc(sizeof(ei_event_bind_widget_t));
-                param->event = event_tbs;
-                param->widget = widget;
-                ei_bind(ei_ev_mouse_move, NULL, "all", callback_move_top_level, param);
-                ei_bind(ei_ev_mouse_buttonup, NULL, "all", callback_move_top_level_end, NULL);
-                return true;
-        } else
-                return false;
-}*/
 
 // Function to add a widget to the list
 void add_widget_to_list(widget_list_t** list, ei_widget_t widget) {
@@ -282,6 +215,13 @@ ei_widget_t find_widget (uint32_t* pixel_pick_surface, ei_widget_t widget) {
         return NULL;
 }
 
+// Define a global variable to store the last clicked widget
+ei_widget_t last_clicked_widget = NULL;
+// Function to retrieve the last clicked widget
+ei_widget_t get_last_clicked_widget() {
+        return last_clicked_widget;
+}
+
 void ei_app_run(void) {
         // Get the root widget of the application
         ei_widget_t root_widget = ei_app_root_widget();
@@ -337,13 +277,21 @@ void ei_app_run(void) {
                 widget = find_widget(pixel_pick_surface, ei_app_root_widget());
                 //printf("Pick_id : %d , Pixel color : %d\n",widget->pick_id, *pixel_pick_surface);
 
-
+                last_clicked_widget = widget;
+                printf("Name :: %s\n", last_clicked_widget->wclass->name);
                 //Search for event in list
                 for (int i = 0; i < linked_event_list_size; ++i) {
                         if (linked_event_list[i]->eventtype == event.type) {
                                 if(linked_event_list[i]->widget != NULL){
                                         if(widget == linked_event_list[i]->widget){
-                                                linked_event_list[i]->callback(widget, &event, linked_event_list[i]->user_param);
+                                                linked_event_list[i]->callback(widget, &event, widget->user_data);
+                                                if (root->wclass != NULL) {
+                                                        if (root->wclass->drawfunc != NULL) {
+                                                                root->wclass->drawfunc(root, main_surface, pick_surface, NULL);
+                                                        }
+                                                }
+                                                ei_rect_t *clipper = &(root->children_head->screen_location);
+                                                ei_impl_widget_draw_children(root, main_surface, pick_surface, clipper);
                                         }
                                 }else{
                                         if(strcmp(linked_event_list[i]->tag, widget->wclass->name) == 0 ||
