@@ -128,6 +128,8 @@ void toplevel_setdefaultsfunc(ei_widget_t		widget){
         toplevel->title_color = ei_font_default_color;
         toplevel->widget.requested_size.width = 320;
         toplevel->widget.requested_size.height = 240;
+        toplevel->widget.screen_location.size.width = 320;
+        toplevel->widget.screen_location.size.height = 240;
         toplevel->widget.screen_location.top_left.x = 0;
         toplevel->widget.screen_location.top_left.y = 0;
 }

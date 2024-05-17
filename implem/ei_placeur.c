@@ -79,6 +79,8 @@ void placeur_runfunc(ei_widget_t widget){
                         }
                         new_location->size.width = placeur->width;
                         new_location->size.height = placeur->height;
+
+
                 /*} else {
                         new_location->top_left.x = widget->screen_location.top_left.x + placeur->x;
                         new_location->top_left.y = widget->screen_location.top_left.y + placeur->y;

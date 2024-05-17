@@ -84,7 +84,7 @@ set(LIB_EI_SOURCES
 	${SRC}/ei_toplevel.c
 	${SRC}/ei_draw_tool.c
 	${SRC}/ei_global.c
-
+	${SRC}/ei_callback_functions.c
 )
 
 add_library(ei STATIC			${LIB_EI_SOURCES})
