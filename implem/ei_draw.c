@@ -56,25 +56,12 @@ int	ei_copy_surface		(ei_surface_t		destination,
         ei_size_t dest_size = hw_surface_get_size(destination);
         ei_size_t source_size = hw_surface_get_size(source);
 
-        // If destination rectangle is NULL, use entire destination surface
-        ei_rect_t actual_dst_rect;
-        if (dst_rect == NULL) {
-                actual_dst_rect.top_left.x = 0;
-                actual_dst_rect.top_left.y = 0;
-                actual_dst_rect.size = dest_size;
-        } else {
-                actual_dst_rect = *dst_rect;
-        }
+        // Use entire destination surface if dst_rect is NULL
+        ei_rect_t actual_dst_rect = dst_rect ? *dst_rect : (ei_rect_t){{0, 0}, dest_size};
 
-        // If source rectangle is NULL, use entire source surface
-        ei_rect_t actual_src_rect;
-        if (src_rect == NULL) {
-                actual_src_rect.top_left.x = 0;
-                actual_src_rect.top_left.y = 0;
-                actual_src_rect.size = source_size;
-        } else {
-                actual_src_rect = *src_rect;
-        }
+        // Use entire source surface if src_rect is NULL
+        ei_rect_t actual_src_rect = src_rect ? *src_rect : (ei_rect_t){{0, 0}, source_size};
+
 
         // Check if source and destination rectangles have the same size
         if (actual_dst_rect.size.width != actual_src_rect.size.width ||
@@ -85,8 +72,12 @@ int	ei_copy_surface		(ei_surface_t		destination,
                 return 1; // Different sizes, return failure
         }
 
-        for (int y = 0; y < actual_src_rect.size.height; y++) {
-                for (int x = 0; x < actual_src_rect.size.width; x++) {
+        int width = actual_src_rect.size.width;
+        int height = actual_src_rect.size.height;
+
+
+        for (int y = 0; y < height; y++) {
+                for (int x = 0; x < width; x++) {
                         // Calculate coordinates in source and destination surfaces
                         int src_x = actual_src_rect.top_left.x + x;
                         int src_y = actual_src_rect.top_left.y + y;
