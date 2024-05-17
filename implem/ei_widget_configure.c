@@ -4,7 +4,6 @@
 #include "ei_widget_attributes.h"
 #include "ei_button.h"
 #include "ei_toplevel.h"
-#include "ei_draw_tool.h"
 #include "ei_event.h"
 #include "ei_global.h"
 
@@ -133,9 +132,12 @@ void			ei_button_configure		(ei_widget_t		widget,
                 }
         }
 
-        // To be verified with prof
         if (callback != NULL) {
-                //ei_bind(ei_ev_mouse_buttondown, widget, NULL, *callback, NULL);
+                if (user_param != NULL) {
+                        ei_bind(ei_ev_mouse_buttondown, widget, NULL, *callback, user_param);
+                } else {
+                        ei_bind(ei_ev_mouse_buttondown, widget, NULL, *callback, NULL);
+                }
         }
 
         if(img != NULL){
@@ -157,11 +159,11 @@ void			ei_button_configure		(ei_widget_t		widget,
 //Callback function for close button in toplevel
 bool callback_toplevel_close_confirmed(ei_widget_t widget, ei_event_t* event, ei_user_param_t user_param){
         if (event->type == ei_ev_mouse_buttonup) {
-                button_t *button = (button_t *) user_param;
-                button->relief = ei_relief_raised;
-                button->widget.wclass->drawfunc(&(button->widget), main_surface, NULL, &(button->widget.screen_location));
-                ei_unbind(ei_ev_mouse_buttonup, user_param, NULL, callback_toplevel_close_confirmed, user_param);
-                exit(0);
+                toplevel_releasefunc(widget->parent);
+                root->wclass->drawfunc(root, main_surface, pick_surface, NULL);
+                ei_rect_t *clipper = &(root->children_head->screen_location);
+                ei_impl_widget_draw_children(root, main_surface, pick_surface, clipper);
+                ei_unbind(ei_ev_mouse_buttonup, widget, NULL, callback_toplevel_close_confirmed, NULL);
                 return true;
         } else
                 return false;
@@ -171,13 +173,13 @@ bool callback_toplevel_close(ei_widget_t widget, ei_event_t* event, ei_user_para
         if (event->type == ei_ev_mouse_buttondown) {
                 button_t *button = (button_t *) widget;
                 button->relief = ei_relief_sunken;
-                ei_bind(ei_ev_mouse_buttonup, widget, NULL, callback_toplevel_close_confirmed, widget);
+                button->widget.wclass->drawfunc(&(button->widget), main_surface, NULL, &(button->widget.screen_location));
+                ei_bind(ei_ev_mouse_buttonup, widget, NULL, callback_toplevel_close_confirmed, NULL);
                 return true;
         } else {
                 return false;
         }
 }
-
 
 void			ei_toplevel_configure		(ei_widget_t		widget,
                                                                   ei_size_t*		requested_size,

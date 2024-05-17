@@ -8,9 +8,10 @@ void ei_impl_widget_draw_children(ei_widget_t widget,
         // Iterate through all children of the widget
         ei_widget_t child = ei_widget_get_first_child(widget);
         while (child != NULL) {
-                clipper = &(child->screen_location);
-                child->wclass->drawfunc(child,surface,pick_surface,clipper);
-
+                if (child->wclass != NULL) {
+                        clipper = &(child->screen_location);
+                        child->wclass->drawfunc(child,surface,pick_surface,clipper);
+                }
                 // Recursively draw children of the current child widget
                 ei_impl_widget_draw_children(child, surface, pick_surface, clipper);
 
@@ -32,19 +33,21 @@ uint32_t ei_impl_map_rgba(ei_surface_t surface, ei_color_t color) {
         return pixel;
 }
 
-void free_widget_and_siblings(ei_widget_t widget, bool is_root) {
-        if (widget == NULL) return;
+void free_widget_and_siblings(ei_widget_t* widget, bool is_root) {
+        if (widget == NULL || *widget == NULL) return;
 
         // Recursively free all children and their siblings
-        ei_widget_t child = widget->children_head;
-        while (child != NULL) {
-                ei_widget_t next_sibling = child->next_sibling;
+        ei_widget_t* child = &((*widget)->children_head);
+        while (*child != NULL) {
+                ei_widget_t next_sibling = ei_widget_get_next_sibling(*child);
                 free_widget_and_siblings(child, false);
-                child = next_sibling;
+                child = &next_sibling;
         }
 
         // Free the current widget unless it's the root widget passed as the parameter
         if (!is_root) {
-                free(widget);
+                free(*widget);
+                *widget = NULL;
         }
 }
+

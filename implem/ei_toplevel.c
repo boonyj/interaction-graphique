@@ -18,7 +18,13 @@ void toplevel_releasefunc (ei_widget_t	widget){
         free(widget->geom_params);
         free(widget->wclass);
         free(widget->content_rect);
-        free_widget_and_siblings(widget, true);
+        free_widget_and_siblings(&widget, true);
+        widget->user_data = NULL;
+        widget->color = NULL;
+        widget->pick_color = NULL;
+        widget->geom_params = NULL;
+        widget->wclass = NULL;
+        widget->content_rect = NULL;
 }
 
 void draw_toplevel (toplevel_t * toplevel,
@@ -109,7 +115,9 @@ void toplevel_drawfunc (ei_widget_t		widget,
                       ei_surface_t		surface,
                       ei_surface_t		pick_surface,
                       ei_rect_t*		clipper){
-        draw_toplevel((toplevel_t *) widget, surface, pick_surface, clipper);
+        if (widget->geom_params != NULL) {
+                draw_toplevel((toplevel_t *) widget, surface, pick_surface, clipper);
+        }
 }
 
 void toplevel_setdefaultsfunc(ei_widget_t		widget){

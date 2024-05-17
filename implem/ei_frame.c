@@ -16,7 +16,13 @@ void frame_releasefunc (ei_widget_t	widget){
         free(widget->geom_params);
         free(widget->wclass);
         free(widget->content_rect);
-        free_widget_and_siblings(widget, true);
+        free_widget_and_siblings(&widget, true);
+        widget->user_data = NULL;
+        widget->color = NULL;
+        widget->pick_color = NULL;
+        widget->geom_params = NULL;
+        widget->wclass = NULL;
+        widget->content_rect = NULL;
 }
 
 void draw_frame (frame_t* frame,

@@ -1,5 +1,6 @@
 #include "ei_widget_attributes.h"
 #include "ei_implementation.h"
+#include "ei_global.h"
 
 ei_widgetclass_t*	ei_widget_get_class		(ei_widget_t		widget) {
         return widget->wclass;
@@ -13,7 +14,7 @@ const ei_color_t*	ei_widget_get_pick_color	(ei_widget_t		widget) {
 }
 
 ei_widget_t 		ei_widget_get_parent		(ei_widget_t		widget) {
-        if (widget->parent != NULL) {
+        if (widget != root) {
                 return widget->parent;
         }
         return NULL;
@@ -27,14 +28,14 @@ ei_widget_t 		ei_widget_get_first_child	(ei_widget_t		widget) {
 }
 
 ei_widget_t 		ei_widget_get_last_child	(ei_widget_t		widget) {
-        if (widget->children_tail != NULL) {
+        if (widget->children_head != NULL) {
                 return widget->children_tail;
         }
         return NULL;
 }
 
 ei_widget_t 		ei_widget_get_next_sibling	(ei_widget_t		widget) {
-        if (widget->next_sibling != widget) {
+        if (widget!= root && widget != ei_widget_get_last_child(widget->parent)) {
                 return widget->next_sibling;
         }
         return NULL;
