@@ -120,6 +120,10 @@ bool callback_move_resizing_toplevel(ei_widget_t widget, ei_event_t* event, ei_u
                 // placeur->width = toplevel->screen_location.size.width;
                 // placeur->height = toplevel->screen_location.size.height;
 
+                //Avoid accumulations
+                initial_event_bind->event->param.mouse.where.x += dx;
+                initial_event_bind->event->param.mouse.where.y += dy;
+
                 run_all_ei_place(root);
 
                 printf("AFTER EI_PLACE : w = %d , h = %d\n",toplevel->screen_location.size.width,toplevel->screen_location.size.height);
@@ -135,8 +139,13 @@ bool callback_move_resizing_toplevel(ei_widget_t widget, ei_event_t* event, ei_u
                 return true;
         }else if (event->type == ei_ev_mouse_buttonup) {
                 printf("Resizing disabled !\n");
+                ei_event_bind_widget_t* initial_event_bind = (ei_event_bind_widget_t*) user_param;
+                button_t* button = (button_t*) initial_event_bind->widget->children_head->next_sibling;
+                printf("TYPE : %s",widget->wclass->name);
+                button->relief = ei_relief_raised;
+                button->widget.wclass->drawfunc(&button->widget,main_surface,pick_surface,&button->widget.screen_location);
                 ei_unbind(ei_ev_mouse_move, NULL, "all", callback_move_resizing_toplevel, user_param);
-                ei_unbind(ei_ev_mouse_buttonup, NULL, "all", callback_move_resizing_toplevel, NULL);
+                ei_unbind(ei_ev_mouse_buttonup, NULL, "all", callback_move_resizing_toplevel, user_param);
                 return true;
         }
 
@@ -158,7 +167,7 @@ bool callback_buttondown_resize_toplevel_start (ei_widget_t widget, ei_event_t* 
         param->widget = widget->parent;
 
         ei_bind(ei_ev_mouse_move, NULL, "all", callback_move_resizing_toplevel, param);
-        ei_bind(ei_ev_mouse_buttonup, NULL, "all", callback_move_resizing_toplevel, NULL);
+        ei_bind(ei_ev_mouse_buttonup, NULL, "all", callback_move_resizing_toplevel, param);
         return true;
     } else
         return false;

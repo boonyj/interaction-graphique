@@ -48,7 +48,7 @@ void	ei_geometry_run_finalize(ei_widget_t widget, ei_rect_t* new_screen_location
                 widget->content_rect->size.height = new_screen_location->size.height;
         }
         widget->screen_location = *new_screen_location;
-        printf("New Screen Location (%s) : h = %d, w = %d, x = %d , y = %d \n",widget->wclass->name,new_screen_location->size.height,new_screen_location->size.width,new_screen_location->top_left.x,new_screen_location->top_left.y);
+        //printf("New Screen Location (%s) : h = %d, w = %d, x = %d , y = %d \n",widget->wclass->name,new_screen_location->size.height,new_screen_location->size.width,new_screen_location->top_left.x,new_screen_location->top_left.y);
         widget->wclass->geomnotifyfunc(widget);
 }
 
