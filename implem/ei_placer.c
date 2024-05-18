@@ -1,10 +1,6 @@
 #include "ei_placer.h"
 #include "ei_implementation.h"
-#include "ei_widget_configure.h"
-#include "ei_toplevel.h"
 #include "ei_placeur.h"
-#include "ei_event.h"
-#include "ei_button.h"
 #include "ei_global.h"
 
 void		ei_place	(ei_widget_t		widget,
@@ -35,8 +31,8 @@ void		ei_place	(ei_widget_t		widget,
                 placeur->anchor = (anchor != NULL) ? *anchor : ei_anc_northwest;
                 placeur->x = (x != NULL) ? *x : 0;
                 placeur->y = (y != NULL) ? *y : 0;
-                placeur->width = (width != NULL) ? *width : (widget->requested_size.width != 0) ? widget->requested_size.width: 0;
-                placeur->height = (height != NULL) ? *height : (widget->requested_size.height != 0) ? widget->requested_size.height: 0;
+                placeur->width = (width != NULL) ? *width : (widget->screen_location.size.width != 0) ? widget->screen_location.size.width: 0;
+                placeur->height = (height != NULL) ? *height : (widget->screen_location.size.height != 0) ? widget->screen_location.size.height: 0;
                 placeur->rel_x = (rel_x != NULL) ? *rel_x : 0.0;
                 placeur->rel_y = (rel_y != NULL) ? *rel_y : 0.0;
                 placeur->rel_width = (rel_width != NULL) ? *rel_width : 0.0;
@@ -47,8 +43,8 @@ void		ei_place	(ei_widget_t		widget,
                 placeur->anchor = (anchor != NULL) ? *anchor : placeur->anchor;
                 placeur->x = (x != NULL) ? *x : placeur->x;
                 placeur->y = (y != NULL) ? *y : placeur->y;
-                placeur->width = (width != NULL) ? *width : (widget->requested_size.width != 0) ? widget->requested_size.width: placeur->width;
-                placeur->height = (height != NULL) ? *height : (widget->requested_size.height != 0) ? widget->requested_size.height: placeur->height;
+                placeur->width = (width != NULL) ? *width : (widget->screen_location.size.width != 0) ? widget->screen_location.size.width: placeur->width;
+                placeur->height = (height != NULL) ? *height : (widget->screen_location.size.height != 0) ? widget->screen_location.size.height: placeur->height;
                 placeur->rel_x = (rel_x != NULL) ? *rel_x : placeur->rel_x;
                 placeur->rel_y = (rel_y != NULL) ? *rel_y : placeur->rel_y;
                 placeur->rel_width = (rel_width != NULL) ? *rel_width : placeur->rel_width;

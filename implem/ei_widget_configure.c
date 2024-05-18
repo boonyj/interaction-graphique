@@ -6,6 +6,7 @@
 #include "ei_toplevel.h"
 #include "ei_event.h"
 #include "ei_global.h"
+#include "ei_callback_functions.h"
 
 
 void			ei_frame_configure		(ei_widget_t		widget,
@@ -133,6 +134,7 @@ void			ei_button_configure		(ei_widget_t		widget,
         }
 
         if (callback != NULL) {
+                button->callback = *callback;
                 if (user_param != NULL) {
                         button->widget.user_data = *user_param;
                         ei_bind(ei_ev_mouse_buttondown, widget, NULL, *callback, user_param);
@@ -248,5 +250,5 @@ void			ei_toplevel_configure		(ei_widget_t		widget,
                                             &(ei_relief_t){ei_relief_raised},
                                             NULL, NULL,
                                             &(ei_color_t){0x00, 0x00, 0x00, 0xff}, NULL, NULL, NULL, NULL,
-                                            NULL, NULL);
+                                            &(ei_callback_t){callback_buttondown_resize_toplevel_start}, NULL);
 }

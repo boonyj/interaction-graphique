@@ -229,7 +229,9 @@ void button_drawfunc (ei_widget_t		widget,
                      ei_surface_t		surface,
                      ei_surface_t		pick_surface,
                      ei_rect_t*		clipper){
-        draw_button((button_t*) widget, surface, pick_surface, clipper);
+        if (widget->geom_params != NULL) {
+                draw_button((button_t*) widget, surface, pick_surface, clipper);
+        }
 }
 
 void button_setdefaultsfunc(ei_widget_t		widget){
@@ -244,10 +246,15 @@ void button_setdefaultsfunc(ei_widget_t		widget){
         button->text = NULL;
         button->widget.requested_size.width = 100;
         button->widget.requested_size.height = 48;
+        button->widget.screen_location.size.width = 100;
+        button->widget.screen_location.size.height = 48;
         button->img = NULL;
         button->widget.screen_location.top_left.x = 0;
         button->widget.screen_location.top_left.y = 0;
         //button->img_rect = NULL;
+        button->user_param = NULL;
+        button->callback =NULL;
+
 }
 
 void button_geomnotifyfunc(ei_widget_t		widget){

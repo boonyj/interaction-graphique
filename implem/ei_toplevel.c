@@ -1,3 +1,4 @@
+#include <ei_event.h>
 #include "ei_toplevel.h"
 #include "ei_widget_configure.h"
 #include "ei_draw_tool.h"
@@ -25,6 +26,22 @@ void toplevel_releasefunc (ei_widget_t	widget){
         widget->geom_params = NULL;
         widget->wclass = NULL;
         widget->content_rect = NULL;
+        if (widget->parent->children_head == widget) {
+                if (widget->next_sibling != NULL) {
+                        widget->parent->children_head = widget->next_sibling;
+                } else {
+                        widget->parent->children_head = NULL;
+                        widget->parent->children_tail = NULL;
+                }
+        } else if (widget->parent->children_tail == widget) {
+                ei_widget_t* last = &(widget->parent->children_head);
+                while (*last != NULL && (*last)->next_sibling != widget) {
+                        last = &((*last)->next_sibling);
+                }
+                widget->parent->children_tail = *last;
+                widget->parent->children_tail->next_sibling = NULL;
+        }
+
 }
 
 void draw_toplevel (toplevel_t * toplevel,
@@ -128,6 +145,8 @@ void toplevel_setdefaultsfunc(ei_widget_t		widget){
         toplevel->title_color = ei_font_default_color;
         toplevel->widget.requested_size.width = 320;
         toplevel->widget.requested_size.height = 240;
+        toplevel->widget.screen_location.size.width = 320;
+        toplevel->widget.screen_location.size.height = 240;
         toplevel->widget.screen_location.top_left.x = 0;
         toplevel->widget.screen_location.top_left.y = 0;
 }

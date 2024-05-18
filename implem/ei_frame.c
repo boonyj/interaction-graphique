@@ -2,6 +2,7 @@
 #include "ei_draw.h"
 #include "ei_draw_tool.h"
 #include "ei_implementation.h"
+#include "ei_global.h"
 
 ei_widget_t frame_allocfunc (){
         ei_widget_t widget = calloc(1,sizeof(struct frame_t));
@@ -130,7 +131,13 @@ void frame_drawfunc (ei_widget_t		widget,
                      ei_surface_t		surface,
                      ei_surface_t		pick_surface,
                      ei_rect_t*		clipper){
-        draw_frame((frame_t *) widget, surface, pick_surface, clipper);
+        if (widget != root) {
+                if (widget->geom_params != NULL) {
+                        draw_frame((frame_t *) widget, surface, pick_surface, clipper);
+                }
+        } else {
+                draw_frame((frame_t *) widget, surface, pick_surface, clipper);
+        }
 }
 
 void frame_setdefaultsfunc(ei_widget_t		widget){
@@ -143,6 +150,8 @@ void frame_setdefaultsfunc(ei_widget_t		widget){
         frame->text_font = ei_default_font;
         frame->widget.requested_size.width = 300;
         frame->widget.requested_size.height = 200;
+        frame->widget.screen_location.size.width = 300;
+        frame->widget.screen_location.size.height = 200;
         frame->widget.color->red = ei_default_background_color.red;
         frame->widget.color->green = ei_default_background_color.green;
         frame->widget.color->blue = ei_default_background_color.blue;

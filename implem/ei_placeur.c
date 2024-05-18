@@ -21,6 +21,7 @@ void placeur_runfunc(ei_widget_t widget){
                         int parent_coordinate_y =
                                 (int) ((float) parent_height * placeur->rel_y) + parent->screen_location.top_left.y;
 
+
                         placeur->width = (placeur->rel_width != 0.0) ? (int) ((float) parent_width * placeur->rel_width)
                                                                      : placeur->width;
                         placeur->height = (placeur->rel_height != 0.0) ? (int) ((float) parent_height *
@@ -79,6 +80,8 @@ void placeur_runfunc(ei_widget_t widget){
                         }
                         new_location->size.width = placeur->width;
                         new_location->size.height = placeur->height;
+
+
                 /*} else {
                         new_location->top_left.x = widget->screen_location.top_left.x + placeur->x;
                         new_location->top_left.y = widget->screen_location.top_left.y + placeur->y;

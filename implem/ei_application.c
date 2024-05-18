@@ -10,16 +10,7 @@
 #include "ei_draw_tool.c"
 #include "ei_implementation.c"
 #include "ei_global.h"
-
-typedef struct ei_event_bind_widget_t{
-        ei_event_t* event;
-        ei_impl_widget_t* widget;
-}ei_event_bind_widget_t;
-
-typedef struct widget_list_t {
-        ei_widget_t widget;
-        struct widget_list_t* next;
-} widget_list_t;
+#include "ei_callback_functions.h"
 
 void ei_app_create(ei_size_t main_window_size, bool fullscreen){
         // Initialisation of the application
@@ -47,7 +38,7 @@ void ei_app_create(ei_size_t main_window_size, bool fullscreen){
         // Register placeur (to be used later)
         ei_geometrymanager_register(placeur_mng);
 
-        // Can't two root at the same moment (button_root to test button and  frame_root to test_root)
+        // Can't two root at the same moment (button_root to test button and frame_root to test_root)
         root = ei_widget_create("frame", NULL, NULL, NULL);
 }
 
@@ -77,151 +68,6 @@ bool callback_buttondown_reverse_relief (ei_widget_t widget, ei_event_t* event, 
                 return false;
 }
 
-
-// Function to add a widget to the list
-void add_widget_to_list(widget_list_t** list, ei_widget_t widget) {
-        widget_list_t* new_node = (widget_list_t*)malloc(sizeof(widget_list_t));
-        new_node->widget = widget;
-        new_node->next = *list;
-        *list = new_node;
-}
-
-// Recursive function to find all widgets with the class name "button"
-void find_all_buttons_and_frames(ei_widget_t widget, widget_list_t** list) {
-        if (widget == NULL) return;
-
-        // Check if the current widget has the class name "button"
-        if (strcmp(widget->wclass->name, "button") == 0 || strcmp(widget->wclass->name, "frame") == 0) {
-                add_widget_to_list(list, widget);
-        }
-
-        // Recursively search among the widget's children
-        ei_widget_t child = ei_widget_get_first_child(widget);
-        while (child != NULL) {
-                find_all_buttons_and_frames(child, list);
-                child = ei_widget_get_next_sibling(child);
-        }
-}
-
-bool callback_move_toplevel(ei_widget_t widget, ei_event_t* event, ei_user_param_t user_param) {
-        // Only proceed if the event is a mouse button down event
-        if (event->type == ei_ev_mouse_move) {
-                // Cast the widget to a toplevel widget
-                ei_event_bind_widget_t* initial_event_bind = (ei_event_bind_widget_t*) user_param;
-                ei_mouse_event_t initial_mouse = initial_event_bind->event->param.mouse;
-                ei_mouse_event_t mouse = event->param.mouse;
-
-                ei_widget_t toplevel = (ei_widget_t) initial_event_bind->widget;
-
-                // Check if the clicked widget is the toplevel widget
-                if (widget == toplevel) {
-                        // Get the current mouse position
-                        ei_point_t mouse_position = event->param.mouse.where;
-
-                        // Calculate the offset between the mouse position and the toplevel position
-                        int dx = mouse_position.x - initial_mouse.where.x;
-                        int dy = mouse_position.y - initial_mouse.where.y;
-                        ei_place_xy(widget, dx, dy);
-                        // Calculate the offset between the mouse position and the buttons and frames positions
-                        widget_list_t* button_list = NULL;
-                        find_all_buttons_and_frames(root, &button_list);
-                        widget_list_t* current = button_list;
-                        while (current != NULL) {
-                                ei_place(current->widget, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
-                                current = current->next;
-                        }
-                        //ei_place(widget->children_head->next_sibling->next_sibling, NULL, &dx, &dy, NULL, NULL, NULL, NULL, NULL, NULL);
-
-                       if (root->wclass != NULL) {
-                                if (root->wclass->drawfunc != NULL) {
-                                        root->wclass->drawfunc(root, main_surface, pick_surface, NULL);
-                                }
-                        }
-                        ei_rect_t *clipper = &(root->children_head->screen_location);
-                        ei_impl_widget_draw_children(root, main_surface, pick_surface, clipper);
-                        // Return true to indicate that the event was handled
-                        return true;
-                }
-        }
-
-        // Return false if the event was not handled
-        return false;
-}
-
-bool callback_move_top_level_end (ei_widget_t widget, ei_event_t* event, ei_user_param_t user_param) {
-        printf("Move toplevel end !\n");
-        root->screen_location.top_left.x = 0;
-        root->screen_location.top_left.y = 0;
-        ei_unbind(ei_ev_mouse_move, NULL, "all", callback_move_toplevel, user_param);
-        ei_unbind(ei_ev_mouse_buttonup, NULL, "all", callback_move_top_level_end, NULL);
-        return true;
-}
-
-
-bool callback_buttondown_top_level (ei_widget_t widget, ei_event_t* event, ei_user_param_t user_param) {
-        if (event->type == ei_ev_mouse_buttondown) {
-                printf("Clicked !\n");
-                ei_event_t* event_tbs = malloc(sizeof(ei_event_t));
-                event_tbs->type = event->type;
-                event_tbs->param = event->param;
-                event_tbs->modifier_mask = event->modifier_mask;
-                ei_event_bind_widget_t* param = malloc(sizeof(ei_event_bind_widget_t));
-                param->event = event_tbs;
-                root->screen_location.top_left.x = widget->screen_location.top_left.x;
-                root->screen_location.top_left.y = widget->screen_location.top_left.y;
-                param->widget = widget;
-
-                ei_bind(ei_ev_mouse_move, NULL, "all", callback_move_toplevel, param);
-                ei_bind(ei_ev_mouse_buttonup, NULL, "all", callback_move_top_level_end, NULL);
-                return true;
-        } else
-                return false;
-}
-
-void draw_all_buttons_raised (ei_widget_t widget) {
-        ei_widget_t child = ei_widget_get_first_child(widget);
-        while (child != NULL) {
-                if (strcmp(child->wclass->name, "button") == 0) {
-                        button_t *button = (button_t *) child;
-                        button->relief = ei_relief_raised;
-                        button->widget.wclass->drawfunc(&(button->widget), main_surface, NULL, &(button->widget.screen_location));
-                }
-                // Recursively draw children of the current child widget
-                draw_all_buttons_raised(child);
-
-                // Move to the next sibling
-                child = ei_widget_get_next_sibling(child);
-        }
-}
-
-ei_widget_t find_widget (uint32_t* pixel_pick_surface, ei_widget_t widget) {
-        // Check the widget itself first
-        if (widget->pick_id == *pixel_pick_surface) {
-                //printf("Name: %s, Pick id : %u, Pixel : %u\n", widget->wclass->name, widget->pick_id, *pixel_pick_surface);
-                return widget;
-        }
-
-        // Recursively search among the widget's children
-        ei_widget_t child = ei_widget_get_first_child(widget);
-        while (child != NULL) {
-                ei_widget_t found_widget = find_widget(pixel_pick_surface, child);
-                if (found_widget != NULL) {
-                        return found_widget;
-                }
-                child = ei_widget_get_next_sibling(child);
-        }
-
-        // Return NULL if no matching widget is found
-        return NULL;
-}
-
-// Define a global variable to store the last clicked widget
-ei_widget_t last_clicked_widget = NULL;
-// Function to retrieve the last clicked widget
-ei_widget_t get_last_clicked_widget() {
-        return last_clicked_widget;
-}
-
 void ei_app_run(void) {
         // Get the root widget of the application
         ei_widget_t root_widget = ei_app_root_widget();
@@ -249,8 +95,8 @@ void ei_app_run(void) {
         ei_bind(ei_ev_mouse_buttondown, NULL, "button", callback_buttondown_reverse_relief, NULL);
         // Bind the callback function to the mouse button down event on the frame widget
         //ei_bind(ei_ev_mouse_buttondown, NULL, "toplevel", callback_move_toplevel, toplevel_widget);
-
         ei_bind(ei_ev_mouse_buttondown, NULL, "toplevel", callback_buttondown_top_level, NULL);
+        ei_bind(ei_ev_mouse_buttondown, NULL, "toplevel", callback_toplevel_move_front, NULL);
 
         //Main loop here
         ei_event_t event;
@@ -274,17 +120,87 @@ void ei_app_run(void) {
                 ei_size_t pick_size = hw_surface_get_size(pick_surface);
                 pixel_pick_surface += (mouse.where.y * pick_size.width) + (mouse.where.x);
 
-                widget = find_widget(pixel_pick_surface, ei_app_root_widget());
+                if (event.type != ei_ev_keydown && event.type != ei_ev_keyup) {
+                        widget = find_widget(pixel_pick_surface, ei_app_root_widget());
+                        // Flag to check if toplevel exit button's button up callback has been executed
+                        bool exit_button_handled = false;
+
+                        // Special case for toplevel exit button
+                        if (widget->parent != NULL) {
+                                if (widget->pick_id == widget->parent->pick_id + 1) {
+                                        if (event.type == ei_ev_mouse_buttonup) {
+                                                for (int i = 0; i < linked_event_list_size; ++i) {
+                                                        if (linked_event_list[i]->eventtype == ei_ev_mouse_buttonup) {
+                                                                if (linked_event_list[i]->widget == widget) {
+                                                                        linked_event_list[i]->callback(widget, &event,widget->user_data);
+                                                                        exit_button_handled = true;
+                                                                        ei_unbind(ei_ev_mouse_buttonup, NULL, "all", callback_buttonup_reverse_relief, widget);
+                                                                        ei_unbind(ei_ev_mouse_buttonup, NULL, "all", callback_buttonup_reverse_relief, widget->next_sibling);
+                                                                        break;
+                                                                }
+                                                        }
+                                                }
+                                        }
+                                }
+                        }
+
+                        if (!exit_button_handled) {
+                                //Search for event in list
+                                for (int i = 0; i < linked_event_list_size; ++i) {
+                                        if (linked_event_list[i]->eventtype == event.type) {
+                                                if(linked_event_list[i]->widget != NULL){
+                                                        if(widget == linked_event_list[i]->widget){
+                                                                linked_event_list[i]->callback(widget, &event, widget->user_data);
+                                                                if (root->wclass != NULL) {
+                                                                        if (root->wclass->drawfunc != NULL) {
+                                                                                root->wclass->drawfunc(root, main_surface, pick_surface, NULL);
+                                                                        }
+                                                                }
+                                                                clipper = &(root->children_head->screen_location);
+                                                                ei_impl_widget_draw_children(root, main_surface, pick_surface, clipper);
+                                                        }
+                                                }else{
+                                                        if(strcmp(linked_event_list[i]->tag, widget->wclass->name) == 0 ||
+                                                           strcmp(linked_event_list[i]->tag, "all") == 0){
+                                                                linked_event_list[i]->callback(widget, &event, linked_event_list[i]->user_param);
+                                                        }
+                                                }
+                                        }
+                                }
+                        }
+                } else {
+                        for (int i = 0; i < linked_event_list_size; ++i) {
+                                if (linked_event_list[i]->eventtype == event.type) {
+                                        linked_event_list[i]->callback(widget, &event, widget->user_data);
+                                        if (root->wclass != NULL) {
+                                                if (root->wclass->drawfunc != NULL) {
+                                                        root->wclass->drawfunc(root, main_surface, pick_surface, NULL);
+                                                }
+                                        }
+                                        clipper = &(root->children_head->screen_location);
+                                        ei_impl_widget_draw_children(root, main_surface, pick_surface, clipper);
+                                }
+                        }
+                }
                 //printf("Pick_id : %d , Pixel color : %d\n",widget->pick_id, *pixel_pick_surface);
 
-                last_clicked_widget = widget;
-                printf("Name :: %s\n", last_clicked_widget->wclass->name);
-                //Search for event in list
+                /*// Flag to check if a specific widget's callback has been executed
+                bool specific_widget_handled = false;
+
+                // First, handle events for the specific widget
                 for (int i = 0; i < linked_event_list_size; ++i) {
                         if (linked_event_list[i]->eventtype == event.type) {
-                                if(linked_event_list[i]->widget != NULL){
-                                        if(widget == linked_event_list[i]->widget){
-                                                linked_event_list[i]->callback(widget, &event, widget->user_data);
+                                if (linked_event_list[i]->widget != NULL && widget == linked_event_list[i]->widget) {
+                                        if (strcmp(widget->wclass->name, "button") ==0){
+                                                button_t* b= (button_t *) widget;
+                                                ei_event_t event2 = {ei_ev_mouse_buttondown, 0, 'a'};
+                                                callback_buttondown_reverse_relief (widget, &event2, NULL);
+                                                ei_unbind(ei_ev_mouse_buttonup, NULL, "all", callback_buttonup_reverse_relief, widget);
+                                                b->callback(widget, &event, widget->user_data);
+                                                if(b->widget.parent->wclass != NULL ){
+                                                        ei_bind(ei_ev_mouse_buttonup, NULL, "all", callback_buttonup_reverse_relief, widget);
+
+                                                }
                                                 if (root->wclass != NULL) {
                                                         if (root->wclass->drawfunc != NULL) {
                                                                 root->wclass->drawfunc(root, main_surface, pick_surface, NULL);
@@ -292,15 +208,29 @@ void ei_app_run(void) {
                                                 }
                                                 ei_rect_t *clipper = &(root->children_head->screen_location);
                                                 ei_impl_widget_draw_children(root, main_surface, pick_surface, clipper);
+                                        } else {
+                                                linked_event_list[i]->callback(widget, &event, widget->user_data);
                                         }
-                                }else{
-                                        if(strcmp(linked_event_list[i]->tag, widget->wclass->name) == 0 ||
-                                           strcmp(linked_event_list[i]->tag, "all") == 0){
-                                                linked_event_list[i]->callback(widget, &event, linked_event_list[i]->user_param);
-                                        }
+                                        specific_widget_handled = true;
+                                        break;  // Exit the loop once a specific widget's callback is found and executed
                                 }
                         }
                 }
+
+                // If no specific widget's callback was found, handle events for the "all" tag and other matching tags
+                if (!specific_widget_handled) {
+                        for (int i = 0; i < linked_event_list_size; ++i) {
+                                if (linked_event_list[i]->eventtype == event.type) {
+                                        if (linked_event_list[i]->widget == NULL) {
+                                                if (strcmp(linked_event_list[i]->tag, widget->wclass->name) == 0 ||
+                                                    strcmp(linked_event_list[i]->tag, "all") == 0) {
+                                                        linked_event_list[i]->callback(widget, &event, linked_event_list[i]->user_param);
+                                                }
+                                        }
+                                }
+                        }
+                }*/
+
                 hw_surface_unlock(main_surface);
                 hw_surface_unlock(pick_surface);
         }
@@ -315,11 +245,9 @@ void ei_app_quit_request(void){
 }
 
 ei_widget_t ei_app_root_widget(void){
-        //return frame_root;
         return root;
 }
 
 ei_surface_t ei_app_root_surface(void){
         return main_surface;
-
 }

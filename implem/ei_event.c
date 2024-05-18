@@ -75,6 +75,10 @@ void		ei_unbind		(ei_eventtype_t		eventtype,
                     linked_event_list[i]->tag == tag &&
                     linked_event_list[i]->callback == callback) {
 
+                        if(user_param != NULL && linked_event_list[i]->user_param != NULL && linked_event_list[i]->user_param != user_param){
+                                break;
+                        }
+
                         free(linked_event_list[i]);
 
                         // Shift remaining elements in the array to remove the gap
