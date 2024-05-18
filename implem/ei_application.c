@@ -343,7 +343,26 @@ void ei_app_run(void) {
                 for (int i = 0; i < linked_event_list_size; ++i) {
                         if (linked_event_list[i]->eventtype == event.type) {
                                 if (linked_event_list[i]->widget != NULL && widget == linked_event_list[i]->widget) {
-                                        linked_event_list[i]->callback(widget, &event, linked_event_list[i]->user_param);
+                                        if (strcmp(widget->wclass->name, "button") ==0){
+                                                button_t* b= (button_t *) widget;
+                                                ei_event_t event2 = {ei_ev_mouse_buttondown, 0, 'a'};
+                                                callback_buttondown_reverse_relief (widget, &event2, NULL);
+                                                ei_unbind(ei_ev_mouse_buttonup, NULL, "all", callback_buttonup_reverse_relief, widget);
+                                                b->callback(widget, &event, widget->user_data);
+                                                if(b->widget.parent->wclass != NULL ){
+                                                        ei_bind(ei_ev_mouse_buttonup, NULL, "all", callback_buttonup_reverse_relief, widget);
+
+                                                }
+                                                if (root->wclass != NULL) {
+                                                        if (root->wclass->drawfunc != NULL) {
+                                                                root->wclass->drawfunc(root, main_surface, pick_surface, NULL);
+                                                        }
+                                                }
+                                                ei_rect_t *clipper = &(root->children_head->screen_location);
+                                                ei_impl_widget_draw_children(root, main_surface, pick_surface, clipper);
+                                        } else {
+                                                linked_event_list[i]->callback(widget, &event, widget->user_data);
+                                        }
                                         specific_widget_handled = true;
                                         break;  // Exit the loop once a specific widget's callback is found and executed
                                 }
