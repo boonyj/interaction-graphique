@@ -158,11 +158,11 @@ void			ei_button_configure		(ei_widget_t		widget,
 //Callback function for close button in toplevel
 bool callback_toplevel_close_confirmed(ei_widget_t widget, ei_event_t* event, ei_user_param_t user_param){
         if (event->type == ei_ev_mouse_buttonup) {
-                ei_unbind(ei_ev_mouse_buttonup, widget, NULL, callback_toplevel_close_confirmed, NULL);
                 toplevel_releasefunc(widget->parent);
                 root->wclass->drawfunc(root, main_surface, pick_surface, NULL);
                 ei_rect_t *clipper = &(root->children_head->screen_location);
                 ei_impl_widget_draw_children(root, main_surface, pick_surface, clipper);
+                ei_unbind(ei_ev_mouse_buttonup, widget, NULL, callback_toplevel_close_confirmed, NULL);
                 return true;
         } else
                 return false;
@@ -173,9 +173,7 @@ bool callback_toplevel_close(ei_widget_t widget, ei_event_t* event, ei_user_para
                 button_t *button = (button_t *) widget;
                 button->relief = ei_relief_sunken;
                 button->widget.wclass->drawfunc(&(button->widget), main_surface, NULL, &(button->widget.screen_location));
-                //ei_bind(ei_ev_mouse_buttonup, widget, NULL, callback_toplevel_close_confirmed, NULL);
-                toplevel_releasefunc(widget->parent);
-
+                ei_bind(ei_ev_mouse_buttonup, widget, NULL, callback_toplevel_close_confirmed, NULL);
                 return true;
         } else {
                 return false;

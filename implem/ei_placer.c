@@ -1,10 +1,6 @@
 #include "ei_placer.h"
 #include "ei_implementation.h"
-#include "ei_widget_configure.h"
-#include "ei_toplevel.h"
 #include "ei_placeur.h"
-#include "ei_event.h"
-#include "ei_button.h"
 #include "ei_global.h"
 
 void		ei_place	(ei_widget_t		widget,

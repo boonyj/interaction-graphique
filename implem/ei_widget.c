@@ -40,13 +40,13 @@ ei_widget_t ei_widget_create(ei_const_string_t class_name,
                 }
                 parent->children_tail = widget;
 
-                if (parent->children_head != widget) {
+                /*if (parent->children_head != widget) {
                         ei_widget_t prev_sibling = parent->children_head;
                         while (prev_sibling->next_sibling != NULL) {
                                 prev_sibling = prev_sibling->next_sibling;
                         }
                         prev_sibling->next_sibling = widget;
-                }
+                }*/
         }
 
         pick_counter+= 1;

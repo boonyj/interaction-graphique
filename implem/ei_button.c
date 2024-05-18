@@ -229,7 +229,9 @@ void button_drawfunc (ei_widget_t		widget,
                      ei_surface_t		surface,
                      ei_surface_t		pick_surface,
                      ei_rect_t*		clipper){
-        draw_button((button_t*) widget, surface, pick_surface, clipper);
+        if (widget->geom_params != NULL) {
+                draw_button((button_t*) widget, surface, pick_surface, clipper);
+        }
 }
 
 void button_setdefaultsfunc(ei_widget_t		widget){
