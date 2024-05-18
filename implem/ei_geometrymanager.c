@@ -26,21 +26,25 @@ void	ei_geometry_run_finalize(ei_widget_t widget, ei_rect_t* new_screen_location
                 if (new_screen_location->top_left.y - text_height < 0) {
                         new_screen_location->top_left.y = 0 + text_height;
                 }
-                if (new_screen_location->top_left.x + new_screen_location->size.width > root_size->width) {
-                        new_screen_location->top_left.x = root_size->width - new_screen_location->size.width;
+                if (new_screen_location->top_left.x + new_screen_location->size.width + toplevel->border_width > root_size->width) {
+                        new_screen_location->top_left.x = root_size->width - new_screen_location->size.width - toplevel->border_width;
                 }
-                if (new_screen_location->top_left.y + new_screen_location->size.height > root_size->height) {
-                        new_screen_location->top_left.y = root_size->height - new_screen_location->size.height;
+                if (new_screen_location->top_left.y + new_screen_location->size.height + toplevel->border_width > root_size->height) {
+                        new_screen_location->top_left.y = root_size->height - new_screen_location->size.height - toplevel->border_width;
                 }
 
-                if (new_screen_location->size.height > 500) {
-                        new_screen_location->size.height = 500;
+                if(new_screen_location->top_left.x <= toplevel->border_width) {
+                        new_screen_location->top_left.x = toplevel->border_width;
+                }
+
+                if (new_screen_location->size.height > 600) {
+                        new_screen_location->size.height = 600;
                 }else if(new_screen_location->size.height < 150) {
                         new_screen_location->size.height = 150;
                 }
 
-                if (new_screen_location->size.width > 500) {
-                        new_screen_location->size.width = 500;
+                if (new_screen_location->size.width > 600) {
+                        new_screen_location->size.width = 600;
                 }else if(new_screen_location->size.width < 150) {
                         new_screen_location->size.width = 150;
                 }
