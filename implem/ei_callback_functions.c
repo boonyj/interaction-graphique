@@ -48,7 +48,7 @@ bool callback_move_toplevel(ei_widget_t widget, ei_event_t* event, ei_user_param
                         int dx = mouse_position.x - initial_mouse.where.x;
                         int dy = mouse_position.y - initial_mouse.where.y;
                         ei_place_xy(widget, dx, dy);
-                        run_all_ei_place(root);
+                        run_all_ei_place(widget);
 
                         //ei_place(widget->children_head->next_sibling->next_sibling, NULL, &dx, &dy, NULL, NULL, NULL, NULL, NULL, NULL);
 
@@ -124,7 +124,7 @@ bool callback_move_resizing_toplevel(ei_widget_t widget, ei_event_t* event, ei_u
                 initial_event_bind->event->param.mouse.where.x += dx;
                 initial_event_bind->event->param.mouse.where.y += dy;
 
-                run_all_ei_place(root);
+                run_all_ei_place(toplevel);
 
                 printf("AFTER EI_PLACE : w = %d , h = %d\n",toplevel->screen_location.size.width,toplevel->screen_location.size.height);
 

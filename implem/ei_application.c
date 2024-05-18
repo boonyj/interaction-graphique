@@ -355,6 +355,7 @@ void ei_app_run(void) {
                 }
                 hw_surface_unlock(main_surface);
                 hw_surface_unlock(pick_surface);
+                printf("%s's topleft : x = %d, y = %d\n",root_widget->children_head->wclass->name,root_widget->children_head->screen_location.top_left.x,root_widget->children_head->screen_location.top_left.y);
         }
 }
 
