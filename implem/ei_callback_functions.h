@@ -12,9 +12,6 @@ void draw_all_buttons_raised (ei_widget_t widget);
 
 ei_widget_t find_widget (uint32_t* pixel_pick_surface, ei_widget_t widget);
 
-bool callback_buttonup_reverse_relief (ei_widget_t widget, ei_event_t* event, ei_user_param_t user_param);
-
-bool callback_buttondown_reverse_relief (ei_widget_t widget, ei_event_t* event, ei_user_param_t user_param);
 
 bool callback_move_toplevel(ei_widget_t widget, ei_event_t* event, ei_user_param_t user_param);
 
@@ -25,3 +22,5 @@ bool callback_buttondown_top_level (ei_widget_t widget, ei_event_t* event, ei_us
 bool callback_move_resizing_toplevel(ei_widget_t widget, ei_event_t* event, ei_user_param_t user_param);
 
 bool callback_buttondown_resize_toplevel_start (ei_widget_t widget, ei_event_t* event, ei_user_param_t user_param);
+
+bool callback_toplevel_move_front(ei_widget_t widget, ei_event_t* event, ei_user_param_t user_param);

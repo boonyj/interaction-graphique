@@ -5,28 +5,6 @@
 #include "ei_button.h"
 #include "ei_global.h"
 
-bool callback_buttonup_reverse_relief (ei_widget_t widget, ei_event_t* event, ei_user_param_t user_param) {
-        if (event->type == ei_ev_mouse_buttonup) {
-                button_t *button = (button_t *) user_param;
-                button->relief = ei_relief_raised;
-                button->widget.wclass->drawfunc(&(button->widget), main_surface, NULL, &(button->widget.screen_location));
-                ei_unbind(ei_ev_mouse_buttonup, NULL, "all", callback_buttonup_reverse_relief, widget);
-                return true;
-        } else
-                return false;
-}
-
-bool callback_buttondown_reverse_relief (ei_widget_t widget, ei_event_t* event, ei_user_param_t user_param) {
-        if (event->type == ei_ev_mouse_buttondown) {
-                button_t *button = (button_t *) widget;
-                button->relief = ei_relief_sunken;
-                button->widget.wclass->drawfunc(&(button->widget), main_surface, NULL, &(button->widget.screen_location));
-                ei_bind(ei_ev_mouse_buttonup, NULL, "all", callback_buttonup_reverse_relief, widget);
-                return true;
-        } else
-                return false;
-}
-
 //Callbacks for toplevel movement
 
 bool callback_move_toplevel(ei_widget_t widget, ei_event_t* event, ei_user_param_t user_param) {
@@ -224,4 +202,45 @@ ei_widget_t find_widget (uint32_t* pixel_pick_surface, ei_widget_t widget) {
 
     // Return NULL if no matching widget is found
     return NULL;
+}
+
+bool callback_toplevel_move_front(ei_widget_t widget, ei_event_t* event, ei_user_param_t user_param) {
+        if (event->type == ei_ev_mouse_buttondown) {
+                ei_widget_t parent = widget->parent;
+                if (parent == NULL) {
+                        return false;  // Sanity check: widget must have a parent
+                }
+
+                // If the widget is already the last child, no need to move it
+                if (widget->next_sibling == NULL) {
+                        return true;
+                }
+
+                // Remove widget from its current position
+                ei_widget_t* prev = &(parent->children_head);
+                while (*prev != NULL && *prev != widget) {
+                        prev = &((*prev)->next_sibling);
+                }
+                if (*prev == widget ) {
+                        *prev = ei_widget_get_next_sibling(widget);
+                }
+
+                // Move widget to the end of the sibling list
+                ei_widget_t* last = &(parent->children_head);
+                while (*last != NULL && (*last)->next_sibling != NULL) {
+                        last = &((*last)->next_sibling);
+                }
+                (*last)->next_sibling = widget;
+                widget->next_sibling = NULL;
+                parent->children_tail = widget;
+
+                // Redraw the widget hierarchy
+                root->wclass->drawfunc(root, main_surface, pick_surface, NULL);
+                ei_rect_t *clipper = &(root->children_head->screen_location);
+                ei_impl_widget_draw_children(root, main_surface, pick_surface, clipper);
+
+                return true;
+        } else {
+                return false;
+        }
 }
