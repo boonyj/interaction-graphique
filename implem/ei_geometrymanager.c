@@ -17,10 +17,11 @@ void	ei_geometry_run_finalize(ei_widget_t widget, ei_rect_t* new_screen_location
 
         int text_width = 0;
         int text_height = 0;
-
+        int border_width = 0;
         if(strcmp(widget->wclass->name,"toplevel") == 0){
                 toplevel_t* toplevel = (toplevel_t*) widget;
                 hw_text_compute_size(toplevel->title,toplevel->title_font,&text_width,&text_height);
+                border_width = toplevel->border_width;
                 if (new_screen_location->top_left.x < 0) {
                         new_screen_location->top_left.x = 0;
                 }
@@ -53,10 +54,10 @@ void	ei_geometry_run_finalize(ei_widget_t widget, ei_rect_t* new_screen_location
                 widget->content_rect->size.height = new_screen_location->size.height;
         }
 
-        ei_rect_t old_rect = {widget->screen_location.top_left.x -20, widget->screen_location.top_left.y -20,
-                              widget->screen_location.size.width +20, widget->screen_location.size.width +20 };
-        ei_rect_t new_rect = {new_screen_location->top_left.x -20, new_screen_location->top_left.y -20,
-                              new_screen_location->size.width +20, new_screen_location->size.width +20 };
+        ei_rect_t old_rect = {widget->screen_location.top_left.x - border_width , widget->screen_location.top_left.y-text_height-border_width,
+                              widget->screen_location.size.width + border_width*2, widget->screen_location.size.height +text_height + border_width*2 };
+        ei_rect_t new_rect = {new_screen_location->top_left.x - border_width, new_screen_location->top_left.y-text_height -border_width ,
+                              new_screen_location->size.width +border_width*2, new_screen_location->size.height +text_height+ border_width*2 };
 
         ei_app_invalidate_rect(&old_rect);
         ei_app_invalidate_rect(&new_rect);
