@@ -250,6 +250,9 @@ void button_setdefaultsfunc(ei_widget_t		widget){
         button->widget.screen_location.top_left.x = 0;
         button->widget.screen_location.top_left.y = 0;
         //button->img_rect = NULL;
+        button->user_param = NULL;
+        button->callback =NULL;
+
 }
 
 void button_geomnotifyfunc(ei_widget_t		widget){
