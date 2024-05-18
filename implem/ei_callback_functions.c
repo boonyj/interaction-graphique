@@ -4,6 +4,7 @@
 #include "ei_placeur.h"
 #include "ei_button.h"
 #include "ei_global.h"
+#include "ei_toplevel.h"
 
 //Callbacks for toplevel movement
 
@@ -55,18 +56,28 @@ bool callback_move_toplevel(ei_widget_t widget, ei_event_t* event, ei_user_param
 bool callback_buttondown_top_level (ei_widget_t widget, ei_event_t* event, ei_user_param_t user_param) {
         if (event->type == ei_ev_mouse_buttondown) {
                 printf("Clicked !\n");
-                ei_event_t* event_tbs = malloc(sizeof(ei_event_t));
-                event_tbs->type = event->type;
-                event_tbs->param = event->param;
-                event_tbs->modifier_mask = event->modifier_mask;
-                ei_event_bind_widget_t* param = malloc(sizeof(ei_event_bind_widget_t));
-                param->event = event_tbs;
-                root->screen_location.top_left.x = widget->screen_location.top_left.x;
-                root->screen_location.top_left.y = widget->screen_location.top_left.y;
-                param->widget = widget;
 
-                ei_bind(ei_ev_mouse_move, NULL, "all", callback_move_toplevel, param);
-                ei_bind(ei_ev_mouse_buttonup, NULL, "all", callback_move_toplevel, NULL);
+                toplevel_t* toplevel = (toplevel_t *) widget;
+                int width = 0;
+                int height = 0;
+                hw_text_compute_size(toplevel->title,toplevel->title_font, &width, &height);
+                if( event->param.mouse.where.x > widget->screen_location.top_left.x
+                        && event->param.mouse.where.x < widget->screen_location.top_left.x +widget->screen_location.size.width
+                        && event->param.mouse.where.y > widget->screen_location.top_left.y - height
+                        && event->param.mouse.where.y < widget->screen_location.top_left.y  ){
+                        ei_event_t* event_tbs = malloc(sizeof(ei_event_t));
+                        event_tbs->type = event->type;
+                        event_tbs->param = event->param;
+                        event_tbs->modifier_mask = event->modifier_mask;
+                        ei_event_bind_widget_t* param = malloc(sizeof(ei_event_bind_widget_t));
+                        param->event = event_tbs;
+                        root->screen_location.top_left.x = widget->screen_location.top_left.x;
+                        root->screen_location.top_left.y = widget->screen_location.top_left.y;
+                        param->widget = widget;
+                        ei_bind(ei_ev_mouse_move, NULL, "all", callback_move_toplevel, param);
+                        ei_bind(ei_ev_mouse_buttonup, NULL, "all", callback_move_toplevel, NULL);
+                }
+
                 return true;
         } else
                 return false;
