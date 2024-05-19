@@ -135,10 +135,10 @@ void ei_app_run(void) {
                         bool exit_button_handled = false;
 
                         // Special case for toplevel exit button
-                        if (widget->parent != NULL) {
+                        if (widget->parent != NULL && strcmp(widget->parent->wclass->name, "toplevel") == 0) {
                                 if (widget->pick_id == widget->parent->pick_id + 1) {
                                         if (event.type == ei_ev_mouse_buttonup) {
-                                                while (head->next != NULL) {
+                                                while (head != NULL) {
                                                         if (head->eventtype == ei_ev_mouse_buttonup) {
                                                                 if (head->widget == widget) {
                                                                         head->callback(widget, &event,widget->user_data);
@@ -151,11 +151,12 @@ void ei_app_run(void) {
                                                         head = head->next;
                                                 }
                                         } else if (event.type == ei_ev_mouse_buttondown) {
-                                                while (head->next != NULL) {
+                                                while (head != NULL) {
                                                         if (head->eventtype == ei_ev_mouse_buttondown) {
                                                                 if (head->widget == widget) {
                                                                         head->callback(widget, &event,
                                                                                                        widget->user_data);
+                                                                        head = head->next;
                                                                         break;
                                                                 }
                                                         }
@@ -167,7 +168,7 @@ void ei_app_run(void) {
 
                         if (!exit_button_handled) {
                                 //Search for event in list
-                                while (head->next != NULL) {
+                                while (head != NULL) {
                                         if (head->eventtype == event.type) {
                                                 if(head->widget != NULL){
                                                         if(widget == head->widget){
@@ -191,7 +192,7 @@ void ei_app_run(void) {
                                 }
                         }
                 } else {
-                        while (head->next != NULL) {
+                        while (head != NULL) {
                                 if (head->eventtype == event.type) {
                                         head->callback(widget, &event, widget->user_data);
                                         if (root->wclass != NULL) {
