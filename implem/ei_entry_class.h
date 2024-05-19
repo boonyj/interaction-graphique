@@ -9,6 +9,8 @@ typedef struct entry_t {
         int border_width;
         ei_color_t text_color;
         ei_font_t text_font;
+        char* text;
+        bool in_focus;
 } entry_t;
 
 ei_widget_t entry_allocfunc ();

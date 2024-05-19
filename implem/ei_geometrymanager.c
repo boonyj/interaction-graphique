@@ -1,4 +1,6 @@
 #include "ei_geometrymanager.h"
+
+#include "ei_entry_class.h"
 #include "ei_implementation.h"
 #include "ei_global.h"
 #include "ei_toplevel.h"

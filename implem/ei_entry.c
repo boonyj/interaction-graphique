@@ -36,10 +36,30 @@ void			ei_entry_configure		(ei_widget_t		widget,
 }
 
 void			ei_entry_set_text		(ei_widget_t		widget,
-                                                              ei_const_string_t 	text){}
+                                                              ei_const_string_t 	text) {
+        if((strcmp(widget->wclass->name,"entry")) == 0){
+                entry_t* entry = (entry_t*)widget;
+                if(strlen(text) <= entry->requested_char_size) {
+                        entry->text = (char*)text;
+                }else {
+                        strncpy(entry->text,(char*)text,entry->requested_char_size);
+                }
+        }
+}
 
-ei_const_string_t 	ei_entry_get_text		(ei_widget_t		widget){}
+ei_const_string_t 	ei_entry_get_text		(ei_widget_t		widget) {
+        if((strcmp(widget->wclass->name,"entry")) == 0){
+                entry_t* entry = (entry_t*)widget;
+                return entry->text;
+        }
+        return NULL;
+}
 
 
-void			ei_entry_give_focus		(ei_widget_t		widget){}
+void			ei_entry_give_focus		(ei_widget_t		widget) {
+        if((strcmp(widget->wclass->name,"entry")) == 0){
+                entry_t* entry = (entry_t*)widget;
+                entry->in_focus = true;
+        }
+}
 
