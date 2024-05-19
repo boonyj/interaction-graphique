@@ -148,6 +148,9 @@ void toplevel_setdefaultsfunc(ei_widget_t		widget){
         toplevel->widget.color->alpha = ei_default_background_color.alpha;
         toplevel->widget.requested_size.width = 320;
         toplevel->widget.requested_size.height = 240;
+        toplevel->widget.content_rect = malloc(sizeof (ei_rect_t));
+        toplevel->widget.content_rect->size.width = 320;
+        toplevel->widget.content_rect->size.height = 240;
         toplevel->widget.screen_location.size.width = 320;
         toplevel->widget.screen_location.size.height = 240;
         toplevel->widget.screen_location.top_left.x = 0;
@@ -156,6 +159,7 @@ void toplevel_setdefaultsfunc(ei_widget_t		widget){
         toplevel->resizable = ei_axis_both;
         toplevel->min_size.width = 160;
         toplevel->min_size.height = 120;
+        toplevel->border_width = 4;
 
 }
 

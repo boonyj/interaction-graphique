@@ -1,0 +1,82 @@
+#include "ei_entry_class.h"
+#include "ei_draw_tool.h"
+#include "ei_global.h"
+
+
+ei_widget_t entry_allocfunc (){
+        ei_widget_t widget = malloc(sizeof(struct entry_t ));
+
+        return widget;
+}
+
+void entry_releasefunc (ei_widget_t	widget){
+
+}
+
+
+void draw_entry (entry_t * entry,
+                 ei_surface_t		surface,
+                 ei_surface_t		pick_surface,
+                 ei_rect_t*		clipper){
+        assertion_pick_color((ei_widget_t) entry, surface);
+
+        if (entry->widget.wclass->drawfunc != NULL) {
+                ei_color_t color = {entry->widget.color->red, entry->widget.color->green, entry->widget.color->blue};
+                ei_fill(surface, entry->widget.color, clipper);
+                if (pick_surface != NULL) {
+                        ei_fill(pick_surface, entry->widget.pick_color, clipper);
+                }
+        }
+}
+
+void entry_drawfunc (ei_widget_t		widget,
+                     ei_surface_t		surface,
+                     ei_surface_t		pick_surface,
+                     ei_rect_t*		clipper){
+        if (widget != root) {
+                if (ei_widget_is_displayed(widget)) {
+                        draw_entry((entry_t *) widget, surface, pick_surface, clipper);
+                }
+        } else {
+                draw_entry((entry_t *) widget, surface, pick_surface, clipper);
+        }
+}
+
+void entry_setdefaultsfunc(ei_widget_t		widget){
+        entry_t * entry = (entry_t *) widget;
+        entry->widget = *widget;
+        entry->text_font = ei_default_font;
+        entry->text_color = ei_font_default_color;
+        entry->border_width = 2;
+        entry->requested_char_size = 10;
+        entry->widget.color->red = ei_default_background_color.red;
+        entry->widget.color->green = ei_default_background_color.green;
+        entry->widget.color->blue = ei_default_background_color.blue;
+        entry->widget.color->alpha = ei_default_background_color.alpha;
+        int width = 0;
+        int height = 0;
+        hw_text_compute_size("aaaaaaaaaa",ei_default_font,&width,&height);
+        entry->widget.requested_size.width = width;
+        entry->widget.requested_size.height = height;
+        entry->widget.screen_location.size.width = width;
+        entry->widget.screen_location.size.height = height;
+        entry->widget.screen_location.top_left.x = 0;
+        entry->widget.screen_location.top_left.y = 0;
+
+}
+
+void entry_geomnotifyfunc(ei_widget_t		widget){
+
+}
+
+ei_widgetclass_t* create_entry_class(){
+        ei_widgetclass_t* entry = malloc(sizeof(ei_widgetclass_t));
+        strcpy(entry->name, "entry");
+        entry->allocfunc =  &entry_allocfunc;
+        entry->releasefunc = &entry_releasefunc;
+        entry->drawfunc = &entry_drawfunc;
+        entry->setdefaultsfunc = &entry_setdefaultsfunc;
+        entry->geomnotifyfunc = &entry_geomnotifyfunc;
+
+        return entry;
+}

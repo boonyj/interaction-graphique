@@ -7,6 +7,7 @@
 #include "ei_event.h"
 #include "ei_global.h"
 #include "ei_callback_functions.h"
+#include "ei_entry_class.h"
 
 void ei_app_create(ei_size_t main_window_size, bool fullscreen){
         // Initialisation of the application
@@ -21,11 +22,13 @@ void ei_app_create(ei_size_t main_window_size, bool fullscreen){
         ei_widgetclass_t* frame_class = create_frame_class();
         ei_widgetclass_t* button_class = create_button_class();
         ei_widgetclass_t* toplevel_class = create_toplevel_class();
+        ei_widgetclass_t* entry_class = create_entry_class();
 
         // Register the widget class frame (to be used later)
         ei_widgetclass_register(frame_class);
         ei_widgetclass_register(button_class);
         ei_widgetclass_register(toplevel_class);
+        ei_widgetclass_register(entry_class);
 
 
         // Creation of geometry manager

@@ -86,6 +86,7 @@ set(LIB_EI_SOURCES
 	${SRC}/ei_global.c
 	${SRC}/ei_callback_functions.c
 	${SRC}/ei_entry.c
+	${SRC}/ei_entry_class.c
 
 )
 
