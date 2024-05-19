@@ -78,6 +78,84 @@ void clear_invalidated_rects() {
         invalidated_rects_head = NULL;
 }
 
+void exit_button_press(ei_widget_t widget, ei_linked_event_t *head, ei_event_t *event, bool *exit_button_handled) {
+        if (widget->parent != NULL && strcmp(widget->parent->wclass->name, "toplevel") == 0) {
+                if (widget->pick_id == widget->parent->pick_id + 1) {
+                        if ((*event).type == ei_ev_mouse_buttonup) {
+                                while (head != NULL) {
+                                        if (head->eventtype == ei_ev_mouse_buttonup) {
+                                                if (head->widget == widget) {
+                                                        head->callback(widget, event, widget->user_data);
+                                                        (*exit_button_handled) = true;
+                                                        ei_unbind(ei_ev_mouse_buttonup, NULL, "all", callback_buttonup_reverse_relief, widget);
+                                                        ei_unbind(ei_ev_mouse_buttonup, NULL, "all", callback_buttonup_reverse_relief, widget->next_sibling);
+                                                        break;
+                                                }
+                                        }
+                                        head = head->next;
+                                }
+                        } else if ((*event).type == ei_ev_mouse_buttondown) {
+                                while (head != NULL) {
+                                        if (head->eventtype == ei_ev_mouse_buttondown) {
+                                                if (head->widget == widget) {
+                                                        head->callback(widget, event, widget->user_data);
+                                                        break;
+                                                }
+                                        }
+                                        head = head->next;
+                                }
+                        }
+                }
+        }
+}
+
+void draw_all_widgets(ei_rect_t *clipper) {
+        if (root->wclass != NULL) {
+                if (root->wclass->drawfunc != NULL) {
+                        root->wclass->drawfunc(root, main_surface, pick_surface, NULL);
+                }
+        }
+        clipper = &(root->children_head->screen_location);
+        ei_impl_widget_draw_children(root, main_surface, pick_surface, clipper);
+}
+
+void get_event(ei_rect_t *clipper, ei_event_t *event, struct ei_impl_widget_t *widget, ei_linked_event_t *head) {
+        head = linked_event_list;
+        //Search for event in list
+        while (head != NULL) {
+                if (head->eventtype == (*event).type) {
+                        if(head->widget != NULL){
+                                if(widget == head->widget){
+                                        head->callback(widget, event, widget->user_data);
+                                        draw_all_widgets(clipper);
+                                }
+                        }else{
+                                if(strcmp(head->tag, widget->wclass->name) == 0 ||
+                                   strcmp(head->tag, "all") == 0){
+                                        head->callback(widget, event, head->user_param);
+                                }
+                        }
+                }
+                head = head->next;
+        }
+}
+
+void get_keydown_event(struct ei_impl_widget_t *widget, ei_linked_event_t *head, ei_rect_t **clipper,
+                       ei_event_t *event) {
+        while (head != NULL) {
+                if (head->eventtype == (*event).type) {
+                        head->callback(widget, event, widget->user_data);
+                        if (root->wclass != NULL) {
+                                if (root->wclass->drawfunc != NULL) {
+                                        root->wclass->drawfunc(root, main_surface, pick_surface, NULL);
+                                }
+                        }
+                        (*clipper) = &(root->children_head->screen_location);
+                        ei_impl_widget_draw_children(root, main_surface, pick_surface, (*clipper));
+                }
+                head = head->next;
+        }
+}
 
 void ei_app_run(void) {
         // Get the root widget of the application
@@ -87,14 +165,8 @@ void ei_app_run(void) {
         hw_surface_lock(pick_surface);
 
         // Call the draw function for the root widget to draw the entire widget hierarchy
-        if (root_widget->wclass != NULL) {
-                if (root_widget->wclass->drawfunc != NULL) {
-                        root_widget->wclass->drawfunc(root_widget, main_surface, pick_surface, NULL);
-                }
-        }
         ei_rect_t *clipper = &(root_widget->children_head->screen_location);
-        ei_impl_widget_draw_children(root_widget, main_surface, pick_surface, clipper);
-
+        draw_all_widgets(clipper);
 
         hw_surface_unlock(main_surface);
         hw_surface_unlock(pick_surface);
@@ -103,9 +175,8 @@ void ei_app_run(void) {
         hw_surface_update_rects(main_surface, NULL);
         //hw_surface_update_rects(pick_surface, NULL);
 
-        ei_bind(ei_ev_mouse_buttondown, NULL, "button", callback_buttondown_reverse_relief, NULL);
         // Bind the callback function to the mouse button down event on the frame widget
-        //ei_bind(ei_ev_mouse_buttondown, NULL, "toplevel", callback_move_toplevel, toplevel_widget);
+        ei_bind(ei_ev_mouse_buttondown, NULL, "button", callback_buttondown_reverse_relief, NULL);
         ei_bind(ei_ev_mouse_buttondown, NULL, "toplevel", callback_buttondown_top_level, NULL);
         ei_bind(ei_ev_mouse_buttondown, NULL, "all", callback_toplevel_move_front, NULL);
 
@@ -135,131 +206,19 @@ void ei_app_run(void) {
                         bool exit_button_handled = false;
 
                         // Special case for toplevel exit button
-                        if (widget->parent != NULL && strcmp(widget->parent->wclass->name, "toplevel") == 0) {
-                                if (widget->pick_id == widget->parent->pick_id + 1) {
-                                        if (event.type == ei_ev_mouse_buttonup) {
-                                                while (head != NULL) {
-                                                        if (head->eventtype == ei_ev_mouse_buttonup) {
-                                                                if (head->widget == widget) {
-                                                                        head->callback(widget, &event,widget->user_data);
-                                                                        exit_button_handled = true;
-                                                                        ei_unbind(ei_ev_mouse_buttonup, NULL, "all", callback_buttonup_reverse_relief, widget);
-                                                                        ei_unbind(ei_ev_mouse_buttonup, NULL, "all", callback_buttonup_reverse_relief, widget->next_sibling);
-                                                                        break;
-                                                                }
-                                                        }
-                                                        head = head->next;
-                                                }
-                                        } else if (event.type == ei_ev_mouse_buttondown) {
-                                                while (head != NULL) {
-                                                        if (head->eventtype == ei_ev_mouse_buttondown) {
-                                                                if (head->widget == widget) {
-                                                                        head->callback(widget, &event,
-                                                                                                       widget->user_data);
-                                                                        head = head->next;
-                                                                        break;
-                                                                }
-                                                        }
-                                                        head = head->next;
-                                                }
-                                        }
-                                }
-                        }
+                        exit_button_press(widget, head, &event, &exit_button_handled);
 
                         if (!exit_button_handled) {
-                                //Search for event in list
-                                while (head != NULL) {
-                                        if (head->eventtype == event.type) {
-                                                if(head->widget != NULL){
-                                                        if(widget == head->widget){
-                                                                head->callback(widget, &event, widget->user_data);
-                                                                if (root->wclass != NULL) {
-                                                                        if (root->wclass->drawfunc != NULL) {
-                                                                                root->wclass->drawfunc(root, main_surface, pick_surface, NULL);
-                                                                        }
-                                                                }
-                                                                clipper = &(root->children_head->screen_location);
-                                                                ei_impl_widget_draw_children(root, main_surface, pick_surface, clipper);
-                                                        }
-                                                }else{
-                                                        if(strcmp(head->tag, widget->wclass->name) == 0 ||
-                                                           strcmp(head->tag, "all") == 0){
-                                                                head->callback(widget, &event, head->user_param);
-                                                        }
-                                                }
-                                        }
-                                        head = head->next;
-                                }
+                                get_event(clipper, &event, widget, head);
                         }
                 } else {
-                        while (head != NULL) {
-                                if (head->eventtype == event.type) {
-                                        head->callback(widget, &event, widget->user_data);
-                                        if (root->wclass != NULL) {
-                                                if (root->wclass->drawfunc != NULL) {
-                                                        root->wclass->drawfunc(root, main_surface, pick_surface, NULL);
-                                                }
-                                        }
-                                        clipper = &(root->children_head->screen_location);
-                                        ei_impl_widget_draw_children(root, main_surface, pick_surface, clipper);
-                                }
-                                head = head->next;
-                        }
+                        get_keydown_event(widget, head, &clipper, &event);
                 }
-                //printf("Pick_id : %d , Pixel color : %d\n",widget->pick_id, *pixel_pick_surface);
-
-                /*// Flag to check if a specific widget's callback has been executed
-                bool specific_widget_handled = false;
-
-                // First, handle events for the specific widget
-                for (int i = 0; i < linked_event_list_size; ++i) {
-                        if (linked_event_list[i]->eventtype == event.type) {
-                                if (linked_event_list[i]->widget != NULL && widget == linked_event_list[i]->widget) {
-                                        if (strcmp(widget->wclass->name, "button") ==0){
-                                                button_t* b= (button_t *) widget;
-                                                ei_event_t event2 = {ei_ev_mouse_buttondown, 0, 'a'};
-                                                callback_buttondown_reverse_relief (widget, &event2, NULL);
-                                                ei_unbind(ei_ev_mouse_buttonup, NULL, "all", callback_buttonup_reverse_relief, widget);
-                                                b->callback(widget, &event, widget->user_data);
-                                                if(b->widget.parent->wclass != NULL ){
-                                                        ei_bind(ei_ev_mouse_buttonup, NULL, "all", callback_buttonup_reverse_relief, widget);
-
-                                                }
-                                                if (root->wclass != NULL) {
-                                                        if (root->wclass->drawfunc != NULL) {
-                                                                root->wclass->drawfunc(root, main_surface, pick_surface, NULL);
-                                                        }
-                                                }
-                                                ei_rect_t *clipper = &(root->children_head->screen_location);
-                                                ei_impl_widget_draw_children(root, main_surface, pick_surface, clipper);
-                                        } else {
-                                                linked_event_list[i]->callback(widget, &event, widget->user_data);
-                                        }
-                                        specific_widget_handled = true;
-                                        break;  // Exit the loop once a specific widget's callback is found and executed
-                                }
-                        }
-                }
-
-                // If no specific widget's callback was found, handle events for the "all" tag and other matching tags
-                if (!specific_widget_handled) {
-                        for (int i = 0; i < linked_event_list_size; ++i) {
-                                if (linked_event_list[i]->eventtype == event.type) {
-                                        if (linked_event_list[i]->widget == NULL) {
-                                                if (strcmp(linked_event_list[i]->tag, widget->wclass->name) == 0 ||
-                                                    strcmp(linked_event_list[i]->tag, "all") == 0) {
-                                                        linked_event_list[i]->callback(widget, &event, linked_event_list[i]->user_param);
-                                                }
-                                        }
-                                }
-                        }
-                }*/
 
                 hw_surface_unlock(main_surface);
                 hw_surface_unlock(pick_surface);
         }
 }
-
 
 void ei_app_invalidate_rect(const ei_rect_t* rect) {
         // Allocate memory for a new node
@@ -284,8 +243,6 @@ void ei_app_invalidate_rect(const ei_rect_t* rect) {
                 current->next = new_node;
         }
 }
-
-
 
 void ei_app_quit_request(void){
         exit(0);

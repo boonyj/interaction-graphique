@@ -181,7 +181,7 @@ ei_point_t* rounded_frame (ei_rect_t rect, int radius, int partie) {
 
                 center_corner->x = top_left_x + radius;
                 center_corner->y = top_left_y + size_height - radius;
-                generate_rounded_corner(*center_corner, radius, 180, 225, points, 0);
+                generate_rounded_corner(*center_corner, radius, 180, 230, points, 0);
 
                 points[nb_segments].x = top_left_x + size_width / 3;
                 points[nb_segments].y = top_left_y + size_height / 2;
@@ -191,7 +191,7 @@ ei_point_t* rounded_frame (ei_rect_t rect, int radius, int partie) {
 
                 center_corner->x = top_left_x + size_width - radius;
                 center_corner->y = top_left_y + radius;
-                generate_rounded_corner(*center_corner, radius, 45, 90, points, nb_segments+2);
+                generate_rounded_corner(*center_corner, radius, 40, 90, points, nb_segments+2);
 
                 center_corner->x = top_left_x + radius;
                 center_corner->y = top_left_y + radius;
@@ -202,7 +202,7 @@ ei_point_t* rounded_frame (ei_rect_t rect, int radius, int partie) {
 
                 center_corner->x = top_left_x + size_width - radius;
                 center_corner->y = top_left_y + radius;
-                generate_rounded_corner(*center_corner, radius, 0, 45, points, 0);
+                generate_rounded_corner(*center_corner, radius, 0, 50, points, 0);
 
                 points[nb_segments].x = top_left_x + size_width * 2 / 3;
                 points[nb_segments].y = top_left_y + size_height / 2;
@@ -212,7 +212,7 @@ ei_point_t* rounded_frame (ei_rect_t rect, int radius, int partie) {
 
                 center_corner->x = top_left_x + radius;
                 center_corner->y = top_left_y + size_height - radius;
-                generate_rounded_corner(*center_corner, radius, 225, 270, points, nb_segments+2);
+                generate_rounded_corner(*center_corner, radius, 220, 270, points, nb_segments+2);
 
                 center_corner->x = top_left_x +  size_width - radius;
                 center_corner->y = top_left_y + size_height - radius;
