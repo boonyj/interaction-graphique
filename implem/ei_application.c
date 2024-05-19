@@ -2,7 +2,6 @@
 #include "ei_implementation.h"
 #include "ei_frame.h"
 #include "ei_placeur.h"
-#include "ei_placer.h"
 #include "ei_button.h"
 #include "ei_toplevel.h"
 #include "ei_event.h"
@@ -68,6 +67,18 @@ bool callback_buttondown_reverse_relief (ei_widget_t widget, ei_event_t* event, 
                 return false;
 }
 
+// Function to clear the invalidated rectangles list (for cleanup purposes)
+void clear_invalidated_rects() {
+        ei_linked_rect_t* current = invalidated_rects_head;
+        while (current != NULL) {
+                ei_linked_rect_t* next = current->next;
+                free(current);
+                current = next;
+        }
+        invalidated_rects_head = NULL;
+}
+
+
 void ei_app_run(void) {
         // Get the root widget of the application
         ei_widget_t root_widget = ei_app_root_widget();
@@ -106,7 +117,7 @@ void ei_app_run(void) {
                 event.type = ei_ev_none;
                 //Update screen
                 hw_surface_update_rects(main_surface, NULL);
-
+                clear_invalidated_rects();
                 hw_surface_lock(main_surface);
                 hw_surface_lock(pick_surface);
 
@@ -115,13 +126,9 @@ void ei_app_run(void) {
                 // 1. Get widget in cursor position
                 mouse = event.param.mouse;
 
-                //Move to current pixel
-                uint32_t* pixel_pick_surface = (uint32_t*)hw_surface_get_buffer(pick_surface);
-                ei_size_t pick_size = hw_surface_get_size(pick_surface);
-                pixel_pick_surface += (mouse.where.y * pick_size.width) + (mouse.where.x);
-
                 if (event.type != ei_ev_keydown && event.type != ei_ev_keyup) {
-                        widget = find_widget(pixel_pick_surface, ei_app_root_widget());
+                        //Move to current pixel
+                        widget = ei_widget_pick(&(mouse.where));
                         // Flag to check if toplevel exit button's button up callback has been executed
                         bool exit_button_handled = false;
 
@@ -236,9 +243,32 @@ void ei_app_run(void) {
         }
 }
 
-void ei_app_invalidate_rect(const ei_rect_t* rect){
 
+void ei_app_invalidate_rect(const ei_rect_t* rect) {
+        // Allocate memory for a new node
+        ei_linked_rect_t* new_node = (ei_linked_rect_t*)malloc(sizeof(ei_linked_rect_t));
+        if (new_node == NULL) {
+                // Handle memory allocation failure
+                return;
+        }
+
+        // Copy the rectangle data into the new node
+        new_node->rect = *rect;
+        new_node->next = NULL;
+
+        // Add the new node to the front of the list (or handle differently if maintaining order is important)
+        if (invalidated_rects_head == NULL) {
+                invalidated_rects_head = new_node;
+        } else {
+                ei_linked_rect_t* current = invalidated_rects_head;
+                while (current->next != NULL) {
+                        current = current->next;
+                }
+                current->next = new_node;
+        }
 }
+
+
 
 void ei_app_quit_request(void){
         exit(0);

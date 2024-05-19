@@ -132,7 +132,7 @@ void frame_drawfunc (ei_widget_t		widget,
                      ei_surface_t		pick_surface,
                      ei_rect_t*		clipper){
         if (widget != root) {
-                if (widget->geom_params != NULL) {
+                if (ei_widget_is_displayed(widget)) {
                         draw_frame((frame_t *) widget, surface, pick_surface, clipper);
                 }
         } else {
