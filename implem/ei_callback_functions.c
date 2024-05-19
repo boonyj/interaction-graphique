@@ -200,33 +200,35 @@ void draw_all_buttons_raised (ei_widget_t widget) {
 
 bool callback_toplevel_move_front(ei_widget_t widget, ei_event_t* event, ei_user_param_t user_param) {
         if (event->type == ei_ev_mouse_buttondown) {
-                ei_widget_t parent = widget->parent;
-                if (parent == NULL) {
-                        return false;  // Sanity check: widget must have a parent
-                }
-
                 // If the widget is already the last child, no need to move it
                 if (widget->next_sibling == NULL) {
                         return true;
                 }
 
+                while (strcmp(widget->wclass->name, "toplevel") != 0) {
+                        widget = widget->parent;
+                }
+
                 // Remove widget from its current position
-                ei_widget_t* prev = &(parent->children_head);
+                ei_widget_t* prev = &(root->children_head);
                 while (*prev != NULL && *prev != widget) {
                         prev = &((*prev)->next_sibling);
                 }
-                if (*prev == widget ) {
+                if (*prev != root->children_tail) {
                         *prev = ei_widget_get_next_sibling(widget);
                 }
-
-                // Move widget to the end of the sibling list
-                ei_widget_t* last = &(parent->children_head);
-                while (*last != NULL && (*last)->next_sibling != NULL) {
-                        last = &((*last)->next_sibling);
+                if (*prev != NULL) {
+                        // Move widget to the end of the sibling list
+                        ei_widget_t* last = &(root->children_head);
+                        while (*last != NULL && (*last)->next_sibling != NULL) {
+                                last = &((*last)->next_sibling);
+                        }
+                        if (*last != NULL) {
+                                (*last)->next_sibling = widget;
+                                widget->next_sibling = NULL;
+                                root->children_tail = widget;
+                        }
                 }
-                (*last)->next_sibling = widget;
-                widget->next_sibling = NULL;
-                parent->children_tail = widget;
 
                 // Redraw the widget hierarchy
                 root->wclass->drawfunc(root, main_surface, pick_surface, NULL);

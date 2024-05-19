@@ -12,17 +12,17 @@ ei_widget_t toplevel_allocfunc (){
 }
 
 void toplevel_releasefunc (ei_widget_t	widget){
-        free(widget->user_data);
+        free(widget->geom_params);
+        widget->geom_params = NULL;
+        /*free(widget->user_data);
         free(widget->color);
         free(widget->pick_color);
-        free(widget->geom_params);
         free(widget->wclass);
         free(widget->content_rect);
         free_widget_and_siblings(&widget, true);
         widget->user_data = NULL;
         widget->color = NULL;
         widget->pick_color = NULL;
-        widget->geom_params = NULL;
         widget->wclass = NULL;
         widget->content_rect = NULL;
         if (widget->parent->children_head == widget) {
@@ -39,7 +39,7 @@ void toplevel_releasefunc (ei_widget_t	widget){
                 }
                 widget->parent->children_tail = *last;
                 widget->parent->children_tail->next_sibling = NULL;
-        }
+        }*/
 
 }
 

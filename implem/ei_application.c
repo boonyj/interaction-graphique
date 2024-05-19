@@ -50,7 +50,7 @@ bool callback_buttonup_reverse_relief (ei_widget_t widget, ei_event_t* event, ei
                 button_t *button = (button_t *) user_param;
                 button->relief = ei_relief_raised;
                 button->widget.wclass->drawfunc(&(button->widget), main_surface, NULL, &(button->widget.screen_location));
-                ei_unbind(ei_ev_mouse_buttonup, NULL, "all", callback_buttonup_reverse_relief, widget);
+                ei_unbind(ei_ev_mouse_buttonup, NULL, "all", callback_buttonup_reverse_relief, user_param);
                 return true;
         } else
                 return false;
@@ -107,7 +107,7 @@ void ei_app_run(void) {
         // Bind the callback function to the mouse button down event on the frame widget
         //ei_bind(ei_ev_mouse_buttondown, NULL, "toplevel", callback_move_toplevel, toplevel_widget);
         ei_bind(ei_ev_mouse_buttondown, NULL, "toplevel", callback_buttondown_top_level, NULL);
-        ei_bind(ei_ev_mouse_buttondown, NULL, "toplevel", callback_toplevel_move_front, NULL);
+        ei_bind(ei_ev_mouse_buttondown, NULL, "all", callback_toplevel_move_front, NULL);
 
         //Main loop here
         ei_event_t event;
@@ -143,6 +143,16 @@ void ei_app_run(void) {
                                                                         exit_button_handled = true;
                                                                         ei_unbind(ei_ev_mouse_buttonup, NULL, "all", callback_buttonup_reverse_relief, widget);
                                                                         ei_unbind(ei_ev_mouse_buttonup, NULL, "all", callback_buttonup_reverse_relief, widget->next_sibling);
+                                                                        break;
+                                                                }
+                                                        }
+                                                }
+                                        } else if (event.type == ei_ev_mouse_buttondown) {
+                                                for (int i = 0; i < linked_event_list_size; ++i) {
+                                                        if (linked_event_list[i]->eventtype == ei_ev_mouse_buttondown) {
+                                                                if (linked_event_list[i]->widget == widget) {
+                                                                        linked_event_list[i]->callback(widget, &event,
+                                                                                                       widget->user_data);
                                                                         break;
                                                                 }
                                                         }
