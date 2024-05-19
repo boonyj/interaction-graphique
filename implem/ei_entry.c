@@ -1,5 +1,7 @@
 #include "ei_entry.h"
 #include "ei_entry_class.h"
+#include "ei_placer.h"
+#include "ei_toplevel.h"
 
 void			ei_entry_configure		(ei_widget_t		widget,
                                                                int*			requested_char_size,
@@ -12,6 +14,25 @@ void			ei_entry_configure		(ei_widget_t		widget,
 
         if (requested_char_size != NULL){
                 entry->requested_char_size = *requested_char_size;
+                // Create an array with space for characters plus the null terminator
+                char string[entry->requested_char_size+1];
+                // Use memset to fill the array with 'a' characters
+                memset(string, 'a', entry->requested_char_size);
+
+                // Manually add the null terminator at the end
+                string[entry->requested_char_size] = '\0';
+                int width = 0;
+                int height = 0;
+                hw_text_compute_size(string,ei_default_font,&width,&height);
+                entry->widget.parent->content_rect->size.height = 5*height;
+
+                entry->widget.parent->screen_location.size.height = 5*height;
+
+                if(((toplevel_t*)entry->widget.parent)->resizable != ei_axis_none){
+                        ei_place_xy(entry->widget.parent->children_head->next_sibling,0,0);
+
+                }
+
         }
 
         if (color != NULL) {
