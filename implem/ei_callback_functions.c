@@ -113,11 +113,13 @@ bool callback_move_resizing_toplevel(ei_widget_t widget, ei_event_t* event, ei_u
                 initial_event_bind->event->param.mouse.where.x += dx;
                 initial_event_bind->event->param.mouse.where.y += dy;
 
+                placeur_param* placeur = (placeur_param*)toplevel->geom_params;
+                placeur->x = toplevel->screen_location.top_left.x;
+                placeur->y = toplevel->screen_location.top_left.y;
+
                 run_all_ei_place(toplevel);
 
-                printf("AFTER EI_PLACE : w = %d , h = %d\n",toplevel->screen_location.size.width,toplevel->screen_location.size.height);
-
-               if (root->wclass != NULL) {
+                if (root->wclass != NULL) {
                         if (root->wclass->drawfunc != NULL) {
                                 root->wclass->drawfunc(root, main_surface, pick_surface, NULL);
                         }
@@ -151,8 +153,6 @@ bool callback_buttondown_resize_toplevel_start (ei_widget_t widget, ei_event_t* 
         event_tbs->modifier_mask = event->modifier_mask;
         ei_event_bind_widget_t* param = malloc(sizeof(ei_event_bind_widget_t));
         param->event = event_tbs;
-        // root->screen_location.top_left.x = widget->screen_location.top_left.x;
-        // root->screen_location.top_left.y = widget->screen_location.top_left.y;
         param->widget = widget->parent;
 
         ei_bind(ei_ev_mouse_move, NULL, "all", callback_move_resizing_toplevel, param);
