@@ -21,6 +21,8 @@ void	ei_geometry_run_finalize(ei_widget_t widget, ei_rect_t* new_screen_location
                 toplevel_t* toplevel = (toplevel_t*) widget;
                 hw_text_compute_size(toplevel->title,toplevel->title_font,&text_width,&text_height);
                 border_width = toplevel->border_width;
+
+                //Border management
                 if (new_screen_location->top_left.x < 0) {
                         new_screen_location->top_left.x = 0;
                 }
@@ -33,21 +35,36 @@ void	ei_geometry_run_finalize(ei_widget_t widget, ei_rect_t* new_screen_location
                 if (new_screen_location->top_left.y + new_screen_location->size.height + toplevel->border_width > root_size->height) {
                         new_screen_location->top_left.y = root_size->height - new_screen_location->size.height - toplevel->border_width;
                 }
-
                 if(new_screen_location->top_left.x <= toplevel->border_width) {
                         new_screen_location->top_left.x = toplevel->border_width;
                 }
 
-                if (new_screen_location->size.height > 600) {
-                        new_screen_location->size.height = 600;
-                }else if(new_screen_location->size.height < 150) {
-                        new_screen_location->size.height = 150;
-                }
+                //Size limits
+                switch (toplevel->resizable) {
+                        case(ei_axis_both):
+                                if (new_screen_location->size.height < toplevel->min_size.height) {
+                                        new_screen_location->size.height = toplevel->min_size.height;
+                                }
+                                if (new_screen_location->size.width < toplevel->min_size.width) {
+                                        new_screen_location->size.width = toplevel->min_size.width;
+                                }
+                                break;
+                        case(ei_axis_x):
+                                new_screen_location->size.height = toplevel->widget.screen_location.size.height;
 
-                if (new_screen_location->size.width > 600) {
-                        new_screen_location->size.width = 600;
-                }else if(new_screen_location->size.width < 150) {
-                        new_screen_location->size.width = 150;
+                                if (new_screen_location->size.width < toplevel->min_size.width) {
+                                        new_screen_location->size.width = toplevel->min_size.width;
+                                }
+                                break;
+                        case(ei_axis_y):
+                                if (new_screen_location->size.height < toplevel->min_size.height) {
+                                        new_screen_location->size.height = toplevel->min_size.height;
+                                }
+
+                                new_screen_location->size.width = toplevel->widget.screen_location.size.width;
+                                break;
+                        default:
+                                printf("bruh");
                 }
                 widget->content_rect->size.width = new_screen_location->size.width;
                 widget->content_rect->size.height = new_screen_location->size.height;

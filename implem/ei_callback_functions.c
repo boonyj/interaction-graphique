@@ -94,35 +94,34 @@ bool callback_move_resizing_toplevel(ei_widget_t widget, ei_event_t* event, ei_u
                 toplevel_t* tl = (toplevel_t*) initial_event_bind->widget;
                 ei_widget_t toplevel = &tl->widget;
 
-                // bool is_resizable = toplevel_t.
+                bool is_resizable = (tl->resizable == ei_axis_x || tl->resizable == ei_axis_y || tl->resizable == ei_axis_both);
 
-                // Get the current mouse position
-                ei_point_t mouse_position = event->param.mouse.where;
+                if(is_resizable) {
+                        // Get the current mouse position
+                        ei_point_t mouse_position = event->param.mouse.where;
 
-                // Calculate the offset between the mouse position and the toplevel position
-                int dx = mouse_position.x - initial_mouse.where.x;
-                int dy = mouse_position.y - initial_mouse.where.y;
-                // ei_place_xy(widget, dx, dy);
+                        // Calculate the offset between the mouse position and the toplevel position
+                        int dx = mouse_position.x - initial_mouse.where.x;
+                        int dy = mouse_position.y - initial_mouse.where.y;
+                        // ei_place_xy(widget, dx, dy);
 
+                        toplevel->screen_location.size.width += (tl->resizable != ei_axis_y) ? dx : 0;
+                        toplevel->screen_location.size.height += (tl->resizable != ei_axis_x) ? dy : 0;
+                        toplevel->content_rect->size.width += (tl->resizable != ei_axis_y) ? dx : 0;
+                        toplevel->content_rect->size.height += (tl->resizable != ei_axis_x) ? dy : 0;
 
+                        //Avoid accumulations
+                        initial_event_bind->event->param.mouse.where.x += dx;
+                        initial_event_bind->event->param.mouse.where.y += dy;
 
-                toplevel->screen_location.size.width += dx;
-                toplevel->screen_location.size.height += dy;
-                toplevel->content_rect->size.width += dx;
-                toplevel->content_rect->size.height += dy;
-                // placeur_param* placeur = (placeur_param*)widget->geom_params;
-                // placeur->width = toplevel->screen_location.size.width;
-                // placeur->height = toplevel->screen_location.size.height;
+                        placeur_param* placeur = (placeur_param*)toplevel->geom_params;
+                        placeur->x = toplevel->screen_location.top_left.x;
+                        placeur->y = toplevel->screen_location.top_left.y;
 
-                //Avoid accumulations
-                initial_event_bind->event->param.mouse.where.x += dx;
-                initial_event_bind->event->param.mouse.where.y += dy;
-
-                placeur_param* placeur = (placeur_param*)toplevel->geom_params;
-                placeur->x = toplevel->screen_location.top_left.x;
-                placeur->y = toplevel->screen_location.top_left.y;
-
-                run_all_ei_place(toplevel);
+                        run_all_ei_place(toplevel);
+                }else {
+                        printf("Toplevel is not resizable bro.");
+                }
 
                 if (root->wclass != NULL) {
                         if (root->wclass->drawfunc != NULL) {

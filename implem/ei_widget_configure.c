@@ -224,12 +224,16 @@ void			ei_toplevel_configure		(ei_widget_t		widget,
         if (closable != NULL) {
                 toplevel->closable = *closable;
                 size_button_round = *closable ? size_button_round : (ei_size_t){0,0};
+        }else {
+                size_button_round = toplevel->closable? size_button_round : (ei_size_t){0,0};;
         }
 
         ei_size_t size_button_square = {12, 12};
         if (resizable != NULL) {
                 toplevel->resizable = *resizable;
                 size_button_square = *resizable !=0 ? size_button_square : (ei_size_t){0, 0};
+        }else {
+                size_button_square = toplevel->resizable != 0 ? size_button_square : (ei_size_t){0,0};;
         }
 
         if (min_size != NULL) {

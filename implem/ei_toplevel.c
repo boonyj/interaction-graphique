@@ -153,7 +153,7 @@ void toplevel_setdefaultsfunc(ei_widget_t		widget){
         toplevel->widget.screen_location.top_left.x = 0;
         toplevel->widget.screen_location.top_left.y = 0;
         toplevel->closable = true;
-        toplevel->closable = ei_axis_both;
+        toplevel->resizable = ei_axis_both;
         toplevel->min_size.width = 160;
         toplevel->min_size.height = 120;
 
