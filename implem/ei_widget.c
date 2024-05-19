@@ -60,8 +60,39 @@ ei_widget_t ei_widget_create(ei_const_string_t class_name,
 }
 
 void			ei_widget_destroy		(ei_widget_t		widget){
-        widget->geom_params = NULL;
+        widget->wclass->releasefunc(widget);
+        free_widget_and_siblings(&widget, true);
+        if (widget->parent->children_head == widget) {
+                if (widget->next_sibling != NULL) {
+                        widget->parent->children_head = widget->next_sibling;
+                } else {
+                        widget->parent->children_head = NULL;
+                        widget->parent->children_tail = NULL;
+                }
+        } else if (widget->parent->children_tail == widget) {
+                ei_widget_t* last = &(widget->parent->children_head);
+                while (*last != NULL && (*last)->next_sibling != widget) {
+                        last = &((*last)->next_sibling);
+                }
+                widget->parent->children_tail = *last;
+                widget->parent->children_tail->next_sibling = NULL;
+        }
+        if (widget->destructor != NULL) {
+                widget->destructor(widget);
+        }
+        free(widget->color);
+        free(widget->pick_color);
+        free(widget->wclass);
+        free(widget->content_rect);
+        widget->user_data = NULL;
+        widget->color = NULL;
+        widget->pick_color = NULL;
+        widget->wclass = NULL;
+        widget->content_rect = NULL;
+        free(widget);
+        widget = NULL;
 }
+
 
 
 bool	 		ei_widget_is_displayed		(ei_widget_t		widget){
