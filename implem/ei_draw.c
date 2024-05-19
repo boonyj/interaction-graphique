@@ -6,8 +6,15 @@ void	ei_fill			(ei_surface_t		surface,
                                             const ei_rect_t*	clipper){
         uint32_t* pixel_ptr = (uint32_t*)hw_surface_get_buffer(surface);
         ei_size_t size = hw_surface_get_size(surface);
+        ei_rect_t rect = hw_surface_get_rect(surface);
+        ei_point_t* points = malloc(4*sizeof (ei_point_t ));
+        points[0] = (ei_point_t){rect.top_left.x, rect.top_left.y};
+        points[1] = (ei_point_t){rect.top_left.x+size.width, rect.top_left.y};
+        points[2] = (ei_point_t){rect.top_left.x+size.width, rect.top_left.y+size.height};
+        points[3] = (ei_point_t){rect.top_left.x, rect.top_left.y+size.height};
 
-        uint32_t color_mapped = ei_impl_map_rgba(surface, *color);
+        ei_draw_polygon(surface, points, 4, *color, clipper);
+/*        uint32_t color_mapped = ei_impl_map_rgba(surface, *color);
 
         if (clipper == NULL) {
                 for (int i = 0; i < size.width * size.height; i++) {
@@ -24,7 +31,7 @@ void	ei_fill			(ei_surface_t		surface,
                         }
                         start_ptr += remaining_width;
                 }
-        }
+        }*/
 
 
 }
