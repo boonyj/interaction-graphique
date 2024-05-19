@@ -220,12 +220,16 @@ void			ei_toplevel_configure		(ei_widget_t		widget,
 
         }
 
+        ei_size_t size_button_round = {18 ,18};
         if (closable != NULL) {
                 toplevel->closable = *closable;
+                size_button_round = *closable ? size_button_round : (ei_size_t){0,0};
         }
 
+        ei_size_t size_button_square = {12, 12};
         if (resizable != NULL) {
                 toplevel->resizable = *resizable;
+                size_button_square = *resizable !=0 ? size_button_square : (ei_size_t){0, 0};
         }
 
         if (min_size != NULL) {
@@ -233,7 +237,7 @@ void			ei_toplevel_configure		(ei_widget_t		widget,
         }
 
         ei_widget_t button_round = ei_widget_create	("button", &(toplevel->widget), NULL, NULL);
-        ei_button_configure		(button_round, &((ei_size_t){18, 18}),
+        ei_button_configure		(button_round, &(size_button_round),
                                             &(ei_color_t){0xB2, 0x22, 0x22, 0xff},
                                             &(int){3},
                                             &(int){9},
@@ -243,7 +247,7 @@ void			ei_toplevel_configure		(ei_widget_t		widget,
                                             &(ei_callback_t){callback_toplevel_close}, NULL);
 
         ei_widget_t button_square = ei_widget_create	("button", &(toplevel->widget), NULL, NULL);
-        ei_button_configure		(button_square, &((ei_size_t){12, 12}),
+        ei_button_configure		(button_square, &(size_button_square),
                                             &(ei_color_t){0x66, 0x66, 0x66, 0xff},
                                             &(int){2},
                                             &(int){0},

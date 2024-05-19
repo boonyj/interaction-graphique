@@ -1,5 +1,7 @@
 #include "ei_widget.h"
 #include "ei_implementation.h"
+#include "ei_global.h"
+#include "ei_widget_attributes.h"
 
 static uint32_t pick_counter = 0;
 
@@ -57,13 +59,45 @@ ei_widget_t ei_widget_create(ei_const_string_t class_name,
         return widget;
 }
 
+void			ei_widget_destroy		(ei_widget_t		widget){
+        widget->geom_params = NULL;
+}
 
 
-void			ei_widget_destroy		(ei_widget_t		widget){}
+bool	 		ei_widget_is_displayed		(ei_widget_t		widget){
+        if(widget->geom_params != NULL){
+                return true;
+        }
+        return false;
+}
 
 
-bool	 		ei_widget_is_displayed		(ei_widget_t		widget){}
+ei_widget_t find_widget (uint32_t* pixel_pick_surface, ei_widget_t widget) {
+        // Check the widget itself first
+        if (widget->pick_id == *pixel_pick_surface) {
+                //printf("Name: %s, Pick id : %u, Pixel : %u\n", widget->wclass->name, widget->pick_id, *pixel_pick_surface);
+                return widget;
+        }
 
+        // Recursively search among the widget's children
+        ei_widget_t child = ei_widget_get_first_child(widget);
+        while (child != NULL) {
+                ei_widget_t found_widget = find_widget(pixel_pick_surface, child);
+                if (found_widget != NULL) {
+                        return found_widget;
+                }
+                child = ei_widget_get_next_sibling(child);
+        }
 
-ei_widget_t		ei_widget_pick			(ei_point_t*		where){}
+        // Return NULL if no matching widget is found
+        return NULL;
+}
+
+ei_widget_t		ei_widget_pick			(ei_point_t*		where){
+        uint32_t* pixel_pick_surface = (uint32_t*)hw_surface_get_buffer(pick_surface);
+        ei_size_t pick_size = hw_surface_get_size(pick_surface);
+        pixel_pick_surface += (where->y * pick_size.width) + (where->x);
+        ei_widget_t widget = find_widget(pixel_pick_surface, root);
+        return widget;
+}
 

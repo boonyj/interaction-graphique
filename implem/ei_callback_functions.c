@@ -194,27 +194,6 @@ void draw_all_buttons_raised (ei_widget_t widget) {
     }
 }
 
-ei_widget_t find_widget (uint32_t* pixel_pick_surface, ei_widget_t widget) {
-    // Check the widget itself first
-    if (widget->pick_id == *pixel_pick_surface) {
-        //printf("Name: %s, Pick id : %u, Pixel : %u\n", widget->wclass->name, widget->pick_id, *pixel_pick_surface);
-        return widget;
-    }
-
-    // Recursively search among the widget's children
-    ei_widget_t child = ei_widget_get_first_child(widget);
-    while (child != NULL) {
-        ei_widget_t found_widget = find_widget(pixel_pick_surface, child);
-        if (found_widget != NULL) {
-            return found_widget;
-        }
-        child = ei_widget_get_next_sibling(child);
-    }
-
-    // Return NULL if no matching widget is found
-    return NULL;
-}
-
 bool callback_toplevel_move_front(ei_widget_t widget, ei_event_t* event, ei_user_param_t user_param) {
         if (event->type == ei_ev_mouse_buttondown) {
                 ei_widget_t parent = widget->parent;

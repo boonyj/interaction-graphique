@@ -116,7 +116,7 @@ void ei_app_run(void) {
         while ((event.type != ei_ev_close)) {
                 event.type = ei_ev_none;
                 //Update screen
-                hw_surface_update_rects(main_surface, invalidated_rects_head);
+                hw_surface_update_rects(main_surface, NULL);
                 clear_invalidated_rects();
                 hw_surface_lock(main_surface);
                 hw_surface_lock(pick_surface);
@@ -126,13 +126,9 @@ void ei_app_run(void) {
                 // 1. Get widget in cursor position
                 mouse = event.param.mouse;
 
-                //Move to current pixel
-                uint32_t* pixel_pick_surface = (uint32_t*)hw_surface_get_buffer(pick_surface);
-                ei_size_t pick_size = hw_surface_get_size(pick_surface);
-                pixel_pick_surface += (mouse.where.y * pick_size.width) + (mouse.where.x);
-
                 if (event.type != ei_ev_keydown && event.type != ei_ev_keyup) {
-                        widget = find_widget(pixel_pick_surface, ei_app_root_widget());
+                        //Move to current pixel
+                        widget = ei_widget_pick(&(mouse.where));
                         // Flag to check if toplevel exit button's button up callback has been executed
                         bool exit_button_handled = false;
 

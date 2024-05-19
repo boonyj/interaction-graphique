@@ -2,7 +2,6 @@
 #include "ei_implementation.h"
 #include "ei_global.h"
 #include "ei_toplevel.h"
-#include "ei_application.h"
 
 static ei_geometrymanager_t** geo_mgr_list = NULL;
 static size_t geo_mgr_list_size = 0;
@@ -54,13 +53,13 @@ void	ei_geometry_run_finalize(ei_widget_t widget, ei_rect_t* new_screen_location
                 widget->content_rect->size.height = new_screen_location->size.height;
         }
 
-        ei_rect_t old_rect = {widget->screen_location.top_left.x - border_width , widget->screen_location.top_left.y-text_height-border_width,
+        /*ei_rect_t old_rect = {widget->screen_location.top_left.x - border_width , widget->screen_location.top_left.y-text_height-border_width,
                               widget->screen_location.size.width + border_width*2, widget->screen_location.size.height +text_height + border_width*2 };
         ei_rect_t new_rect = {new_screen_location->top_left.x - border_width, new_screen_location->top_left.y-text_height -border_width ,
                               new_screen_location->size.width +border_width*2, new_screen_location->size.height +text_height+ border_width*2 };
 
         ei_app_invalidate_rect(&old_rect);
-        ei_app_invalidate_rect(&new_rect);
+        ei_app_invalidate_rect(&new_rect);*/
 
         widget->screen_location = *new_screen_location;
         //printf("New Screen Location (%s) : h = %d, w = %d, x = %d , y = %d \n",widget->wclass->name,new_screen_location->size.height,new_screen_location->size.width,new_screen_location->top_left.x,new_screen_location->top_left.y);
