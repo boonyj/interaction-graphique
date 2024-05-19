@@ -123,6 +123,8 @@ void ei_app_run(void) {
                 // 1. Get widget in cursor position
                 mouse = event.param.mouse;
 
+                ei_linked_event_t* head = linked_event_list;
+
                 if (event.type != ei_ev_keydown && event.type != ei_ev_keyup) {
                         //Move to current pixel
                         widget = ei_widget_pick(&(mouse.where));
@@ -133,26 +135,28 @@ void ei_app_run(void) {
                         if (widget->parent != NULL) {
                                 if (widget->pick_id == widget->parent->pick_id + 1) {
                                         if (event.type == ei_ev_mouse_buttonup) {
-                                                for (int i = 0; i < linked_event_list_size; ++i) {
-                                                        if (linked_event_list[i]->eventtype == ei_ev_mouse_buttonup) {
-                                                                if (linked_event_list[i]->widget == widget) {
-                                                                        linked_event_list[i]->callback(widget, &event,widget->user_data);
+                                                while (head->next != NULL) {
+                                                        if (head->eventtype == ei_ev_mouse_buttonup) {
+                                                                if (head->widget == widget) {
+                                                                        head->callback(widget, &event,widget->user_data);
                                                                         exit_button_handled = true;
                                                                         ei_unbind(ei_ev_mouse_buttonup, NULL, "all", callback_buttonup_reverse_relief, widget);
                                                                         ei_unbind(ei_ev_mouse_buttonup, NULL, "all", callback_buttonup_reverse_relief, widget->next_sibling);
                                                                         break;
                                                                 }
                                                         }
+                                                        head = head->next;
                                                 }
                                         } else if (event.type == ei_ev_mouse_buttondown) {
-                                                for (int i = 0; i < linked_event_list_size; ++i) {
-                                                        if (linked_event_list[i]->eventtype == ei_ev_mouse_buttondown) {
-                                                                if (linked_event_list[i]->widget == widget) {
-                                                                        linked_event_list[i]->callback(widget, &event,
+                                                while (head->next != NULL) {
+                                                        if (head->eventtype == ei_ev_mouse_buttondown) {
+                                                                if (head->widget == widget) {
+                                                                        head->callback(widget, &event,
                                                                                                        widget->user_data);
                                                                         break;
                                                                 }
                                                         }
+                                                        head = head->next;
                                                 }
                                         }
                                 }
@@ -160,11 +164,11 @@ void ei_app_run(void) {
 
                         if (!exit_button_handled) {
                                 //Search for event in list
-                                for (int i = 0; i < linked_event_list_size; ++i) {
-                                        if (linked_event_list[i]->eventtype == event.type) {
-                                                if(linked_event_list[i]->widget != NULL){
-                                                        if(widget == linked_event_list[i]->widget){
-                                                                linked_event_list[i]->callback(widget, &event, widget->user_data);
+                                while (head->next != NULL) {
+                                        if (head->eventtype == event.type) {
+                                                if(head->widget != NULL){
+                                                        if(widget == head->widget){
+                                                                head->callback(widget, &event, widget->user_data);
                                                                 if (root->wclass != NULL) {
                                                                         if (root->wclass->drawfunc != NULL) {
                                                                                 root->wclass->drawfunc(root, main_surface, pick_surface, NULL);
@@ -174,18 +178,19 @@ void ei_app_run(void) {
                                                                 ei_impl_widget_draw_children(root, main_surface, pick_surface, clipper);
                                                         }
                                                 }else{
-                                                        if(strcmp(linked_event_list[i]->tag, widget->wclass->name) == 0 ||
-                                                           strcmp(linked_event_list[i]->tag, "all") == 0){
-                                                                linked_event_list[i]->callback(widget, &event, linked_event_list[i]->user_param);
+                                                        if(strcmp(head->tag, widget->wclass->name) == 0 ||
+                                                           strcmp(head->tag, "all") == 0){
+                                                                head->callback(widget, &event, head->user_param);
                                                         }
                                                 }
                                         }
+                                        head = head->next;
                                 }
                         }
                 } else {
-                        for (int i = 0; i < linked_event_list_size; ++i) {
-                                if (linked_event_list[i]->eventtype == event.type) {
-                                        linked_event_list[i]->callback(widget, &event, widget->user_data);
+                        while (head->next != NULL) {
+                                if (head->eventtype == event.type) {
+                                        head->callback(widget, &event, widget->user_data);
                                         if (root->wclass != NULL) {
                                                 if (root->wclass->drawfunc != NULL) {
                                                         root->wclass->drawfunc(root, main_surface, pick_surface, NULL);
@@ -194,6 +199,7 @@ void ei_app_run(void) {
                                         clipper = &(root->children_head->screen_location);
                                         ei_impl_widget_draw_children(root, main_surface, pick_surface, clipper);
                                 }
+                                head = head->next;
                         }
                 }
                 //printf("Pick_id : %d , Pixel color : %d\n",widget->pick_id, *pixel_pick_surface);

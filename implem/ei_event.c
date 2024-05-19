@@ -1,89 +1,99 @@
 #include "ei_event.h"
 #include "ei_global.h"
 
-bool static check_if_new_linked_event(ei_eventtype_t eventtype, ei_widget_t widget, ei_tag_t tag, ei_callback_t callback){
-        for(int i =0 ; i < linked_event_list_size; i++){
-                if(     (linked_event_list[i]->eventtype == eventtype) &&
-                        (linked_event_list[i]->widget == widget) &&
-                        (linked_event_list[i]->tag == tag) &&
-                        (linked_event_list[i]->callback == callback)){
+bool static check_if_new_linked_event(ei_eventtype_t eventtype, ei_widget_t widget, ei_tag_t tag, ei_callback_t callback, void* user_param) {
+        ei_linked_event_t* current = linked_event_list;
+        while (current != NULL) {
+                if ((current->eventtype == eventtype) &&
+                    (current->widget == widget) &&
+                    (current->tag == tag) &&
+                    (current->callback == callback) &&
+                    (current->user_param == user_param)) {
                         return false;
                 }
+                current = current->next;
         }
         return true;
 }
 
-void		ei_bind			(ei_eventtype_t		eventtype,
-                                                    ei_widget_t		widget,
-                                                    ei_tag_t		tag,
-                                                    ei_callback_t		callback,
-                                                    void*			user_param){
+void ei_bind(ei_eventtype_t eventtype,
+             ei_widget_t widget,
+             ei_tag_t tag,
+             ei_callback_t callback,
+             void* user_param) {
 
-        bool is_new_linked_event = check_if_new_linked_event(eventtype,widget,tag,callback);
+        bool is_new_linked_event = check_if_new_linked_event(eventtype, widget, tag, callback, user_param);
 
-        if (linked_event_list == NULL) {
-                // Première linked_event à être enregistrée
-                linked_event_list = malloc(sizeof(ei_linked_event_t*));
-                if (linked_event_list == NULL) {
-                        // Échec de l'allocation mémoire
-                        return;
-                }
-                ei_linked_event_t* event_to_bind = malloc(sizeof(ei_linked_event_t));
-                event_to_bind->eventtype = eventtype;
-                event_to_bind->widget = widget;
-                event_to_bind->callback = callback;
-                event_to_bind->tag = tag;
-                event_to_bind->user_param = user_param;
-                linked_event_list[0] = event_to_bind;
-                linked_event_list_size = 1;
-        } else if(is_new_linked_event){
-                        linked_event_list = realloc(linked_event_list,(linked_event_list_size+1)*sizeof(ei_linked_event_t*));
-                        linked_event_list_size += 1;
-                        ei_linked_event_t* event_to_bind = malloc(sizeof(ei_linked_event_t));
-                        event_to_bind->eventtype = eventtype;
-                        event_to_bind->widget = widget;
-                        event_to_bind->callback = callback;
-                        event_to_bind->tag = tag;
-                        event_to_bind->user_param = user_param;
-                        linked_event_list[linked_event_list_size - 1] = event_to_bind;
-        }
-}
-
-void		ei_unbind		(ei_eventtype_t		eventtype,
-                                              ei_widget_t		widget,
-                                              ei_tag_t		tag,
-                                              ei_callback_t		callback,
-                                              void*			user_param){
-        if (linked_event_list == NULL || linked_event_list_size == 0) {
+        if (!is_new_linked_event) {
                 return;
         }
 
-        // Find the matching event to unbind
-        for (int i = 0; i < linked_event_list_size; i++) {
-                if (linked_event_list[i]->eventtype == eventtype &&
-                    linked_event_list[i]->widget == widget &&
-                    linked_event_list[i]->tag == tag &&
-                    linked_event_list[i]->callback == callback) {
+        ei_linked_event_t* event_to_bind = malloc(sizeof(ei_linked_event_t));
+        if (event_to_bind == NULL) {
+                // Memory allocation failure
+                return;
+        }
 
-                        if(user_param != NULL && linked_event_list[i]->user_param != NULL && linked_event_list[i]->user_param != user_param){
-                                break;
+        event_to_bind->eventtype = eventtype;
+        event_to_bind->widget = widget;
+        event_to_bind->tag = tag;
+        event_to_bind->callback = callback;
+        event_to_bind->user_param = user_param;
+        event_to_bind->next = NULL;
+
+        if (linked_event_list == NULL) {
+                // First linked event to be registered
+                linked_event_list = event_to_bind;
+        } else {
+                // Add new event to the front of the linked list
+                event_to_bind->next = linked_event_list;
+                linked_event_list = event_to_bind;
+        }
+}
+
+
+void ei_unbind(ei_eventtype_t eventtype,
+               ei_widget_t widget,
+               ei_tag_t tag,
+               ei_callback_t callback,
+               void* user_param) {
+        if (linked_event_list == NULL) {
+                return;
+        }
+
+        // Traverse the linked list to find the matching event
+        ei_linked_event_t* current = linked_event_list;
+        ei_linked_event_t* previous = NULL;
+
+        while (current != NULL) {
+                if (current->eventtype == eventtype &&
+                    current->widget == widget &&
+                    current->tag == tag &&
+                    current->callback == callback) {
+
+                        if (user_param != NULL && current->user_param != NULL && current->user_param != user_param) {
+                                previous = current;
+                                current = current->next;
+                                continue;
                         }
 
-                        free(linked_event_list[i]);
-
-                        // Shift remaining elements in the array to remove the gap
-                        for (int j = i; j < linked_event_list_size - 1; j++) {
-                                linked_event_list[j] = linked_event_list[j + 1];
+                        // Match found, remove the node from the linked list
+                        ei_linked_event_t* node_to_remove = current;
+                        if (previous == NULL) {
+                                // Removing the head of the list
+                                linked_event_list = node_to_remove->next;
+                        } else {
+                                // Removing a node from the middle or end of the list
+                                previous->next = node_to_remove->next;
                         }
 
-                        // Resize the array to remove the last (now duplicate) element
-                        linked_event_list = realloc(linked_event_list, (linked_event_list_size - 1) * sizeof(ei_linked_event_t*));
-
-                        // Update the size of the linked_event_list
-                        linked_event_list_size--;
+                        free(node_to_remove);
 
                         // Exit the function as we've successfully unbound the event
                         return;
                 }
+
+                previous = current;
+                current = current->next;
         }
 }
