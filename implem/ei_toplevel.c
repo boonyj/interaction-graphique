@@ -142,12 +142,21 @@ void toplevel_setdefaultsfunc(ei_widget_t		widget){
         toplevel->title = NULL;
         toplevel->title_font = ei_default_font;
         toplevel->title_color = ei_font_default_color;
+        toplevel->widget.color->red = ei_default_background_color.red;
+        toplevel->widget.color->green = ei_default_background_color.green;
+        toplevel->widget.color->blue = ei_default_background_color.blue;
+        toplevel->widget.color->alpha = ei_default_background_color.alpha;
         toplevel->widget.requested_size.width = 320;
         toplevel->widget.requested_size.height = 240;
         toplevel->widget.screen_location.size.width = 320;
         toplevel->widget.screen_location.size.height = 240;
         toplevel->widget.screen_location.top_left.x = 0;
         toplevel->widget.screen_location.top_left.y = 0;
+        toplevel->closable = true;
+        toplevel->closable = ei_axis_both;
+        toplevel->min_size.width = 160;
+        toplevel->min_size.height = 120;
+
 }
 
 void toplevel_geomnotifyfunc(ei_widget_t		widget){

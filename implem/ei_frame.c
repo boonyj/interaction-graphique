@@ -145,9 +145,12 @@ void frame_setdefaultsfunc(ei_widget_t		widget){
         frame->widget = *widget;
         frame->relief = ei_relief_none;
         frame->border_width = 0;
+        frame->text = NULL;
         frame->text_color = ei_font_default_color;
-        frame->text_anchor = ei_anc_none;
+        frame->text_anchor = ei_anc_center;
         frame->text_font = ei_default_font;
+        frame->img = NULL;
+        frame->img_anchor = ei_anc_center;
         frame->widget.requested_size.width = 300;
         frame->widget.requested_size.height = 200;
         frame->widget.screen_location.size.width = 300;

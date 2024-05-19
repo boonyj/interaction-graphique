@@ -1,6 +1,7 @@
 #include "ei_button.h"
 #include "ei_draw_tool.h"
 #include "ei_implementation.h"
+#include "ei_widget_configure.h"
 
 ei_widget_t button_allocfunc (){
         ei_widget_t widget = malloc(sizeof(struct button_t));
@@ -237,9 +238,13 @@ void button_drawfunc (ei_widget_t		widget,
 void button_setdefaultsfunc(ei_widget_t		widget){
         button_t * button = (button_t*) widget;
         button->widget = *widget;
-        button->relief = ei_relief_none;
-        button->border_width = 0;
-        button->corner_radius = 0;
+        button->relief = ei_relief_raised;
+        button->widget.color->red = ei_default_background_color.red;
+        button->widget.color->green = ei_default_background_color.green;
+        button->widget.color->blue = ei_default_background_color.blue;
+        button->widget.color->alpha = ei_default_background_color.alpha;
+        button->border_width = k_default_button_border_width;
+        button->corner_radius = k_default_button_corner_radius;
         button->text_color = ei_font_default_color;
         button->text_anchor = ei_anc_none;
         button->text_font = ei_default_font;
