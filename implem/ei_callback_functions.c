@@ -91,7 +91,10 @@ bool callback_move_resizing_toplevel(ei_widget_t widget, ei_event_t* event, ei_u
                 ei_event_bind_widget_t* initial_event_bind = (ei_event_bind_widget_t*) user_param;
                 ei_mouse_event_t initial_mouse = initial_event_bind->event->param.mouse;
 
-                ei_widget_t toplevel = (ei_widget_t) initial_event_bind->widget;
+                toplevel_t* tl = (toplevel_t*) initial_event_bind->widget;
+                ei_widget_t toplevel = &tl->widget;
+
+                // bool is_resizable = toplevel_t.
 
                 // Get the current mouse position
                 ei_point_t mouse_position = event->param.mouse.where;
@@ -100,6 +103,8 @@ bool callback_move_resizing_toplevel(ei_widget_t widget, ei_event_t* event, ei_u
                 int dx = mouse_position.x - initial_mouse.where.x;
                 int dy = mouse_position.y - initial_mouse.where.y;
                 // ei_place_xy(widget, dx, dy);
+
+
 
                 toplevel->screen_location.size.width += dx;
                 toplevel->screen_location.size.height += dy;
