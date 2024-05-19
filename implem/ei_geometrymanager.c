@@ -71,7 +71,13 @@ void	ei_geometry_run_finalize(ei_widget_t widget, ei_rect_t* new_screen_location
                 widget->content_rect->size.width = new_screen_location->size.width;
                 widget->content_rect->size.height = new_screen_location->size.height;
         }
+        if(strcmp(widget->wclass->name,"entry") == 0){
+                if (new_screen_location->top_left.x + new_screen_location->size.width > widget->parent->screen_location.size.width) {
+                        new_screen_location->size.width = widget->parent->screen_location.size.width
+                                - (new_screen_location->top_left.x - widget->parent->screen_location.top_left.x + 10);
+                }
 
+        }
         /*ei_rect_t old_rect = {widget->screen_location.top_left.x - border_width , widget->screen_location.top_left.y-text_height-border_width,
                               widget->screen_location.size.width + border_width*2, widget->screen_location.size.height +text_height + border_width*2 };
         ei_rect_t new_rect = {new_screen_location->top_left.x - border_width, new_screen_location->top_left.y-text_height -border_width ,
