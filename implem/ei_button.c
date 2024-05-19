@@ -8,7 +8,9 @@ ei_widget_t button_allocfunc (){
 }
 
 void button_releasefunc (ei_widget_t	widget){
-        free(widget->user_data);
+        free(widget->geom_params);
+        widget->geom_params = NULL;
+        /*free(widget->user_data);
         free(widget->color);
         free(widget->pick_color);
         free(widget->geom_params);
@@ -20,7 +22,7 @@ void button_releasefunc (ei_widget_t	widget){
         widget->pick_color = NULL;
         widget->geom_params = NULL;
         widget->wclass = NULL;
-        widget->content_rect = NULL;
+        widget->content_rect = NULL;*/
 }
 
 void draw_button (button_t * button,
