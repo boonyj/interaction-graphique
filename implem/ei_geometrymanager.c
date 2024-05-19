@@ -64,7 +64,7 @@ void	ei_geometry_run_finalize(ei_widget_t widget, ei_rect_t* new_screen_location
                                 new_screen_location->size.width = toplevel->widget.screen_location.size.width;
                                 break;
                         default:
-                                printf("bruh");
+                                break;
                 }
                 widget->content_rect->size.width = new_screen_location->size.width;
                 widget->content_rect->size.height = new_screen_location->size.height;

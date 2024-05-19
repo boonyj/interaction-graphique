@@ -5,9 +5,6 @@
 #include "ei_button.h"
 #include "ei_toplevel.h"
 #include "ei_event.h"
-#include "ei_event.c"
-#include "ei_draw_tool.c"
-#include "ei_implementation.c"
 #include "ei_global.h"
 #include "ei_callback_functions.h"
 

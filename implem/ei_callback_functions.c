@@ -41,8 +41,7 @@ bool callback_move_toplevel(ei_widget_t widget, ei_event_t* event, ei_user_param
                         // Return true to indicate that the event was handled
                         return true;
                 }
-        }else if(event->type == ei_ev_mouse_buttonup) {
-                printf("Move toplevel end !\n");
+        } else if(event->type == ei_ev_mouse_buttonup) {
                 root->screen_location.top_left.x = 0;
                 root->screen_location.top_left.y = 0;
                 ei_unbind(ei_ev_mouse_move, NULL, "all", callback_move_toplevel, user_param);
@@ -55,8 +54,6 @@ bool callback_move_toplevel(ei_widget_t widget, ei_event_t* event, ei_user_param
 
 bool callback_buttondown_top_level (ei_widget_t widget, ei_event_t* event, ei_user_param_t user_param) {
         if (event->type == ei_ev_mouse_buttondown) {
-                printf("Clicked !\n");
-
                 toplevel_t* toplevel = (toplevel_t *) widget;
                 int width = 0;
                 int height = 0;
@@ -119,8 +116,6 @@ bool callback_move_resizing_toplevel(ei_widget_t widget, ei_event_t* event, ei_u
                         placeur->y = toplevel->screen_location.top_left.y;
 
                         run_all_ei_place(toplevel);
-                }else {
-                        printf("Toplevel is not resizable bro.");
                 }
 
                 if (root->wclass != NULL) {
@@ -133,10 +128,8 @@ bool callback_move_resizing_toplevel(ei_widget_t widget, ei_event_t* event, ei_u
                 // Return true to indicate that the event was handled
                 return true;
         }else if (event->type == ei_ev_mouse_buttonup) {
-                printf("Resizing disabled !\n");
                 ei_event_bind_widget_t* initial_event_bind = (ei_event_bind_widget_t*) user_param;
                 button_t* button = (button_t*) initial_event_bind->widget->children_head->next_sibling;
-                printf("TYPE : %s",widget->wclass->name);
                 button->relief = ei_relief_raised;
                 button->widget.wclass->drawfunc(&button->widget,main_surface,pick_surface,&button->widget.screen_location);
                 ei_unbind(ei_ev_mouse_move, NULL, "all", callback_move_resizing_toplevel, user_param);
@@ -150,7 +143,6 @@ bool callback_move_resizing_toplevel(ei_widget_t widget, ei_event_t* event, ei_u
 
 bool callback_buttondown_resize_toplevel_start (ei_widget_t widget, ei_event_t* event, ei_user_param_t user_param) {
     if (event->type == ei_ev_mouse_buttondown) {
-        printf("Resizing enabled !\n");
         ei_event_t* event_tbs = malloc(sizeof(ei_event_t));
         event_tbs->type = event->type;
         event_tbs->param = event->param;

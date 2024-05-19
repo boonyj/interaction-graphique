@@ -1,15 +1,5 @@
 #include "ei_event.h"
-
-typedef struct ei_linked_event_t{
-        ei_eventtype_t eventtype;
-        ei_widget_t widget;
-        ei_callback_t callback;
-        ei_tag_t tag;
-        void* user_param;
-}ei_linked_event_t;
-
-static ei_linked_event_t** linked_event_list = NULL;
-static size_t linked_event_list_size = 0;
+#include "ei_global.h"
 
 bool static check_if_new_linked_event(ei_eventtype_t eventtype, ei_widget_t widget, ei_tag_t tag, ei_callback_t callback){
         for(int i =0 ; i < linked_event_list_size; i++){
