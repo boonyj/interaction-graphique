@@ -1,12 +1,5 @@
-#include "ei_widget_configure.h"
-#include "ei_callback_functions.h"
-#include "ei_widget_attributes.h"
-#include "ei_placer.h"
-#include "ei_placeur.h"
-#include "ei_button.h"
-#include "ei_global.h"
-#include "ei_toplevel.h"
-#include "ei_frame.h"
+#include "ei_callback_toplevel.h"
+
 
 //Callbacks for toplevel resizing
 

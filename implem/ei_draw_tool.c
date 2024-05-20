@@ -1,6 +1,4 @@
-#include <math.h>
 #include "ei_draw_tool.h"
-#include "ei_global.h"
 
 int nb_segments = 8;
 

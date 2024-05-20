@@ -2,6 +2,8 @@
 #define PROJETC_IG_EI_BUTTON_H
 
 #include "ei_implementation.h"
+#include "ei_draw_tool.h"
+#include "ei_widget_configure.h"
 
 typedef struct button_t {
         ei_impl_widget_t widget;

@@ -1,8 +1,4 @@
 #include "ei_frame.h"
-#include "ei_draw.h"
-#include "ei_draw_tool.h"
-#include "ei_implementation.h"
-#include "ei_global.h"
 
 ei_widget_t frame_allocfunc (){
         ei_widget_t widget = calloc(1,sizeof(struct frame_t));

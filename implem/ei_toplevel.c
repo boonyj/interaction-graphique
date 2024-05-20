@@ -1,9 +1,5 @@
-#include <ei_event.h>
 #include "ei_toplevel.h"
-#include "ei_draw_tool.h"
-#include "ei_draw.h"
-#include "ei_placer.h"
-#include "ei_implementation.h"
+
 
 ei_widget_t toplevel_allocfunc (){
         ei_widget_t widget = malloc(sizeof(struct toplevel_t ));

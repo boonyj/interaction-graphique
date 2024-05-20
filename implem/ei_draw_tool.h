@@ -3,6 +3,7 @@
 
 #include <math.h>
 #include "ei_implementation.h"
+#include "ei_global.h"
 
 #define PI 3.14159265
 extern int nb_segments;

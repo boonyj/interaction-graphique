@@ -1,5 +1,4 @@
 #include "ei_draw.h"
-#include "ei_implementation.h"
 
 void	ei_fill			(ei_surface_t		surface,
                                             const ei_color_t*	color,

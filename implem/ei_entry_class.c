@@ -1,6 +1,5 @@
 #include "ei_entry_class.h"
-#include "ei_draw_tool.h"
-#include "ei_global.h"
+
 
 
 ei_widget_t entry_allocfunc (){

@@ -12,7 +12,7 @@
 #include "ei_types.h"
 #include "ei_widget.h"
 #include "ei_geometrymanager.h"
-
+#include "ei_event.h"
 
 
 /**
@@ -83,5 +83,32 @@ typedef struct ei_impl_geom_param_t {
 	ei_geometrymanager_t*		manager;	///< The geometry managers that manages this widget.
 } ei_impl_geom_param_t;
 
+
+typedef struct placeur_param {
+        ei_impl_geom_param_t geom_mng;
+        ei_anchor_t anchor;
+        int x;
+        int y;
+        int width;
+        int height;
+        float rel_x;
+        float rel_y;
+        float rel_width;
+        float rel_height;
+} placeur_param;
+
+typedef struct ei_event_bind_widget_t{
+        ei_event_t* event;
+        ei_impl_widget_t* widget;
+}ei_event_bind_widget_t;
+
+typedef struct ei_linked_event_t{
+        ei_eventtype_t eventtype;
+        ei_widget_t widget;
+        ei_callback_t callback;
+        ei_tag_t tag;
+        void* user_param;
+        struct ei_linked_event_t* next;
+}ei_linked_event_t;
 
 #endif

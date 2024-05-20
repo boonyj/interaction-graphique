@@ -1,7 +1,4 @@
 #include "ei_button.h"
-#include "ei_draw_tool.h"
-#include "ei_implementation.h"
-#include "ei_widget_configure.h"
 
 ei_widget_t button_allocfunc (){
         ei_widget_t widget = malloc(sizeof(struct button_t));

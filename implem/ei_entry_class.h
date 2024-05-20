@@ -2,6 +2,8 @@
 #define PROJETC_IG_EI_ENTRY_CLASS_H
 
 #include "ei_implementation.h"
+#include "ei_draw_tool.h"
+#include "ei_global.h"
 
 typedef struct entry_t {
         ei_impl_widget_t widget;

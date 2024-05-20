@@ -27,7 +27,6 @@ void		ei_place	(ei_widget_t		widget,
                 widget->geom_params->manager->releasefunc = type_geom_mng->releasefunc;
 
                 placeur = (placeur_param*) widget->geom_params;
-
                 placeur->anchor = (anchor != NULL) ? *anchor : ei_anc_northwest;
                 placeur->x = (x != NULL) ? *x : 0;
                 placeur->y = (y != NULL) ? *y : 0;

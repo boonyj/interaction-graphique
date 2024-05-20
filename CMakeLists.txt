@@ -84,9 +84,10 @@ set(LIB_EI_SOURCES
 	${SRC}/ei_toplevel.c
 	${SRC}/ei_draw_tool.c
 	${SRC}/ei_global.c
-	${SRC}/ei_callback_functions.c
+	${SRC}/ei_callback_toplevel.c
 	${SRC}/ei_entry.c
 	${SRC}/ei_entry_class.c
+	${SRC}/ei_callback_button.c
 
 )
 

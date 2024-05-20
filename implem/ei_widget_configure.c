@@ -6,7 +6,7 @@
 #include "ei_toplevel.h"
 #include "ei_event.h"
 #include "ei_global.h"
-#include "ei_callback_functions.h"
+#include "ei_callback_toplevel.h"
 
 
 void			ei_frame_configure		(ei_widget_t		widget,
