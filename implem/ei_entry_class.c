@@ -91,7 +91,7 @@ void draw_entry (entry_t * entry,
         assertion_pick_color((ei_widget_t) entry, surface);
 
         if (entry->widget.wclass->drawfunc != NULL) {
-                if(entry->in_focus) {
+                if(entry->in_focus && entry->widget.parent->parent->children_tail == entry->widget.parent) {
                         ei_color_t entry_color = (ei_color_t){255,255,255, 180};
                         ei_fill(surface, &entry_color, clipper);
                 }else {

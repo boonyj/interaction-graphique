@@ -1,8 +1,36 @@
 #include "ei_entry.h"
-#include "ei_entry_class.h"
-#include "ei_placer.h"
-#include "ei_toplevel.h"
+
+#include <ei_widget_attributes.h>
+
 #include "ei_global.h"
+
+void			ei_entry_set_text		(ei_widget_t		widget,
+                                                              ei_const_string_t 	text) {
+        if((strcmp(widget->wclass->name,"entry")) == 0){
+                entry_t* entry = (entry_t*)widget;
+                if(strlen(text) <= entry->requested_char_size+1) {
+                        entry->text = (char*)text;
+                }else {
+                        strncpy(entry->text,(char*)text,entry->requested_char_size);
+                }
+        }
+}
+
+ei_const_string_t 	ei_entry_get_text		(ei_widget_t		widget) {
+        if((strcmp(widget->wclass->name,"entry")) == 0){
+                entry_t* entry = (entry_t*)widget;
+                return entry->text;
+        }
+        return NULL;
+}
+
+
+void			ei_entry_give_focus		(ei_widget_t		widget) {
+        if((strcmp(widget->wclass->name,"entry")) == 0){
+                entry_t* entry = (entry_t*)widget;
+                entry->in_focus = true;
+        }
+}
 
 char* get_text_without_cursor(char* str) {
         // Allocate memory for the result string
@@ -220,6 +248,67 @@ bool callback_type_in_focus (ei_widget_t widget, ei_event_t* event, ei_user_para
                         }else {
                                 res = move_pipe_in_text(entry->text, false);
                         }
+                }else if(event->param.key_code == SDLK_TAB) {
+                        //Same situation but with different user_param
+                        entry = (entry_t*) user_param;
+                        entry->in_focus = false;
+                        res = get_text_without_cursor(entry->text);
+                        ei_unbind(ei_ev_mouse_buttondown,NULL,"all",callback_buttondown_remove_focus_entry,entry);
+                        ei_unbind(ei_ev_keydown,NULL,"all",callback_type_in_focus,entry);
+
+                        ei_widget_t parc = &entry->widget;
+
+                        if(!ei_event_has_shift(event)) {
+                                //Get next sibling who is entry
+                                while(parc != NULL) {
+                                        parc = ei_widget_get_next_sibling(parc);
+                                        if(parc != NULL && strcmp(parc->wclass->name,"entry") == 0) {
+                                                break;
+                                        }
+                                }
+
+                                if(parc == NULL) {
+                                        parc = entry->widget.parent->children_head;
+                                        while(strcmp(parc->wclass->name,"entry") != 0) {
+                                                parc = ei_widget_get_next_sibling(parc);
+                                        }
+                                }
+                        }else {
+                                // Get sibling before this entry
+                                ei_widget_t prev = NULL;
+                                ei_widget_t current = entry->widget.parent->children_head;
+
+                                // Traverse to find the previous entry widget
+                                while (current != &entry->widget) {
+                                        if (strcmp(current->wclass->name, "entry") == 0) {
+                                                prev = current;
+                                        }
+                                        current = ei_widget_get_next_sibling(current);
+                                }
+
+                                if (prev != NULL) {
+                                        parc = prev;
+                                } else {
+                                        // If no previous entry is found, start from the last child and find the last entry widget
+                                        parc = entry->widget.parent->children_head;
+                                        ei_widget_t* last_entry = NULL;
+
+                                        while (parc != NULL) {
+                                                if (strcmp(parc->wclass->name, "entry") == 0) {
+                                                        last_entry = parc;
+                                                }
+                                                parc = ei_widget_get_next_sibling(parc);
+                                        }
+
+                                        parc = last_entry;
+                                }
+
+                        }
+                        entry_t* new_entry = (entry_t*) parc;
+                        new_entry->in_focus = true;
+                        ei_entry_set_text(&new_entry->widget, get_text_with_char_concatenated(new_entry->text, '|'));
+                        ei_bind(ei_ev_mouse_buttondown,NULL,"all",callback_buttondown_remove_focus_entry,new_entry);
+                        ei_bind(ei_ev_keydown,NULL,"all",callback_type_in_focus,new_entry);
                 }
                 ei_entry_set_text(&(entry->widget),res);
 
@@ -310,32 +399,3 @@ void			ei_entry_configure		(ei_widget_t		widget,
 
         ei_bind(ei_ev_mouse_buttondown, &entry->widget,NULL, callback_buttondown_focus_entry, NULL);
 }
-
-void			ei_entry_set_text		(ei_widget_t		widget,
-                                                              ei_const_string_t 	text) {
-        if((strcmp(widget->wclass->name,"entry")) == 0){
-                entry_t* entry = (entry_t*)widget;
-                if(strlen(text) <= entry->requested_char_size+1) {
-                        entry->text = (char*)text;
-                }else {
-                        strncpy(entry->text,(char*)text,entry->requested_char_size);
-                }
-        }
-}
-
-ei_const_string_t 	ei_entry_get_text		(ei_widget_t		widget) {
-        if((strcmp(widget->wclass->name,"entry")) == 0){
-                entry_t* entry = (entry_t*)widget;
-                return entry->text;
-        }
-        return NULL;
-}
-
-
-void			ei_entry_give_focus		(ei_widget_t		widget) {
-        // if((strcmp(widget->wclass->name,"entry")) == 0){
-        //         entry_t* entry = (entry_t*)widget;
-        //         entry->in_focus = true;
-        // }
-}
-
