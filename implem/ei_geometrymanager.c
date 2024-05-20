@@ -1,13 +1,11 @@
 #include "ei_geometrymanager.h"
-
-#include "ei_entry_class.h"
 #include "ei_implementation.h"
 #include "ei_global.h"
 #include "ei_toplevel.h"
+#include "ei_widget.h"
 
 static ei_geometrymanager_t** geo_mgr_list = NULL;
 static size_t geo_mgr_list_size = 0;
-
 
 void	ei_geometry_run_finalize(ei_widget_t widget, ei_rect_t* new_screen_location){
         // Vérifier si le widget est valide
@@ -25,9 +23,9 @@ void	ei_geometry_run_finalize(ei_widget_t widget, ei_rect_t* new_screen_location
                 border_width = toplevel->border_width;
 
                 //Border management
-                if (new_screen_location->top_left.x < 0) {
+                /*if (new_screen_location->top_left.x < 0) {
                         new_screen_location->top_left.x = 0;
-                }
+                }*/
                 if (new_screen_location->top_left.y - text_height < 0) {
                         new_screen_location->top_left.y = 0 + text_height;
                 }

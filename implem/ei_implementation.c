@@ -35,12 +35,13 @@ uint32_t ei_impl_map_rgba(ei_surface_t surface, ei_color_t color) {
 
 void free_widget_and_siblings(ei_widget_t* widget, bool is_root) {
         if (widget == NULL || *widget == NULL) return;
+
         // Recursively free all children and their siblings
-        ei_widget_t* child = &((*widget)->children_head);
-        while (*child != NULL) {
-                ei_widget_t next_sibling = ei_widget_get_next_sibling(*child);
-                free_widget_and_siblings(child, false);
-                child = &next_sibling;
+        ei_widget_t child = (*widget)->children_head;
+        while (child != NULL) {
+                ei_widget_t next_sibling = child->next_sibling;
+                free_widget_and_siblings(&child, false);
+                child = next_sibling;
         }
 
         // Free the current widget unless it's the root widget passed as the parameter
@@ -49,4 +50,3 @@ void free_widget_and_siblings(ei_widget_t* widget, bool is_root) {
                 *widget = NULL;
         }
 }
-

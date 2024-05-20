@@ -1,3 +1,4 @@
+#include "ei_widget_configure.h"
 #include "ei_callback_functions.h"
 #include "ei_widget_attributes.h"
 #include "ei_placer.h"
@@ -5,82 +6,84 @@
 #include "ei_button.h"
 #include "ei_global.h"
 #include "ei_toplevel.h"
+#include "ei_frame.h"
 
-//Callbacks for toplevel movement
+//Callbacks for toplevel resizing
 
-bool callback_move_toplevel(ei_widget_t widget, ei_event_t* event, ei_user_param_t user_param) {
-        // Only proceed if the event is a mouse button down event
-        if (event->type == ei_ev_mouse_move) {
-                // Cast the widget to a toplevel widget
-                ei_event_bind_widget_t* initial_event_bind = (ei_event_bind_widget_t*) user_param;
-                ei_mouse_event_t initial_mouse = initial_event_bind->event->param.mouse;
-                ei_mouse_event_t mouse = event->param.mouse;
+void widget_move_to_front(ei_widget_t parent, ei_widget_t widget) {
+        if (parent == NULL || widget == NULL || parent->children_head == NULL) return;
 
-                ei_widget_t toplevel = (ei_widget_t) initial_event_bind->widget;
+        // If the widget is already the head, no need to do anything
+        if (parent->children_head == widget) return;
 
-                // Check if the clicked widget is the toplevel widget
-                if (widget == toplevel) {
-                        // Get the current mouse position
-                        ei_point_t mouse_position = event->param.mouse.where;
+        // Find the widget in the children list
+        ei_widget_t prev = NULL;
+        ei_widget_t current = parent->children_head;
+        while (current != NULL && current != widget) {
+                prev = current;
+                current = current->next_sibling;
+        }
 
-                        // Calculate the offset between the mouse position and the toplevel position
-                        int dx = mouse_position.x - initial_mouse.where.x;
-                        int dy = mouse_position.y - initial_mouse.where.y;
-                        ei_place_xy(widget, dx, dy);
-                        run_all_ei_place(widget);
-
-                        //ei_place(widget->children_head->next_sibling->next_sibling, NULL, &dx, &dy, NULL, NULL, NULL, NULL, NULL, NULL);
-
-                       if (root->wclass != NULL) {
-                                if (root->wclass->drawfunc != NULL) {
-                                        root->wclass->drawfunc(root, main_surface, pick_surface, NULL);
-                                }
-                        }
-                        ei_rect_t *clipper = &(root->children_head->screen_location);
-                        ei_impl_widget_draw_children(root, main_surface, pick_surface, clipper);
-                        // Return true to indicate that the event was handled
-                        return true;
+        // If the widget was found in the list
+        if (current == widget) {
+                // Remove the widget from its current position
+                if (prev != NULL) {
+                        prev->next_sibling = widget->next_sibling;
                 }
-        } else if(event->type == ei_ev_mouse_buttonup) {
-                root->screen_location.top_left.x = 0;
-                root->screen_location.top_left.y = 0;
-                ei_unbind(ei_ev_mouse_move, NULL, "all", callback_move_toplevel, user_param);
-                ei_unbind(ei_ev_mouse_buttonup, NULL, "all", callback_move_toplevel, NULL);
+
+                // Update the tail if the widget is the tail
+                if (parent->children_tail == widget) {
+                        parent->children_tail = prev;
+                }
+
+                // Insert the widget at the head of the list
+                widget->next_sibling = parent->children_head;
+                parent->children_head = widget;
+        }
+}
+
+void draw_resized_toplevel(ei_widget_t widget, int width, int x, ei_callback_t callback) {
+        toplevel_t* toplevel = (toplevel_t*) widget;
+        if (strcmp(root->children_head->wclass->name, "frame") == 0) {
+                int text_width = 0;
+                int text_height = 0;
+                hw_text_compute_size(toplevel->title,toplevel->title_font,&text_width,&text_height);
+                int height = root_size->height-text_height;
+                ei_place(&(toplevel->widget), NULL, &(int){x}, &(int){0}, &(int){width}, &(int){height}, NULL, NULL, NULL, NULL);
+                run_all_ei_place(widget);
+                frame_releasefunc(root->children_head);
+                ei_widget_destroy(root->children_head);
+        }
+        root->screen_location.top_left.x = 0;
+        root->screen_location.top_left.y = 0;
+        ei_unbind(ei_ev_mouse_buttonup, &(toplevel->widget), NULL, callback, NULL);
+        ei_unbind(ei_ev_mouse_move, NULL, "all", callback_move_toplevel, NULL);
+        ei_unbind(ei_ev_mouse_buttonup, NULL, "all", callback_move_toplevel, NULL);
+}
+
+bool callback_left_resize_toplevel(ei_widget_t widget, ei_event_t* event, ei_user_param_t user_param) {
+        if (event->type == ei_ev_mouse_buttonup) {
+                draw_resized_toplevel(widget, root_size->width/2, -root->screen_location.top_left.x, callback_left_resize_toplevel);
                 return true;
         }
-        // Return false if the event was not handled
         return false;
 }
 
-bool callback_buttondown_top_level (ei_widget_t widget, ei_event_t* event, ei_user_param_t user_param) {
-        if (event->type == ei_ev_mouse_buttondown) {
-                toplevel_t* toplevel = (toplevel_t *) widget;
-                int width = 0;
-                int height = 0;
-                hw_text_compute_size(toplevel->title,toplevel->title_font, &width, &height);
-                if( event->param.mouse.where.x > widget->screen_location.top_left.x
-                        && event->param.mouse.where.x < widget->screen_location.top_left.x +widget->screen_location.size.width
-                        && event->param.mouse.where.y > widget->screen_location.top_left.y - height
-                        && event->param.mouse.where.y < widget->screen_location.top_left.y  ){
-                        ei_event_t* event_tbs = malloc(sizeof(ei_event_t));
-                        event_tbs->type = event->type;
-                        event_tbs->param = event->param;
-                        event_tbs->modifier_mask = event->modifier_mask;
-                        ei_event_bind_widget_t* param = malloc(sizeof(ei_event_bind_widget_t));
-                        param->event = event_tbs;
-                        root->screen_location.top_left.x = widget->screen_location.top_left.x;
-                        root->screen_location.top_left.y = widget->screen_location.top_left.y;
-                        param->widget = widget;
-                        ei_bind(ei_ev_mouse_move, NULL, "all", callback_move_toplevel, param);
-                        ei_bind(ei_ev_mouse_buttonup, NULL, "all", callback_move_toplevel, NULL);
-                }
-
+bool callback_right_resize_toplevel(ei_widget_t widget, ei_event_t* event, ei_user_param_t user_param) {
+        if (event->type == ei_ev_mouse_buttonup) {
+                draw_resized_toplevel(widget, root_size->width/2, -root->screen_location.top_left.x+(root_size->width/2), callback_right_resize_toplevel);
                 return true;
-        } else
-                return false;
+        }
+        return false;
 }
 
-//Callbacks for toplevel resizing
+bool callback_fullscreen_toplevel(ei_widget_t widget, ei_event_t* event, ei_user_param_t user_param) {
+        if (event->type == ei_ev_mouse_buttonup) {
+                draw_resized_toplevel(widget, root_size->width, -root->screen_location.top_left.x, callback_fullscreen_toplevel);
+                return true;
+        }
+        return false;
+}
 
 bool callback_move_resizing_toplevel(ei_widget_t widget, ei_event_t* event, ei_user_param_t user_param) {
         // Only proceed if the event is a mouse button down event
@@ -142,20 +145,137 @@ bool callback_move_resizing_toplevel(ei_widget_t widget, ei_event_t* event, ei_u
 }
 
 bool callback_buttondown_resize_toplevel_start (ei_widget_t widget, ei_event_t* event, ei_user_param_t user_param) {
-    if (event->type == ei_ev_mouse_buttondown) {
-        ei_event_t* event_tbs = malloc(sizeof(ei_event_t));
-        event_tbs->type = event->type;
-        event_tbs->param = event->param;
-        event_tbs->modifier_mask = event->modifier_mask;
-        ei_event_bind_widget_t* param = malloc(sizeof(ei_event_bind_widget_t));
-        param->event = event_tbs;
-        param->widget = widget->parent;
+        if (event->type == ei_ev_mouse_buttondown) {
+                ei_event_t* event_tbs = malloc(sizeof(ei_event_t));
+                event_tbs->type = event->type;
+                event_tbs->param = event->param;
+                event_tbs->modifier_mask = event->modifier_mask;
+                ei_event_bind_widget_t* param = malloc(sizeof(ei_event_bind_widget_t));
+                param->event = event_tbs;
+                param->widget = widget->parent;
 
-        ei_bind(ei_ev_mouse_move, NULL, "all", callback_move_resizing_toplevel, param);
-        ei_bind(ei_ev_mouse_buttonup, NULL, "all", callback_move_resizing_toplevel, param);
-        return true;
-    } else
+                ei_bind(ei_ev_mouse_move, NULL, "all", callback_move_resizing_toplevel, param);
+                ei_bind(ei_ev_mouse_buttonup, NULL, "all", callback_move_resizing_toplevel, param);
+                return true;
+        } else
+                return false;
+}
+
+//Callbacks for toplevel movement
+
+void temp_frame(toplevel_t* toplevel, int width, int x, int y, ei_callback_t callback) {
+        if (strcmp(root->children_head->wclass->name, "frame") != 0) {
+                ei_widget_t temp_frame = ei_widget_create("frame", root, NULL, NULL);
+                ei_frame_configure(temp_frame, &(ei_size_t) {width, root_size->height},
+                                   &(ei_color_t) {0x88, 0x88, 0x88, 0x60},
+                                   0,
+                                   &(ei_relief_t) {ei_relief_none}, NULL, NULL, NULL,
+                                   NULL, NULL, NULL, NULL);
+                ei_place_xy(temp_frame, x, y);
+                widget_move_to_front(temp_frame->parent, temp_frame);
+                ei_bind(ei_ev_mouse_buttonup, &(toplevel->widget), NULL,
+                        callback, NULL);
+        }
+}
+
+bool callback_move_toplevel(ei_widget_t widget, ei_event_t* event, ei_user_param_t user_param) {
+        // Only proceed if the event is a mouse button down event
+        if (event->type == ei_ev_mouse_move) {
+                // Cast the widget to a toplevel widget
+                ei_event_bind_widget_t* initial_event_bind = (ei_event_bind_widget_t*) user_param;
+                ei_mouse_event_t initial_mouse = initial_event_bind->event->param.mouse;
+                ei_mouse_event_t mouse = event->param.mouse;
+
+                ei_widget_t toplevel = (ei_widget_t) initial_event_bind->widget;
+
+                // Check if the clicked widget is the toplevel widget
+                if (widget == toplevel) {
+                        // Get the current mouse position
+                        ei_point_t mouse_position = event->param.mouse.where;
+
+                        // Calculate the offset between the mouse position and the toplevel position
+                        int dx = mouse_position.x - initial_mouse.where.x;
+                        int dy = mouse_position.y - initial_mouse.where.y;
+                        ei_place_xy(widget, dx, dy);
+                        run_all_ei_place(widget);
+
+                        toplevel_t* toplevel_w = (toplevel_t*) widget;
+                        if (toplevel_w->resizable == ei_axis_both) {
+                                int text_width = 0;
+                                int text_height = 0;
+                                hw_text_compute_size(toplevel_w->title, toplevel_w->title_font, &text_width,
+                                                     &text_height);
+
+                                if (toplevel_w->widget.screen_location.size.height == root_size->height - text_height) {
+                                        toplevel_w->widget.screen_location.size.width = 320;
+                                        toplevel_w->widget.screen_location.size.height = 240;
+                                }
+
+                                if (toplevel_w->widget.screen_location.top_left.x == toplevel_w->border_width) {
+                                        temp_frame(toplevel_w, root_size->width / 2, -root->screen_location.top_left.x,
+                                                   -root->screen_location.top_left.y,callback_left_resize_toplevel);
+                                } else if(toplevel_w->widget.screen_location.top_left.x + toplevel_w->widget.screen_location.size.width +
+                                        toplevel_w->border_width == root_size->width) {
+                                        temp_frame(toplevel_w, root_size->width / 2, -root->screen_location.top_left.x+(root_size->width/2),
+                                                   -root->screen_location.top_left.y,callback_right_resize_toplevel);
+                                } else if(toplevel_w->widget.screen_location.top_left.y - text_height == 0) {
+                                        temp_frame(toplevel_w, root_size->width, -root->screen_location.top_left.x,
+                                                   -root->screen_location.top_left.y,callback_fullscreen_toplevel);
+                                } else if (strcmp(root->children_head->wclass->name, "frame") == 0) {
+                                        frame_releasefunc(root->children_head);
+                                        ei_widget_destroy(root->children_head);
+                                        ei_unbind(ei_ev_mouse_buttonup, &(toplevel_w->widget), NULL, callback_left_resize_toplevel, NULL);
+                                }
+                        }
+                        //ei_place(widget->children_head->next_sibling->next_sibling, NULL, &dx, &dy, NULL, NULL, NULL, NULL, NULL, NULL);
+
+                       if (root->wclass != NULL) {
+                                if (root->wclass->drawfunc != NULL) {
+                                        root->wclass->drawfunc(root, main_surface, pick_surface, NULL);
+                                }
+                       }
+                       ei_rect_t *clipper = &(root->children_head->screen_location);
+                       ei_impl_widget_draw_children(root, main_surface, pick_surface, clipper);
+                       // Return true to indicate that the event was handled
+                       return true;
+                }
+        } else if(event->type == ei_ev_mouse_buttonup) {
+                root->screen_location.top_left.x = 0;
+                root->screen_location.top_left.y = 0;
+                ei_unbind(ei_ev_mouse_move, NULL, "all", callback_move_toplevel, user_param);
+                ei_unbind(ei_ev_mouse_buttonup, NULL, "all", callback_move_toplevel, NULL);
+                return true;
+        }
+        // Return false if the event was not handled
         return false;
+}
+
+bool callback_buttondown_top_level (ei_widget_t widget, ei_event_t* event, ei_user_param_t user_param) {
+        if (event->type == ei_ev_mouse_buttondown) {
+                toplevel_t* toplevel = (toplevel_t *) widget;
+                int width = 0;
+                int height = 0;
+                hw_text_compute_size(toplevel->title,toplevel->title_font, &width, &height);
+                if( event->param.mouse.where.x > widget->screen_location.top_left.x
+                        && event->param.mouse.where.x < widget->screen_location.top_left.x +widget->screen_location.size.width
+                        && event->param.mouse.where.y > widget->screen_location.top_left.y - height
+                        && event->param.mouse.where.y < widget->screen_location.top_left.y){
+                        ei_event_t* event_tbs = malloc(sizeof(ei_event_t));
+                        event_tbs->type = event->type;
+                        event_tbs->param = event->param;
+                        event_tbs->modifier_mask = event->modifier_mask;
+                        ei_event_bind_widget_t* param = malloc(sizeof(ei_event_bind_widget_t));
+                        param->event = event_tbs;
+                        root->screen_location.top_left.x = widget->screen_location.top_left.x;
+                        root->screen_location.top_left.y = widget->screen_location.top_left.y;
+                        param->widget = widget;
+                        ei_bind(ei_ev_mouse_move, NULL, "all", callback_move_toplevel, param);
+                        ei_bind(ei_ev_mouse_buttonup, NULL, "all", callback_move_toplevel, NULL);
+                }
+
+                return true;
+        } else
+                return false;
 }
 
 //Extra functions
