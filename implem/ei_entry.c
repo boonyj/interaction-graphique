@@ -84,38 +84,72 @@ char* insert_char_before_pipe(char* str, char ch, int max) {
         strncpy(new_str, str, prefix_len);
         new_str[prefix_len] = ch; // Insert the new character
         strcpy(new_str + prefix_len + 1, pipe_pos); // Copy the rest of the string, including the '|'
-
+        new_str[strlen(new_str)] = '\0';
         return new_str;
 }
 
-char* remove_character_before_pipe(char* str) {
+char* remove_character_before_pipe(char* str, bool delete_before) {
         if (str == NULL) {
                 return NULL;
         }
 
         // Find the position of the '|' character
         char* pipe_pos = strchr(str, '|');
-        if (pipe_pos == NULL || pipe_pos == str) {
-                // If '|' is not found or is the first character, return a copy of the original string
+        if (pipe_pos == NULL) {
+                // If '|' is not found, return a copy of the original string
                 return strdup(str);
+        }
+        printf("///////////////////////////\n");
+        printf("Source string : %s\n", str);
+        // Calculate the position index
+        size_t index = pipe_pos - str;
+
+        // Determine the position to delete based on the boolean parameter
+        size_t delete_index;
+        if (delete_before) {
+                // Delete before '|'
+                delete_index = (index > 0) ? index - 1 : index;
+        } else {
+                delete_index = index+1;
+        }
+
+        if(strlen(str) == 1) {
+                return str;
         }
 
         // Calculate the lengths
         size_t str_len = strlen(str);
-        size_t prefix_len = pipe_pos - str; // Length before the '|'
+        size_t new_str_len = str_len + 5; // Length of the new string (excluding the removed character)
 
         // Allocate memory for the new string
-        // -1 for the removed character, +1 for the null terminator
-        char* new_str = malloc((str_len) * sizeof(char));
+        char* new_str = malloc((new_str_len) * sizeof(char)); // +1 for the null terminator
         if (new_str == NULL) {
                 // Handle memory allocation failure
                 return NULL;
         }
 
-        // Copy the part of the string before the character to be removed
-        strncpy(new_str, str, prefix_len - 1);
-        // Copy the part of the string starting from the '|'
-        strcpy(new_str + prefix_len - 1, pipe_pos);
+        if(delete_before) {
+                // Copy the part of the string before the character to be removed
+                strncpy(new_str, str, delete_index);
+
+                // Copy the part of the string after the character to be removed
+                strcpy(new_str + delete_index, str + delete_index+1);
+        }else{
+                // Copy the part of the string before the character to be removed
+                strncpy(new_str, str, delete_index);
+
+                if(delete_index != strlen(str)) {
+                        // Copy the part of the string after the character to be removed
+                        strcpy(new_str + delete_index, str + delete_index + 1);
+                }else {
+                        return str;
+                }
+        }
+
+        new_str[strlen(new_str)] = '\0';
+        printf("///////////////////////////\n");
+
+
 
         return new_str;
 }
@@ -154,6 +188,7 @@ char* move_pipe_in_text(char* str, bool dir) {
         strcpy(new_str, str);
         new_str[index] = new_str[new_index];
         new_str[new_index] = '|';
+        new_str[strlen(new_str)] = '\0';
 
         return new_str;
 }
@@ -170,8 +205,11 @@ bool callback_type_in_focus (ei_widget_t widget, ei_event_t* event, ei_user_para
                         }
                         res = insert_char_before_pipe(entry->text,input,entry->requested_char_size);
                 }else if (event->param.key_code == SDLK_BACKSPACE){
-                                res = remove_character_before_pipe(entry->text);
-                        }
+                        res = remove_character_before_pipe(entry->text, true);
+                }
+                else if (event->param.key_code == SDLK_DELETE){
+                        res = remove_character_before_pipe(entry->text, false);
+                }
                 else if(event->param.key_code == SDLK_RIGHT || event->param.key_code == SDLK_LEFT) {
                         if(event->param.key_code == SDLK_RIGHT) {
                                 res = move_pipe_in_text(entry->text, true);
@@ -182,7 +220,6 @@ bool callback_type_in_focus (ei_widget_t widget, ei_event_t* event, ei_user_para
                 ei_entry_set_text(entry,res);
 
                 entry->widget.wclass->drawfunc(entry,main_surface,pick_surface,&entry->widget.screen_location);
-                printf("%s",entry->text);
                 return true;
         } else
                 return false;
