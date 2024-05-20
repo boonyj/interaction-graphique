@@ -119,7 +119,7 @@ bool callback_type_in_focus (ei_widget_t widget, ei_event_t* event, ei_user_para
         if (event->type == ei_ev_keydown) {
                 entry_t* entry = (entry_t*) user_param;
                 char input = event->param.key_code;
-                char* res;
+                char* res = entry->text;
                 // If it's input character
                 if(event->param.key_code >= SDLK_SPACE && event->param.key_code <= SDLK_z) {
                         if(ei_event_has_shift(event)) {
@@ -174,8 +174,8 @@ void			ei_entry_configure		(ei_widget_t		widget,
 
         if (requested_char_size != NULL){
                 entry->requested_char_size = *requested_char_size;
-                // Create an array with space for characters plus the null terminator
-                char string[entry->requested_char_size+1];
+                // Create an array with space for characters plus the null terminator and cursor
+                char string[entry->requested_char_size+2];
                 // Use memset to fill the array with 'a' characters
                 memset(string, 'a', entry->requested_char_size);
 
@@ -222,7 +222,7 @@ void			ei_entry_set_text		(ei_widget_t		widget,
                                                               ei_const_string_t 	text) {
         if((strcmp(widget->wclass->name,"entry")) == 0){
                 entry_t* entry = (entry_t*)widget;
-                if(strlen(text) <= entry->requested_char_size) {
+                if(strlen(text) <= entry->requested_char_size+1) {
                         entry->text = (char*)text;
                 }else {
                         strncpy(entry->text,(char*)text,entry->requested_char_size);
