@@ -1,7 +1,5 @@
 #include "ei_entry_class.h"
 
-
-
 ei_widget_t entry_allocfunc (){
         ei_widget_t widget = malloc(sizeof(struct entry_t ));
 

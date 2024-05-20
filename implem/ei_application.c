@@ -31,7 +31,6 @@ void ei_app_create(ei_size_t main_window_size, bool fullscreen){
         ei_widgetclass_register(toplevel_class);
         ei_widgetclass_register(entry_class);
 
-
         // Creation of geometry manager
         ei_geometrymanager_t* placeur_mng = create_placeur_mng();
 
@@ -108,7 +107,7 @@ void get_event(ei_rect_t *clipper, ei_event_t *event, struct ei_impl_widget_t *w
                                         head->callback(widget, event, widget->user_data);
                                         draw_all_widgets(clipper);
                                 }
-                        }else{
+                        } else {
                                 if(strcmp(head->tag, widget->wclass->name) == 0 ||
                                    strcmp(head->tag, "all") == 0){
                                         head->callback(widget, event, head->user_param);

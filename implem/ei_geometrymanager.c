@@ -7,6 +7,10 @@
 static ei_geometrymanager_t** geo_mgr_list = NULL;
 static size_t geo_mgr_list_size = 0;
 
+size_t		ei_geom_param_size(){
+        return sizeof(ei_impl_geom_param_t);
+}
+
 void	ei_geometry_run_finalize(ei_widget_t widget, ei_rect_t* new_screen_location){
         // Vérifier si le widget est valide
         if (widget == NULL || new_screen_location == NULL) {
@@ -23,9 +27,6 @@ void	ei_geometry_run_finalize(ei_widget_t widget, ei_rect_t* new_screen_location
                 border_width = toplevel->border_width;
 
                 //Border management
-                /*if (new_screen_location->top_left.x < 0) {
-                        new_screen_location->top_left.x = 0;
-                }*/
                 if (new_screen_location->top_left.y - text_height < 0) {
                         new_screen_location->top_left.y = 0 + text_height;
                 }
