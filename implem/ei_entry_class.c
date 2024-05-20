@@ -50,7 +50,7 @@ void entry_drawfunc (ei_widget_t		widget,
 void entry_setdefaultsfunc(ei_widget_t		widget){
         entry_t * entry = (entry_t *) widget;
         entry->widget = *widget;
-        entry->text = NULL;
+        entry->text = "\0";
         entry->text_font = ei_default_font;
         entry->text_color = ei_font_default_color;
         entry->border_width = 2;

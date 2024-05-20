@@ -144,7 +144,7 @@ void get_keydown_event(struct ei_impl_widget_t *widget, ei_linked_event_t *head,
                        ei_event_t *event) {
         while (head != NULL) {
                 if (head->eventtype == (*event).type) {
-                        head->callback(widget, event, widget->user_data);
+                        head->callback(widget, event, head->user_param);
                         if (root->wclass != NULL) {
                                 if (root->wclass->drawfunc != NULL) {
                                         root->wclass->drawfunc(root, main_surface, pick_surface, NULL);

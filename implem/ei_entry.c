@@ -2,6 +2,166 @@
 #include "ei_entry_class.h"
 #include "ei_placer.h"
 #include "ei_toplevel.h"
+#include "ei_global.h"
+
+char* get_text_without_cursor(char* str) {
+        // Allocate memory for the result string
+        // +1 for the null terminator, -1 because we're removing one character
+        char* res = malloc((strlen(str)) * sizeof(char));
+        if (res == NULL) {
+                // Handle memory allocation failure
+                return NULL;
+        }
+        // Copy the characters, excluding the '|'
+        int j = 0;
+        for (int i = 0; str[i] != '\0'; ++i) {
+                if (str[i] != '|') {
+                        res[j++] = str[i];
+                }
+        }
+        res[j] = '\0';  // Null-terminate the result string
+
+        return res;
+}
+
+char* get_text_with_char_concatenated(char* str, char ch) {
+        if (str == NULL) {
+                return NULL;
+        }
+
+        // Calculate the length of the new string
+        size_t str_len = strlen(str);
+        size_t new_str_len = str_len + 1; // +1 for the '|' character
+
+        // Allocate memory for the new string
+        char* new_str = malloc((new_str_len + 1) * sizeof(char)); // +1 for the null terminator
+        if (new_str == NULL) {
+                // Handle memory allocation failure
+                return NULL;
+        }
+
+        // Copy the original string to the new string
+        strcpy(new_str, str);
+
+        // Append the '|' character
+        new_str[str_len] = ch;
+
+        // Null-terminate the new string
+        new_str[new_str_len] = '\0';
+
+        return new_str;
+}
+
+char* insert_char_before_pipe(char* str, char ch) {
+        if (str == NULL) {
+                return NULL;
+        }
+
+        // Find the position of the '|' character
+        char* pipe_pos = strchr(str, '|');
+        if (pipe_pos == NULL) {
+                // If '|' is not found, return a copy of the original string
+                return strdup(str);
+        }
+
+        // Calculate the lengths
+        size_t str_len = strlen(str);
+        size_t prefix_len = pipe_pos - str; // Length before the '|'
+
+        // Allocate memory for the new string
+        char* new_str = malloc((str_len + 2) * sizeof(char)); // +2 for the new character and null terminator
+        if (new_str == NULL) {
+                // Handle memory allocation failure
+                return NULL;
+        }
+
+        // Copy the part of the string before the '|'
+        strncpy(new_str, str, prefix_len);
+        new_str[prefix_len] = ch; // Insert the new character
+        strcpy(new_str + prefix_len + 1, pipe_pos); // Copy the rest of the string, including the '|'
+
+        return new_str;
+}
+
+char* remove_character_before_pipe(char* str) {
+        if (str == NULL) {
+                return NULL;
+        }
+
+        // Find the position of the '|' character
+        char* pipe_pos = strchr(str, '|');
+        if (pipe_pos == NULL || pipe_pos == str) {
+                // If '|' is not found or is the first character, return a copy of the original string
+                return strdup(str);
+        }
+
+        // Calculate the lengths
+        size_t str_len = strlen(str);
+        size_t prefix_len = pipe_pos - str; // Length before the '|'
+
+        // Allocate memory for the new string
+        // -1 for the removed character, +1 for the null terminator
+        char* new_str = malloc((str_len) * sizeof(char));
+        if (new_str == NULL) {
+                // Handle memory allocation failure
+                return NULL;
+        }
+
+        // Copy the part of the string before the character to be removed
+        strncpy(new_str, str, prefix_len - 1);
+        // Copy the part of the string starting from the '|'
+        strcpy(new_str + prefix_len - 1, pipe_pos);
+
+        return new_str;
+}
+
+bool callback_type_in_focus (ei_widget_t widget, ei_event_t* event, ei_user_param_t user_param) {
+        if (event->type == ei_ev_keydown) {
+                entry_t* entry = (entry_t*) user_param;
+                char input = event->param.key_code;
+                char* res;
+                // If it's input character
+                if(event->param.key_code >= SDLK_SPACE && event->param.key_code <= SDLK_z) {
+                        if(ei_event_has_shift(event)) {
+                                input = toupper(input);
+                        }
+                        res = insert_char_before_pipe(entry->text,input);
+                }else if (event->param.key_code >= SDLK_BACKSPACE){
+                                res = remove_character_before_pipe(entry->text);
+                        }
+                ei_entry_set_text(entry,res);
+
+                entry->widget.wclass->drawfunc(entry,main_surface,pick_surface,&entry->widget.screen_location);
+                printf("%s",entry->text);
+                return true;
+        } else
+                return false;
+}
+
+bool callback_buttondown_remove_focus_entry (ei_widget_t widget, ei_event_t* event, ei_user_param_t user_param) {
+        if (event->type == ei_ev_mouse_buttondown) {
+                entry_t* entry = (entry_t*) user_param;
+                entry->in_focus = false;
+                ei_entry_set_text(entry,get_text_without_cursor(entry->text));
+                ei_unbind(ei_ev_mouse_buttondown,NULL,"all",callback_buttondown_remove_focus_entry,entry);
+                ei_unbind(ei_ev_keydown,NULL,"all",callback_type_in_focus,entry);
+                entry->widget.wclass->drawfunc(entry,main_surface,pick_surface,&entry->widget.screen_location);
+                return true;
+        } else
+                return false;
+}
+
+bool callback_buttondown_focus_entry (ei_widget_t widget, ei_event_t* event, ei_user_param_t user_param) {
+        if (event->type == ei_ev_mouse_buttondown) {
+                entry_t* entry = (entry_t*) widget;
+                entry->in_focus = true;
+                ei_entry_set_text(&entry->widget, get_text_with_char_concatenated(entry->text, '|'));
+                ei_bind(ei_ev_mouse_buttondown,NULL,"all",callback_buttondown_remove_focus_entry,entry);
+                ei_bind(ei_ev_keydown,NULL,"all",callback_type_in_focus,entry);
+                return true;
+        } else
+                return false;
+}
 
 void			ei_entry_configure		(ei_widget_t		widget,
                                                                int*			requested_char_size,
@@ -54,6 +214,8 @@ void			ei_entry_configure		(ei_widget_t		widget,
         if (text_color != NULL){
                 entry->text_color = *text_color;
         }
+
+        ei_bind(ei_ev_mouse_buttondown, &entry->widget,NULL, callback_buttondown_focus_entry, NULL);
 }
 
 void			ei_entry_set_text		(ei_widget_t		widget,
