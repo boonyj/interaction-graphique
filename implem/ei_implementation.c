@@ -35,7 +35,6 @@ uint32_t ei_impl_map_rgba(ei_surface_t surface, ei_color_t color) {
 
 void free_widget_and_siblings(ei_widget_t* widget, bool is_root) {
         if (widget == NULL || *widget == NULL) return;
-
         // Recursively free all children and their siblings
         ei_widget_t* child = &((*widget)->children_head);
         while (*child != NULL) {

@@ -84,6 +84,12 @@ void			ei_widget_destroy		(ei_widget_t		widget){
                 }
         }
 
+        if(widget->children_tail != NULL){
+                widget->children_tail->wclass->releasefunc(widget->children_tail);
+                widget->children_tail = NULL;
+        }
+
+
         if (widget->destructor != NULL) {
                 widget->destructor(widget);
         }
