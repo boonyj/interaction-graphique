@@ -107,6 +107,10 @@ char* remove_character_before_pipe(char* str, bool delete_before) {
         // Determine the position to delete based on the boolean parameter
         size_t delete_index;
         if (delete_before) {
+                if(*str == '|') {
+                        return str;
+                }
+
                 // Delete before '|'
                 delete_index = (index > 0) ? index - 1 : index;
         } else {
@@ -119,7 +123,7 @@ char* remove_character_before_pipe(char* str, bool delete_before) {
 
         // Calculate the lengths
         size_t str_len = strlen(str);
-        size_t new_str_len = str_len + 5; // Length of the new string (excluding the removed character)
+        size_t new_str_len = str_len + 1; // Length of the new string (excluding the removed character)
 
         // Allocate memory for the new string
         char* new_str = malloc((new_str_len) * sizeof(char)); // +1 for the null terminator
