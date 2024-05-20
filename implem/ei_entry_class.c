@@ -17,7 +17,6 @@ char* remove_first_char(char* str) {
                 return NULL;
         }
 
-
         // Calculate the lengths
         size_t str_len = strlen(str);
 
@@ -31,13 +30,38 @@ char* remove_first_char(char* str) {
 
         // Copy the part of the string before the character to be removed
         strcpy(new_str, str + 1);
-        printf( "%s\n",new_str);
+        return new_str;
+}
+
+char* remove_last_char(char* str) {
+        if (str == NULL) {
+                return NULL;
+        }
+
+        // Calculate the lengths
+        size_t str_len = strlen(str);
+
+        // Allocate memory for the new string
+        // -1 for the removed character, +1 for the null terminator
+        char* new_str = malloc((str_len) * sizeof(char));
+        if (new_str == NULL) {
+                // Handle memory allocation failure
+                return NULL;
+        }
+
+        strncpy(new_str, str, str_len - 1);
+        new_str[str_len - 1] = '\0'; // Add the null terminator
+
         return new_str;
 }
 
 char* truncate_text_to_fit_width(char* text, void* font, int max_width) {
         int width = 0, height = 0;
         hw_text_compute_size(text, font, &width, &height);
+
+        char* temp = text;
+        char* cursor_pos_ptr = strchr(text, '|') ;
+        int cursor_pos = cursor_pos_ptr - text;
 
         // If text width is greater than the max width, truncate it
         if (width > max_width) {
@@ -47,6 +71,20 @@ char* truncate_text_to_fit_width(char* text, void* font, int max_width) {
                         hw_text_compute_size(text, font, &width, &height);
                 }
         }
+
+        char* cursor_new = strchr(text, '|');
+        if(cursor_new == NULL){
+                hw_text_compute_size(cursor_pos_ptr, font, &width, &height);
+                if (width > max_width) {
+                        int len = strlen(cursor_pos_ptr);
+                        while (len > 0 && width > max_width) {
+                                cursor_pos_ptr = remove_last_char(cursor_pos_ptr);
+                                hw_text_compute_size(cursor_pos_ptr, font, &width, &height);
+                        }
+                }
+                text = cursor_pos_ptr;
+        }
+
         return text;
 }
 
