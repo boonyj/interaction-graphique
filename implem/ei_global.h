@@ -16,3 +16,4 @@ extern ei_widget_t root;
 extern ei_size_t* root_size;
 extern ei_linked_rect_t* invalidated_rects_head;
 extern ei_linked_event_t* linked_event_list;
+extern double blinking;

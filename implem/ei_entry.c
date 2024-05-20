@@ -52,7 +52,7 @@ char* get_text_with_char_concatenated(char* str, char ch) {
         return new_str;
 }
 
-char* insert_char_before_pipe(char* str, char ch) {
+char* insert_char_before_pipe(char* str, char ch, int max) {
         if (str == NULL) {
                 return NULL;
         }
@@ -67,6 +67,11 @@ char* insert_char_before_pipe(char* str, char ch) {
         // Calculate the lengths
         size_t str_len = strlen(str);
         size_t prefix_len = pipe_pos - str; // Length before the '|'
+
+        if (str_len > max) {
+                // Handle memory allocation failure
+                return str;
+        }
 
         // Allocate memory for the new string
         char* new_str = malloc((str_len + 2) * sizeof(char)); // +2 for the new character and null terminator
@@ -163,7 +168,7 @@ bool callback_type_in_focus (ei_widget_t widget, ei_event_t* event, ei_user_para
                         if(ei_event_has_shift(event)) {
                                 input = toupper(input);
                         }
-                        res = insert_char_before_pipe(entry->text,input);
+                        res = insert_char_before_pipe(entry->text,input,entry->requested_char_size);
                 }else if (event->param.key_code == SDLK_BACKSPACE){
                                 res = remove_character_before_pipe(entry->text);
                         }
@@ -190,6 +195,7 @@ bool callback_buttondown_remove_focus_entry (ei_widget_t widget, ei_event_t* eve
                 ei_entry_set_text(entry,get_text_without_cursor(entry->text));
                 ei_unbind(ei_ev_mouse_buttondown,NULL,"all",callback_buttondown_remove_focus_entry,entry);
                 ei_unbind(ei_ev_keydown,NULL,"all",callback_type_in_focus,entry);
+                blinking = 0;
                 entry->widget.wclass->drawfunc(entry,main_surface,pick_surface,&entry->widget.screen_location);
                 return true;
         } else
@@ -201,6 +207,7 @@ bool callback_buttondown_focus_entry (ei_widget_t widget, ei_event_t* event, ei_
                 entry_t* entry = (entry_t*) widget;
                 entry->in_focus = true;
                 ei_entry_set_text(&entry->widget, get_text_with_char_concatenated(entry->text, '|'));
+                blinking = hw_now();
                 ei_bind(ei_ev_mouse_buttondown,NULL,"all",callback_buttondown_remove_focus_entry,entry);
                 ei_bind(ei_ev_keydown,NULL,"all",callback_type_in_focus,entry);
                 return true;
@@ -285,9 +292,9 @@ ei_const_string_t 	ei_entry_get_text		(ei_widget_t		widget) {
 
 
 void			ei_entry_give_focus		(ei_widget_t		widget) {
-        if((strcmp(widget->wclass->name,"entry")) == 0){
-                entry_t* entry = (entry_t*)widget;
-                entry->in_focus = true;
-        }
+        // if((strcmp(widget->wclass->name,"entry")) == 0){
+        //         entry_t* entry = (entry_t*)widget;
+        //         entry->in_focus = true;
+        // }
 }
 

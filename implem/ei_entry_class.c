@@ -57,8 +57,12 @@ void draw_entry (entry_t * entry,
         assertion_pick_color((ei_widget_t) entry, surface);
 
         if (entry->widget.wclass->drawfunc != NULL) {
-                ei_color_t color = {entry->widget.color->red, entry->widget.color->green, entry->widget.color->blue};
-                ei_fill(surface, entry->widget.color, clipper);
+                if(entry->in_focus) {
+                        ei_color_t entry_color = (ei_color_t){255,255,255, 180};
+                        ei_fill(surface, &entry_color, clipper);
+                }else {
+                        ei_fill(surface, entry->widget.color, clipper);
+                }
                 if (pick_surface != NULL) {
                         ei_fill(pick_surface, entry->widget.pick_color, clipper);
                 }
@@ -111,6 +115,7 @@ void entry_setdefaultsfunc(ei_widget_t		widget){
         entry->widget.screen_location.size.height = height;
         entry->widget.screen_location.top_left.x = 0;
         entry->widget.screen_location.top_left.y = 0;
+        entry->in_focus = false;
 
 }
 

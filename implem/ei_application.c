@@ -194,6 +194,7 @@ void ei_app_run(void) {
 
                 //Wait for event
                 hw_event_wait_next(&event);
+
                 // 1. Get widget in cursor position
                 mouse = event.param.mouse;
 
