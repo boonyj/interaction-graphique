@@ -12,7 +12,43 @@ ei_widget_t entry_allocfunc (){
 void entry_releasefunc (ei_widget_t	widget){
 
 }
+char* remove_first_char(char* str) {
+        if (str == NULL) {
+                return NULL;
+        }
 
+
+        // Calculate the lengths
+        size_t str_len = strlen(str);
+
+        // Allocate memory for the new string
+        // -1 for the removed character, +1 for the null terminator
+        char* new_str = malloc((str_len) * sizeof(char));
+        if (new_str == NULL) {
+                // Handle memory allocation failure
+                return NULL;
+        }
+
+        // Copy the part of the string before the character to be removed
+        strcpy(new_str, str + 1);
+        printf( "%s\n",new_str);
+        return new_str;
+}
+
+char* truncate_text_to_fit_width(char* text, void* font, int max_width) {
+        int width = 0, height = 0;
+        hw_text_compute_size(text, font, &width, &height);
+
+        // If text width is greater than the max width, truncate it
+        if (width > max_width) {
+                int len = strlen(text);
+                while (len > 0 && width > max_width) {
+                        text = remove_first_char(text);
+                        hw_text_compute_size(text, font, &width, &height);
+                }
+        }
+        return text;
+}
 
 void draw_entry (entry_t * entry,
                  ei_surface_t		surface,
@@ -27,7 +63,14 @@ void draw_entry (entry_t * entry,
                         ei_fill(pick_surface, entry->widget.pick_color, clipper);
                 }
                 if ((entry->text) != NULL){
-                        draw_text(entry->text, entry->text_font, entry->text_color, entry->widget.screen_location.top_left,
+                        char * text = entry->text;
+                        int width = 0;
+                        int height = 0;
+                        hw_text_compute_size(entry->text, entry->text_font, &width, &height);
+                        if(width > entry->widget.screen_location.size.width){
+                                text = truncate_text_to_fit_width(entry->text, entry->text_font, entry->widget.screen_location.size.width);
+                        }
+                        draw_text(text, entry->text_font, entry->text_color, entry->widget.screen_location.top_left,
                                   entry->widget.screen_location.size, surface, clipper);
                 }
 
