@@ -115,6 +115,44 @@ char* remove_character_before_pipe(char* str) {
         return new_str;
 }
 
+char* move_pipe_in_text(char* str, bool dir) {
+        //True to move the pipe to the right, false to the left.
+        if (str == NULL) {
+                return NULL;
+        }
+
+        char* pipe_pos = strchr(str, '|');
+        if (pipe_pos == NULL) {
+                return strdup(str);
+        }
+
+        size_t index = pipe_pos - str;
+        size_t str_len = strlen(str);
+
+        size_t new_index;
+        if (dir) {
+                new_index = (index < str_len - 1) ? index + 1 : index;
+        } else {
+                new_index = (index > 0) ? index - 1 : index;
+        }
+
+        if (new_index == index) {
+                return strdup(str);
+        }
+
+        char* new_str = malloc((str_len + 1) * sizeof(char));
+        if (new_str == NULL) {
+                // Handle memory allocation failure
+                return NULL;
+        }
+
+        strcpy(new_str, str);
+        new_str[index] = new_str[new_index];
+        new_str[new_index] = '|';
+
+        return new_str;
+}
+
 bool callback_type_in_focus (ei_widget_t widget, ei_event_t* event, ei_user_param_t user_param) {
         if (event->type == ei_ev_keydown) {
                 entry_t* entry = (entry_t*) user_param;
@@ -126,9 +164,16 @@ bool callback_type_in_focus (ei_widget_t widget, ei_event_t* event, ei_user_para
                                 input = toupper(input);
                         }
                         res = insert_char_before_pipe(entry->text,input);
-                }else if (event->param.key_code >= SDLK_BACKSPACE){
+                }else if (event->param.key_code == SDLK_BACKSPACE){
                                 res = remove_character_before_pipe(entry->text);
                         }
+                else if(event->param.key_code == SDLK_RIGHT || event->param.key_code == SDLK_LEFT) {
+                        if(event->param.key_code == SDLK_RIGHT) {
+                                res = move_pipe_in_text(entry->text, true);
+                        }else {
+                                res = move_pipe_in_text(entry->text, false);
+                        }
+                }
                 ei_entry_set_text(entry,res);
 
                 entry->widget.wclass->drawfunc(entry,main_surface,pick_surface,&entry->widget.screen_location);
