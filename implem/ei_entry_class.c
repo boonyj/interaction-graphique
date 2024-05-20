@@ -61,7 +61,6 @@ char* truncate_text_to_fit_width(char* text, void* font, int max_width) {
 
         char* temp = text;
         char* cursor_pos_ptr = strchr(text, '|') ;
-        int cursor_pos = cursor_pos_ptr - text;
 
         // If text width is greater than the max width, truncate it
         if (width > max_width) {
@@ -82,7 +81,7 @@ char* truncate_text_to_fit_width(char* text, void* font, int max_width) {
                                 hw_text_compute_size(cursor_pos_ptr, font, &width, &height);
                         }
                 }
-                text = cursor_pos_ptr;
+                if(cursor_pos_ptr !=NULL)text = cursor_pos_ptr;
         }
 
         return text;

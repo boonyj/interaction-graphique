@@ -212,7 +212,15 @@ void ei_app_run(void) {
                         if (!exit_button_handled) {
                                 get_event(clipper, &event, widget, head);
                         }
-                } else {
+                } else if (event.type == ei_ev_exposed){
+                        if (root->wclass != NULL) {
+                                if (root->wclass->drawfunc != NULL) {
+                                        root->wclass->drawfunc(root, main_surface, pick_surface, NULL);
+                                }
+                        }
+                        ei_impl_widget_draw_children(root, main_surface, pick_surface, clipper);
+                }
+                else {
                         get_keydown_event(widget, head, &clipper, &event);
                 }
 
