@@ -245,6 +245,7 @@ void ei_app_invalidate_rect(const ei_rect_t* rect) {
 }
 
 void ei_app_quit_request(void){
+        ei_widget_destroy(root);
         exit(0);
 }
 

@@ -26,6 +26,11 @@ void draw_entry (entry_t * entry,
                 if (pick_surface != NULL) {
                         ei_fill(pick_surface, entry->widget.pick_color, clipper);
                 }
+                if ((entry->text) != NULL){
+                        draw_text(entry->text, entry->text_font, entry->text_color, entry->widget.screen_location.top_left,
+                                  entry->widget.screen_location.size, surface, clipper);
+                }
+
         }
 }
 
@@ -45,6 +50,7 @@ void entry_drawfunc (ei_widget_t		widget,
 void entry_setdefaultsfunc(ei_widget_t		widget){
         entry_t * entry = (entry_t *) widget;
         entry->widget = *widget;
+        entry->text = NULL;
         entry->text_font = ei_default_font;
         entry->text_color = ei_font_default_color;
         entry->border_width = 2;

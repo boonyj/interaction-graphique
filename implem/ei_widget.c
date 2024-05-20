@@ -62,21 +62,28 @@ ei_widget_t ei_widget_create(ei_const_string_t class_name,
 void			ei_widget_destroy		(ei_widget_t		widget){
         widget->wclass->releasefunc(widget);
         free_widget_and_siblings(&widget, true);
-        if (widget->parent->children_head == widget) {
-                if (widget->next_sibling != NULL) {
-                        widget->parent->children_head = widget->next_sibling;
-                } else {
-                        widget->parent->children_head = NULL;
-                        widget->parent->children_tail = NULL;
+        if(widget->parent){
+                if (widget->parent->children_head == widget) {
+                        if (widget->next_sibling != NULL) {
+                                widget->parent->children_head = widget->next_sibling;
+                        } else {
+                                widget->parent->children_head = NULL;
+                                widget->parent->children_tail = NULL;
+                        }
+                }  else {
+                        ei_widget_t prev = widget->parent->children_head;
+                        while (prev && prev->next_sibling != widget) {
+                                prev = prev->next_sibling;
+                        }
+                        if (prev) {
+                                prev->next_sibling = widget->next_sibling;
+                                if (widget->parent->children_tail == widget) {
+                                        widget->parent->children_tail = prev;
+                                }
+                        }
                 }
-        } else if (widget->parent->children_tail == widget) {
-                ei_widget_t* last = &(widget->parent->children_head);
-                while (*last != NULL && (*last)->next_sibling != widget) {
-                        last = &((*last)->next_sibling);
-                }
-                widget->parent->children_tail = *last;
-                widget->parent->children_tail->next_sibling = NULL;
         }
+
         if (widget->destructor != NULL) {
                 widget->destructor(widget);
         }
