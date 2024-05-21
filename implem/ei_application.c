@@ -139,6 +139,8 @@ void ei_app_run(void) {
         // Get the root widget of the application
         ei_widget_t root_widget = ei_app_root_widget();
 
+        run_all_ei_place(root_widget);
+
         hw_surface_lock(main_surface);
         hw_surface_lock(pick_surface);
 

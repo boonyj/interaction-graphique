@@ -27,7 +27,7 @@ void	ei_geometry_run_finalize(ei_widget_t widget, ei_rect_t* new_screen_location
                 border_width = toplevel->border_width;
 
                 //Border management
-                if(new_screen_location->size.width < root_size->width){
+                //if(new_screen_location->size.width < root_size->width){
                         if (new_screen_location->top_left.y - text_height < 0) {
                                 new_screen_location->top_left.y = 0 + text_height;
                         }
@@ -40,9 +40,7 @@ void	ei_geometry_run_finalize(ei_widget_t widget, ei_rect_t* new_screen_location
                         if(new_screen_location->top_left.x <= toplevel->border_width) {
                                 new_screen_location->top_left.x = toplevel->border_width;
                         }
-                }
-
-
+                //}
 
                 //Size limits
                 switch (toplevel->resizable) {
