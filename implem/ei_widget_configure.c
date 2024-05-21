@@ -69,7 +69,7 @@ void			ei_frame_configure		(ei_widget_t		widget,
                 frame->img = hw_surface_create(main_surface,img_size,true );
                 ei_rect_t t= hw_surface_get_rect(*img);
                 ei_copy_surface(frame->img, &t,*img,&t, true);
-                frame->img_rect = **img_rect;
+                frame->img_rect = img_rect != NULL? **img_rect : frame->img_rect;
                 if (img_anchor != NULL) {
                         frame->img_anchor = *img_anchor;
                 }

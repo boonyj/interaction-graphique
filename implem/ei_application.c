@@ -199,7 +199,6 @@ void ei_app_run(void) {
         ei_widget_t widget;
         while ((event.type != ei_ev_close)) {
                 event.type = ei_ev_none;
-
                 //Update screen
                 hw_surface_update_rects(main_surface, NULL);
                 //hw_surface_update_rects(pick_surface, NULL);
