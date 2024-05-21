@@ -21,8 +21,9 @@ void frame_releasefunc (ei_widget_t	widget){
         ei_anchor_t img_anchor;*/
 
         free(frame->text);
-        //free(frame->text_font);
-        //hw_surface_free(frame->img);
+        if (frame->img != NULL) {
+                hw_surface_free(frame->img);
+        }
 }
 
 void draw_frame (frame_t* frame,

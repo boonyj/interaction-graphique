@@ -45,33 +45,33 @@ void			ei_frame_configure		(ei_widget_t		widget,
                 frame->border_width = *border_width;
         }
 
-        if (text != NULL ){
-                frame->text = malloc((strlen(*text)+1) * sizeof (char*));
+        if (text != NULL) {
+                frame->text = malloc((strlen(*text) + 1) * sizeof(char));
                 strcpy(frame->text, *text);
                 frame->text[strlen(*text)] = '\0';
 
-                if (text_color !=  NULL){
+                if (text_color != NULL) {
                         frame->text_color.alpha = text_color->alpha;
                         frame->text_color.red = text_color->red;
                         frame->text_color.green = text_color->green;
                         frame->text_color.blue = text_color->blue;
                 }
-                if (text_font !=  NULL){
+                if (text_font != NULL) {
                         frame->text_font = *text_font;
                 }
-                if (text_anchor !=  NULL){
+                if (text_anchor != NULL) {
                         frame->text_anchor = *text_anchor;
                 }
+        }
 
-                if(img != NULL){
-                        ei_size_t img_size= hw_surface_get_size(*img);
-                        frame->img = hw_surface_create(main_surface,img_size,true );
-                        ei_rect_t t= hw_surface_get_rect(*img);
-                        ei_copy_surface(frame->img, &t,*img,&t, true);
-                        frame->img_rect = **img_rect;
-                        if (img_anchor != NULL) {
-                                frame->img_anchor = *img_anchor;
-                        }
+        if(img != NULL){
+                ei_size_t img_size= hw_surface_get_size(*img);
+                frame->img = hw_surface_create(main_surface,img_size,true );
+                ei_rect_t t= hw_surface_get_rect(*img);
+                ei_copy_surface(frame->img, &t,*img,&t, true);
+                frame->img_rect = **img_rect;
+                if (img_anchor != NULL) {
+                        frame->img_anchor = *img_anchor;
                 }
         }
 }
@@ -120,7 +120,7 @@ void			ei_button_configure		(ei_widget_t		widget,
         }
 
         if (text != NULL){
-                button->text = malloc((strlen(*text)+1) * sizeof (char*));
+                button->text = malloc((strlen(*text)+1) * sizeof (char));
                 strcpy(button->text, *text);
                 button->text[strlen(*text)] = '\0';
                 if (text_color !=  NULL){
@@ -215,7 +215,7 @@ void			ei_toplevel_configure		(ei_widget_t		widget,
         }
 
         if (title != NULL){
-                toplevel->title = malloc((strlen(*title)+1) * sizeof (char*));
+                toplevel->title = malloc((strlen(*title)+1) * sizeof (char));
                 strcpy(toplevel->title, *title);
                 toplevel->title[strlen(*title)] = '\0';
                 toplevel->title_color.red =  0xff;

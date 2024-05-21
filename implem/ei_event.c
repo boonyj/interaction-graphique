@@ -61,7 +61,6 @@ void ei_unbind(ei_eventtype_t eventtype,
                 return;
         }
 
-        // Traverse the linked list to find the matching event
         ei_linked_event_t* current = linked_event_list;
         ei_linked_event_t* previous = NULL;
 
@@ -72,9 +71,9 @@ void ei_unbind(ei_eventtype_t eventtype,
                     current->callback == callback) {
 
                         /*if (user_param != NULL && current->user_param != NULL && current->user_param != user_param) {
-                                previous = current;
-                                current = current->next;
-                                continue;
+                            previous = current;
+                            current = current->next;
+                            continue;
                         }*/
 
                         // Match found, remove the node from the linked list
@@ -87,13 +86,12 @@ void ei_unbind(ei_eventtype_t eventtype,
                                 previous->next = node_to_remove->next;
                         }
 
+                        current = node_to_remove->next; // Move to the next node before freeing
                         //free(node_to_remove);
-
-                        // Exit the function as we've successfully unbound the event
-                        //return;
+                } else {
+                        previous = current;
+                        current = current->next;
                 }
-
-                previous = current;
-                current = current->next;
         }
 }
+

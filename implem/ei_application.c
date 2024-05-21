@@ -55,8 +55,6 @@ void free_event_list() {
 
 void ei_app_free(void){
         free_event_list();
-        hw_surface_unlock(main_surface);
-        hw_surface_unlock(pick_surface);
         hw_surface_free(main_surface);
         hw_surface_free(pick_surface);
         free(root_size);
