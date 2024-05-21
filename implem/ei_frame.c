@@ -49,7 +49,7 @@ void draw_frame (frame_t* frame,
                                 assertion_color(frame->widget.color, color, 1);
 
                                 points = malloc(5 * sizeof(ei_point_t));
-                                calculate_haut_sans_corner_radius(points, clipper, frame->widget.screen_location.size);
+                                calculate_top_without_corner_radius(points, clipper, frame->widget.screen_location.size);
 
                                 points_size = 5;
 
@@ -73,19 +73,19 @@ void draw_frame (frame_t* frame,
                                                         *frame->widget.pick_color, clipper);
                                 }
 
-                                calculate_clipper_sans_border(clipper, frame->border_width);
+                                calculate_clipper_without_border(clipper, frame->border_width);
 
                                 assertion_color(frame->widget.color, color, 0);
 
                                 ei_fill(surface, frame->widget.color, clipper);
 
-                                calculate_clipper_avec_border(clipper, frame->border_width);
+                                calculate_clipper_with_border(clipper, frame->border_width);
                                 break;
                         case ei_relief_sunken :
                                 assertion_color(frame->widget.color, color, 2);
 
                                 points = malloc(5 * sizeof(ei_point_t));
-                                calculate_haut_sans_corner_radius(points, clipper, frame->widget.screen_location.size);
+                                calculate_top_without_corner_radius(points, clipper, frame->widget.screen_location.size);
 
                                 points_size = 5;
 
@@ -109,13 +109,13 @@ void draw_frame (frame_t* frame,
                                                         *frame->widget.pick_color, clipper);
                                 }
 
-                                calculate_clipper_sans_border(clipper, frame->border_width);
+                                calculate_clipper_without_border(clipper, frame->border_width);
 
                                 assertion_color(frame->widget.color, color, 0);
 
                                 ei_fill(surface, frame->widget.color, clipper);
 
-                                calculate_clipper_avec_border(clipper, frame->border_width);
+                                calculate_clipper_with_border(clipper, frame->border_width);
                                 break;
                 }
                 if ((frame->text) != NULL){

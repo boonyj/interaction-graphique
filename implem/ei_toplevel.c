@@ -79,7 +79,7 @@ void draw_toplevel (toplevel_t * toplevel,
                 ei_fill(pick_surface, toplevel->widget.pick_color, clipper_content);
         }
 
-        calculate_clipper_sans_border(clipper_content, toplevel->border_width);
+        calculate_clipper_without_border(clipper_content, toplevel->border_width);
         assertion_color(toplevel->widget.color, color, 0);
 
         ei_fill(surface, toplevel->widget.color, clipper_content);

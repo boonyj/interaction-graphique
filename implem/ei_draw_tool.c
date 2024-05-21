@@ -4,21 +4,17 @@ int nb_segments = 8;
 
 unsigned char dark(unsigned char colorComponent) {
         double darkComponent = colorComponent * 0.6;
-
         if (darkComponent < 0) {
                 darkComponent = 0;
         }
-
         return (unsigned char)darkComponent;
 }
 
 unsigned char light(unsigned char colorComponent) {
         double lightComponent = colorComponent * 1.4;
-
         if (lightComponent < 0) {
                 lightComponent = 0;
         }
-
         return (unsigned char)lightComponent;
 }
 
@@ -51,7 +47,57 @@ void assertion_color(ei_color_t* child_color, ei_color_t color, int mode){
                 child_color->green = dark(color.green);
                 child_color->blue = dark(color.blue);
         }
+}
 
+void draw_text(ei_string_t text, ei_font_t text_font, ei_color_t text_color, ei_rect_t * screen_location, ei_surface_t surface,
+               ei_rect_t* clipper, ei_anchor_t text_anchor) {
+        int width = 0;
+        int height = 0;
+
+        // Compute the size of the text.
+        hw_text_compute_size(text, text_font, &width, &height);
+        ei_point_t top_left = screen_location->top_left;
+        ei_size_t size = screen_location->size;
+
+        // Adjust the position based on the anchor type.
+        switch (text_anchor) {
+                case ei_anc_center:
+                        top_left.x += size.width / 2 - width / 2;
+                        top_left.y += size.height / 2 - height / 2;
+                        break;
+                case ei_anc_north:
+                        top_left.x += size.width / 2 - width / 2;
+                        break;
+                case ei_anc_south:
+                        top_left.x += size.width / 2 - width / 2;
+                        top_left.y += size.height - height;
+                        break;
+                case ei_anc_east:
+                        top_left.x += size.width - width;
+                        top_left.y += size.height / 2 - height / 2;
+                        break;
+                case ei_anc_west:
+                        top_left.y += size.height / 2 - height / 2;
+                        break;
+                case ei_anc_northeast:
+                        top_left.x += size.width - width;
+                        break;
+                case ei_anc_northwest:
+                        // No change needed, already top-left corner.
+                        break;
+                case ei_anc_southeast:
+                        top_left.x += size.width - width;
+                        top_left.y += size.height - height;
+                        break;
+                case ei_anc_southwest:
+                        top_left.y += size.height - height;
+                        break;
+                default:
+                        // Handle default case, assume top-left anchor if not specified.
+                        break;
+        }
+        // Draw the text at the computed position.
+        ei_draw_text(surface, &top_left, text, text_font, text_color, clipper);
 }
 
 void draw_image_from_surface(ei_surface_t surface, ei_surface_t image, ei_rect_t * where,
@@ -104,74 +150,21 @@ void draw_image_from_surface(ei_surface_t surface, ei_surface_t image, ei_rect_t
         ei_copy_surface(surface, &dst_rect, image, img_rect, true);
 }
 
-void draw_text(ei_string_t text, ei_font_t text_font, ei_color_t text_color, ei_rect_t * screen_location, ei_surface_t surface,
-               ei_rect_t* clipper, ei_anchor_t text_anchor) {
-        int width = 0;
-        int height = 0;
-
-        // Compute the size of the text.
-        hw_text_compute_size(text, text_font, &width, &height);
-        ei_point_t top_left = screen_location->top_left;
-        ei_size_t size = screen_location->size;
-
-        // Adjust the position based on the anchor type.
-        switch (text_anchor) {
-                case ei_anc_center:
-                        top_left.x += size.width / 2 - width / 2;
-                        top_left.y += size.height / 2 - height / 2;
-                        break;
-                case ei_anc_north:
-                        top_left.x += size.width / 2 - width / 2;
-                        break;
-                case ei_anc_south:
-                        top_left.x += size.width / 2 - width / 2;
-                        top_left.y += size.height - height;
-                        break;
-                case ei_anc_east:
-                        top_left.x += size.width - width;
-                        top_left.y += size.height / 2 - height / 2;
-                        break;
-                case ei_anc_west:
-                        top_left.y += size.height / 2 - height / 2;
-                        break;
-                case ei_anc_northeast:
-                        top_left.x += size.width - width;
-                        break;
-                case ei_anc_northwest:
-                        // No change needed, already top-left corner.
-                        break;
-                case ei_anc_southeast:
-                        top_left.x += size.width - width;
-                        top_left.y += size.height - height;
-                        break;
-                case ei_anc_southwest:
-                        top_left.y += size.height - height;
-                        break;
-                default:
-                        // Handle default case, assume top-left anchor if not specified.
-                        break;
-        }
-
-        // Draw the text at the computed position.
-        ei_draw_text(surface, &top_left, text, text_font, text_color, clipper);
-}
-
-
-void calculate_clipper_sans_border(ei_rect_t*	clipper, int border_width){
+void calculate_clipper_without_border(ei_rect_t*	clipper, int border_width){
         clipper->size.width -= border_width * 2;
         clipper->size.height -= border_width * 2;
         clipper->top_left.x += border_width;
         clipper->top_left.y += border_width;
 }
 
-void calculate_clipper_avec_border(ei_rect_t*	clipper, int border_width){
+void calculate_clipper_with_border(ei_rect_t*	clipper, int border_width){
         clipper->size.width += border_width * 2;
         clipper->size.height += border_width * 2;
         clipper->top_left.x -= border_width;
         clipper->top_left.y -= border_width;
 }
 
-void calculate_haut_sans_corner_radius(ei_point_t *points, ei_rect_t*clipper, ei_size_t size){
+void calculate_top_without_corner_radius(ei_point_t *points, ei_rect_t*clipper, ei_size_t size){
         points[0].x = clipper->top_left.x;
         points[0].y = clipper->top_left.y + size.height;
         points[1].x = clipper->top_left.x + size.width / 3;
@@ -184,14 +177,14 @@ void calculate_haut_sans_corner_radius(ei_point_t *points, ei_rect_t*clipper, ei
         points[4].y = clipper->top_left.y;
 }
 
-void arc(ei_point_t center, int radius, double start_angle, double end_angle, int nb_segments, ei_point_t** arc_points) {
+void arc(ei_point_t center, int radius, double start_angle, double end_angle, int segments, ei_point_t** arc_points) {
         // Allouer de la mémoire pour le tableau de points de l'arc
-        *arc_points = malloc(nb_segments * sizeof(ei_point_t));
+        *arc_points = malloc(segments * sizeof(ei_point_t));
 
-        double angle_step = (end_angle - start_angle) / nb_segments;
+        double angle_step = (end_angle - start_angle) / segments;
 
         // Générer les points de l'arc en utilisant la formule paramétrique d'un cercle
-        for (int i = 0; i < nb_segments; ++i) {
+        for (int i = 0; i < segments; ++i) {
                 double angle = start_angle + angle_step * i;
                 double x = center.x + radius * cos(angle * PI / 180);
                 double y = center.y - radius * sin(angle * PI / 180); // Soustraction car l'axe y est orienté vers le bas sur les écrans
@@ -213,7 +206,7 @@ void generate_rounded_corner(ei_point_t center_corner, int radius, float start_a
         free(points_arc);
 }
 
-ei_point_t* rounded_frame (ei_rect_t rect, int radius, int partie) {
+ei_point_t* rounded_frame (ei_rect_t rect, int radius, int part) {
         ei_point_t *center_corner = malloc(sizeof(ei_point_t));
         ei_point_t *points = NULL;
         int top_left_x = rect.top_left.x;
@@ -221,7 +214,7 @@ ei_point_t* rounded_frame (ei_rect_t rect, int radius, int partie) {
         int size_width = rect.size.width;
         int size_height = rect.size.height;
 
-        if (partie == 0) {
+        if (part == 0) {
                 points = malloc(4*nb_segments * sizeof(ei_point_t));
 
                 center_corner->x = top_left_x +  size_width  - radius;
@@ -240,7 +233,7 @@ ei_point_t* rounded_frame (ei_rect_t rect, int radius, int partie) {
                 center_corner->y = top_left_y +  size_height  - radius;
                 generate_rounded_corner(*center_corner, radius, 270, 360, points, 3*nb_segments);
 
-        } else if (partie == 1) {
+        } else if (part == 1) {
                 points = malloc((3*nb_segments+2) * sizeof(ei_point_t));
 
                 center_corner->x = top_left_x + radius;
@@ -261,7 +254,7 @@ ei_point_t* rounded_frame (ei_rect_t rect, int radius, int partie) {
                 center_corner->y = top_left_y + radius;
                 generate_rounded_corner(*center_corner, radius, 90, 180, points, 2*nb_segments+2);
 
-        } else if (partie == 2) {
+        } else if (part == 2) {
                 points = malloc((3*nb_segments+2) * sizeof(ei_point_t));
 
                 center_corner->x = top_left_x + size_width - radius;

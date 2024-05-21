@@ -15,7 +15,7 @@ void	ei_fill			(ei_surface_t		surface,
         ei_draw_polygon(surface, points, 4, *color, clipper);
 
         free(points);
-/*        uint32_t color_mapped = ei_impl_map_rgba(surface, *color);
+        /*uint32_t color_mapped = ei_impl_map_rgba(surface, *color);
 
         if (clipper == NULL) {
                 for (int i = 0; i < size.width * size.height; i++) {
@@ -33,8 +33,6 @@ void	ei_fill			(ei_surface_t		surface,
                         start_ptr += remaining_width;
                 }
         }*/
-
-
 }
 
 void	ei_draw_text		(ei_surface_t		surface,
@@ -126,7 +124,3 @@ int	ei_copy_surface		(ei_surface_t		destination,
         return 0; // Success
 
 }
-
-
-
-

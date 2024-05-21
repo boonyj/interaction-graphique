@@ -35,7 +35,7 @@ void draw_button (button_t * button,
                                                 ei_fill(pick_surface, button->widget.pick_color, clipper);
                                         }
 
-                                        calculate_clipper_sans_border(clipper, button->border_width);
+                                        calculate_clipper_without_border(clipper, button->border_width);
 
                                         assertion_color(button->widget.color, color, 0);
 
@@ -51,7 +51,7 @@ void draw_button (button_t * button,
                                                                 *button->widget.pick_color, clipper);
                                         }
 
-                                        calculate_clipper_sans_border(clipper, button->border_width);
+                                        calculate_clipper_without_border(clipper, button->border_width);
 
                                         assertion_color(button->widget.color, color, 0);
 
@@ -62,14 +62,15 @@ void draw_button (button_t * button,
 
                                         free(points);
                                 }
-                                calculate_clipper_avec_border(clipper, button->border_width);
+                                calculate_clipper_with_border(clipper, button->border_width);
                                 break;
                         case ei_relief_raised :
                                 assertion_color(button->widget.color, color, 1);
 
                                 if (button->corner_radius == 0){
                                         ei_point_t *points = malloc(5 * sizeof(ei_point_t));
-                                        calculate_haut_sans_corner_radius(points, clipper, button->widget.screen_location.size);
+                                        calculate_top_without_corner_radius(points, clipper,
+                                                                            button->widget.screen_location.size);
                                         size_t points_size = 5;
 
                                         ei_draw_polygon(surface, points, points_size,
@@ -92,7 +93,7 @@ void draw_button (button_t * button,
                                                                 *button->widget.pick_color, clipper);
                                         }
 
-                                        calculate_clipper_sans_border(clipper, button->border_width);
+                                        calculate_clipper_without_border(clipper, button->border_width);
 
                                         assertion_color(button->widget.color, color, 0);
 
@@ -126,7 +127,7 @@ void draw_button (button_t * button,
                                         free(points);
 
                                         // Draw inside button
-                                        calculate_clipper_sans_border(clipper, button->border_width);
+                                        calculate_clipper_without_border(clipper, button->border_width);
 
                                         assertion_color(button->widget.color, color, 0);
 
@@ -138,14 +139,15 @@ void draw_button (button_t * button,
 
                                         free(points);
                                 }
-                                calculate_clipper_avec_border(clipper, button->border_width);
+                                calculate_clipper_with_border(clipper, button->border_width);
                                 break;
                         case ei_relief_sunken :
                                 assertion_color(button->widget.color, color, 2);
 
                                 if (button->corner_radius == 0){
                                         ei_point_t *points = malloc(5 * sizeof(ei_point_t));
-                                        calculate_haut_sans_corner_radius(points, clipper, button->widget.screen_location.size);
+                                        calculate_top_without_corner_radius(points, clipper,
+                                                                            button->widget.screen_location.size);
                                         size_t points_size = 5;
                                         ei_draw_polygon(surface, points, points_size,
                                                         *button->widget.color, clipper);
@@ -170,7 +172,7 @@ void draw_button (button_t * button,
                                                                 *button->widget.pick_color, clipper);
                                         }
 
-                                        calculate_clipper_sans_border(clipper, button->border_width);
+                                        calculate_clipper_without_border(clipper, button->border_width);
 
                                         assertion_color(button->widget.color, color, 0);
 
@@ -204,7 +206,7 @@ void draw_button (button_t * button,
                                         free(points);
 
                                         // Draw inside button
-                                        calculate_clipper_sans_border(clipper, button->border_width);
+                                        calculate_clipper_without_border(clipper, button->border_width);
 
                                         assertion_color(button->widget.color, color, 0);
 
@@ -216,7 +218,7 @@ void draw_button (button_t * button,
 
                                         free(points);
                                 }
-                                calculate_clipper_avec_border(clipper, button->border_width);
+                                calculate_clipper_with_border(clipper, button->border_width);
                                 break;
                 }
                 if (button->text != NULL){
