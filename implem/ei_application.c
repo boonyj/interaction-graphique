@@ -154,6 +154,22 @@ void get_keydown_event(struct ei_impl_widget_t *widget, ei_linked_event_t *head,
         }
 }
 
+void run_ev_app_event(struct ei_impl_widget_t *widget,ei_linked_event_t *head, ei_rect_t **clipper, ei_event_t *event) {
+        while (head != NULL) {
+                if (head->eventtype == ei_ev_app) {
+                        head->callback(NULL, event, head->user_param);
+                        if (root->wclass != NULL) {
+                                if (root->wclass->drawfunc != NULL) {
+                                        root->wclass->drawfunc(root, main_surface, pick_surface, NULL);
+                                }
+                        }
+                        (*clipper) = &(root->children_head->screen_location);
+                        ei_impl_widget_draw_children(root, main_surface, pick_surface, (*clipper));
+                }
+                head = head->next;
+        }
+}
+
 void ei_app_run(void) {
         // Get the root widget of the application
         ei_widget_t root_widget = ei_app_root_widget();
@@ -211,12 +227,7 @@ void ei_app_run(void) {
                         ei_impl_widget_draw_children(root, main_surface, pick_surface, clipper);
                 }
                 else if (event.type == ei_ev_app){
-                        /*if (root->wclass != NULL) {
-                                if (root->wclass->drawfunc != NULL) {
-                                        root->wclass->drawfunc(root, main_surface, pick_surface, NULL);
-                                }
-                        }
-                        ei_impl_widget_draw_children(root, main_surface, pick_surface, clipper);*/
+                        run_ev_app_event(widget,linked_event_list,&clipper,&event);
                 } else  if (event.type != ei_ev_keydown && event.type != ei_ev_keyup) {
                         //Move to current pixel
                         widget = ei_widget_pick(&(mouse.where));

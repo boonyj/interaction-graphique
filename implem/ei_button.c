@@ -274,6 +274,7 @@ void button_setdefaultsfunc(ei_widget_t		widget){
         button->widget.screen_location.top_left.x = 0;
         button->widget.screen_location.top_left.y = 0;
         //button->img_rect = NULL;
+        button->img_anchor = ei_anc_center;
         button->user_param = NULL;
         button->callback =NULL;
 

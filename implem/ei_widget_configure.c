@@ -137,9 +137,10 @@ void			ei_button_configure		(ei_widget_t		widget,
                 }
         }
 
+        button->widget.user_data = (user_param != NULL) ? *user_param : button->widget.user_data;
+
         if (callback != NULL) {
                 button->callback = *callback;
-                button->widget.user_data = (user_param != NULL) ? *user_param : NULL;
                 if (button->text != NULL && strcmp(button->text, "Ok") == 0) {
                         ei_bind(ei_ev_mouse_buttonup, widget, NULL, *callback, user_param);
                 } else {
@@ -152,7 +153,7 @@ void			ei_button_configure		(ei_widget_t		widget,
                 button->img = hw_surface_create(main_surface,img_size,true );
                 ei_rect_t t= hw_surface_get_rect(*img);
                 ei_copy_surface(button->img, &t,*img,&t, true);
-                button->img_rect = **img_rect;
+                button->img_rect = (img_rect != NULL) ? **img_rect : t;
                 if (img_anchor != NULL) {
                         button->img_anchor = *img_anchor;
                 }
