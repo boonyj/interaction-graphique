@@ -233,7 +233,20 @@ void ei_app_invalidate_rect(const ei_rect_t* rect) {
         }
 }
 
+void free_event_list() {
+        ei_linked_event_t* current = linked_event_list;
+        ei_linked_event_t* next_node;
+
+        while (current != NULL) {
+                next_node = current->next;  // Save the next node
+                free(current);              // Free the current node
+                current = next_node;        // Move to the next node
+        }
+        linked_event_list = NULL;  // Set the head pointer to NULL, indicating the list is empty
+}
+
 void ei_app_quit_request(void){
+        free_event_list();
         ei_widget_destroy(root);
         exit(0);
 }

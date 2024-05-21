@@ -325,7 +325,6 @@ bool callback_buttondown_remove_focus_entry (ei_widget_t widget, ei_event_t* eve
                 ei_entry_set_text(&(entry->widget),get_text_without_cursor(entry->text));
                 ei_unbind(ei_ev_mouse_buttondown,NULL,"all",callback_buttondown_remove_focus_entry,entry);
                 ei_unbind(ei_ev_keydown,NULL,"all",callback_type_in_focus,entry);
-                blinking = 0;
                 entry->widget.wclass->drawfunc(&(entry->widget),main_surface,pick_surface,&entry->widget.screen_location);
                 return true;
         } else
@@ -337,7 +336,6 @@ bool callback_buttondown_focus_entry (ei_widget_t widget, ei_event_t* event, ei_
                 entry_t* entry = (entry_t*) widget;
                 entry->in_focus = true;
                 ei_entry_set_text(&entry->widget, get_text_with_char_concatenated(entry->text, '|'));
-                blinking = hw_now();
                 ei_bind(ei_ev_mouse_buttondown,NULL,"all",callback_buttondown_remove_focus_entry,entry);
                 ei_bind(ei_ev_keydown,NULL,"all",callback_type_in_focus,entry);
                 return true;
