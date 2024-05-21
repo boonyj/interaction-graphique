@@ -1,3 +1,6 @@
+#ifndef PROJETC_IG_EI_CALLBACK_TOPLEVEL_H
+#define PROJETC_IG_EI_CALLBACK_TOPLEVEL_H
+
 #include "ei_implementation.h"
 #include "ei_event.h"
 #include "ei_widget_configure.h"
@@ -8,7 +11,6 @@
 #include "ei_global.h"
 #include "ei_toplevel.h"
 #include "ei_frame.h"
-
 
 void run_all_ei_place(ei_widget_t widget);
 
@@ -29,3 +31,5 @@ bool callback_left_resize_toplevel(ei_widget_t widget, ei_event_t* event, ei_use
 bool callback_right_resize_toplevel(ei_widget_t widget, ei_event_t* event, ei_user_param_t user_param);
 
 bool callback_fullscreen_toplevel(ei_widget_t widget, ei_event_t* event, ei_user_param_t user_param);
+
+#endif //PROJETC_IG_EI_CALLBACK_TOPLEVEL_H

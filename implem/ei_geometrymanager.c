@@ -133,8 +133,29 @@ ei_geometrymanager_t*	ei_geometrymanager_from_name	(ei_geometrymanager_name_t na
         return NULL;
 }
 
+/**
+ * \brief	Tell the geometry manager in charge of a widget to forget it. This removes the
+ *		widget from the screen. If the widget is not currently managed, this function
+ *		returns silently.
+ *		Side effects:
+ *		<ul>
+ *			<li> the \ref ei_geometrymanager_releasefunc_t of the geometry manager in
+ *				charge of this widget is called, </li>
+ *			<li> the geom_param field of the widget is freed, </li>
+ *			<li> the current screen_location of the widget is invalidated (which will
+ *				trigger a redraw), </li>
+ *			<li> the screen_location of the widget is reset to 0. </li>
+ *		</ul>
+ *
+ * @param	widget		The widget to unmap from the screen.
+ */
 void			ei_geometrymanager_unmap	(ei_widget_t widget){
-
+        /*ei_geometrymanager_t* geom_mng = ei_widget_get_geom_manager(widget);
+        geom_mng->releasefunc(widget);
+        free(widget->geom_params->manager);
+        free(widget->geom_params);
+        widget->screen_location.top_left.x = 0;
+        widget->screen_location.top_left.y = 0;*/
 }
 
 ei_geometrymanager_t*	ei_widget_get_geom_manager	(ei_widget_t widget){

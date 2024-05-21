@@ -1,3 +1,6 @@
+#ifndef PROJETC_IG_EI_ENTRY_H
+#define PROJETC_IG_EI_ENTRY_H
+
 #include "ei_entry_class.h"
 #include "ei_placer.h"
 #include "ei_toplevel.h"
@@ -17,3 +20,5 @@ bool callback_type_in_focus (ei_widget_t widget, ei_event_t* event, ei_user_para
 bool callback_buttondown_remove_focus_entry (ei_widget_t widget, ei_event_t* event, ei_user_param_t user_param);
 
 bool callback_buttondown_focus_entry (ei_widget_t widget, ei_event_t* event, ei_user_param_t user_param);
+
+#endif //PROJETC_IG_EI_ENTRY_CLASS_H
