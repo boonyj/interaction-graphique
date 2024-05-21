@@ -88,6 +88,7 @@ set(LIB_EI_SOURCES
 	${SRC}/ei_entry.c
 	${SRC}/ei_entry_class.c
 	${SRC}/ei_callback_button.c
+	${SRC}/ei_app_run_tool.c
 
 )
 
