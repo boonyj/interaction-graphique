@@ -24,7 +24,7 @@ bool callback_buttonup_reverse_relief (ei_widget_t widget, ei_event_t* event, ei
                 ei_widget_t last_widget = find_last_widget_in_hierarchy(root);
                 button_t *button = (button_t *) user_param;
                 if (last_widget != NULL) {
-                        if (button->widget.pick_id <= last_widget->pick_id) {
+                        if (button->widget.pick_id != 0 && button->widget.pick_id <= last_widget->pick_id) {
                                 button->relief = ei_relief_raised;
                                 button->widget.wclass->drawfunc(&(button->widget), main_surface, NULL, &(button->widget.screen_location));
                         }

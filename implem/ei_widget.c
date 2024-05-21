@@ -62,7 +62,7 @@ ei_widget_t ei_widget_create(ei_const_string_t class_name,
 void			ei_widget_destroy		(ei_widget_t		widget){
         widget->wclass->releasefunc(widget);
         free_widget_and_siblings(&widget, true);
-        /*if(widget->parent){
+        if(widget->parent){
                 if (widget->parent->children_head == widget) {
                         if (widget->next_sibling != NULL) {
                                 widget->parent->children_head = widget->next_sibling;
@@ -82,27 +82,20 @@ void			ei_widget_destroy		(ei_widget_t		widget){
                                 }
                         }
                 }
-        }*/
-
-        /*if(widget->children_tail != NULL){
-                widget->children_tail->wclass->releasefunc(widget->children_tail);
-                widget->children_tail = NULL;
-        }*/
+        }
 
         if (widget->destructor != NULL) {
                 widget->destructor(widget);
         }
+
         free(widget->color);
         free(widget->pick_color);
         free(widget->wclass);
-        free(widget->content_rect);
-        widget->user_data = NULL;
-        widget->color = NULL;
-        widget->pick_color = NULL;
-        widget->wclass = NULL;
-        widget->content_rect = NULL;
+        free(widget->geom_params->manager);
+        free(widget->geom_params);
+        widget->geom_params = NULL;
+        //hw_surface_free(widget->content_rect);
         free(widget);
-        widget = NULL;
 }
 
 

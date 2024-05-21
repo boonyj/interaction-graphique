@@ -47,6 +47,13 @@ void free_widget_and_siblings(ei_widget_t* widget, bool is_root) {
         // Free the current widget unless it's the root widget passed as the parameter
         if (!is_root) {
                 (*widget)->wclass->releasefunc(*widget);
+                free((*widget)->wclass);
+                free((*widget)->geom_params->manager);
+                free((*widget)->geom_params);
+                free((*widget)->color);
+                free((*widget)->pick_color);
+                //hw_surface_free((*widget)->content_rect);
+                (*widget)->geom_params = NULL;
                 free(*widget);
                 *widget = NULL;
         }

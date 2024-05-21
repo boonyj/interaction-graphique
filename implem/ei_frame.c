@@ -8,42 +8,21 @@ ei_widget_t frame_allocfunc (){
 
 void frame_releasefunc (ei_widget_t	widget){
         frame_t * frame = (frame_t*) widget;
-        free(widget->geom_params->manager);
-        free(widget->geom_params);
-        free(widget->user_data);
-        free(widget->color);
-        free(widget->pick_color);
-        free(widget->wclass);
+
+        /*ei_impl_widget_t widget;
+        int border_width;
+        ei_relief_t relief;
+        ei_color_t text_color;
+        ei_font_t text_font;
+        char* text;
+        ei_anchor_t text_anchor;
+        ei_surface_t img;
+        ei_rect_t img_rect;
+        ei_anchor_t img_anchor;*/
+
         free(frame->text);
-        //free(widget->content_rect);
-        //free_widget_and_siblings(&widget, true);
-        widget->user_data = NULL;
-        widget->color = NULL;
-        widget->pick_color = NULL;
-        widget->geom_params = NULL;
-        widget->wclass = NULL;
-        //widget->content_rect = NULL;
-        if(widget->parent){
-                if (widget->parent->children_head == widget) {
-                        if (widget->next_sibling != NULL) {
-                                widget->parent->children_head = widget->next_sibling;
-                        } else {
-                                widget->parent->children_head = NULL;
-                                widget->parent->children_tail = NULL;
-                        }
-                }  else {
-                        ei_widget_t prev = widget->parent->children_head;
-                        while (prev && prev->next_sibling != widget) {
-                                prev = prev->next_sibling;
-                        }
-                        if (prev) {
-                                prev->next_sibling = widget->next_sibling;
-                                if (widget->parent->children_tail == widget) {
-                                        widget->parent->children_tail = prev;
-                                }
-                        }
-                }
-        }
+        //free(frame->text_font);
+        //hw_surface_free(frame->img);
 }
 
 void draw_frame (frame_t* frame,

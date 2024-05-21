@@ -44,7 +44,7 @@ void draw_resized_toplevel(ei_widget_t widget, int width, int x, ei_callback_t c
                 int height = root_size->height-text_height;
                 ei_place(&(toplevel->widget), NULL, &(int){x}, &(int){0}, &(int){width}, &(int){height}, NULL, NULL, NULL, NULL);
                 run_all_ei_place(widget);
-                frame_releasefunc(root->children_head);
+                ei_widget_destroy(root->children_head);
         }
         root->screen_location.top_left.x = 0;
         root->screen_location.top_left.y = 0;
@@ -214,7 +214,7 @@ bool callback_move_toplevel(ei_widget_t widget, ei_event_t* event, ei_user_param
                                         temp_frame(toplevel_w, root_size->width, -root->screen_location.top_left.x,
                                                    -root->screen_location.top_left.y,callback_fullscreen_toplevel);
                                 } else if (strcmp(root->children_head->wclass->name, "frame") == 0) {
-                                        frame_releasefunc(root->children_head);
+                                        ei_widget_destroy(root->children_head);
                                         ei_unbind(ei_ev_mouse_buttonup, &(toplevel_w->widget), NULL, callback_left_resize_toplevel, NULL);
                                 }
                         }

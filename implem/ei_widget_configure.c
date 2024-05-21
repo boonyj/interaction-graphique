@@ -161,7 +161,6 @@ void			ei_button_configure		(ei_widget_t		widget,
 //Callback function for close button in toplevel
 bool callback_toplevel_close_confirmed(ei_widget_t widget, ei_event_t* event, ei_user_param_t user_param){
         if (event->type == ei_ev_mouse_buttonup) {
-                //toplevel_releasefunc(widget->parent);
                 ei_widget_destroy(widget->parent);
                 root->wclass->drawfunc(root, main_surface, pick_surface, NULL);
                 ei_rect_t *clipper = &(root->children_head->screen_location);

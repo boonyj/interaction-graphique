@@ -7,42 +7,23 @@ ei_widget_t button_allocfunc (){
 
 void button_releasefunc (ei_widget_t	widget){
         button_t * button = (button_t*) widget;
-        free(widget->geom_params->manager);
-        free(widget->geom_params);
-        free(widget->user_data);
-        free(widget->color);
-        free(widget->pick_color);
-        free(widget->wclass);
+
+        /*int border_width;
+        ei_relief_t relief;
+        int corner_radius;
+        ei_color_t text_color;
+        ei_font_t text_font;
+        ei_string_t text;
+        ei_anchor_t text_anchor;
+        ei_surface_t img;
+        ei_rect_t img_rect;
+        ei_anchor_t img_anchor;
+        ei_callback_t	callback;
+        ei_user_param_t	user_param;*/
+
         free(button->text);
-        //free(widget->content_rect);
-        //free_widget_and_siblings(&widget, true);
-        widget->user_data = NULL;
-        widget->color = NULL;
-        widget->pick_color = NULL;
-        widget->geom_params = NULL;
-        widget->wclass = NULL;
-        //widget->content_rect = NULL;
-        if(widget->parent){
-                if (widget->parent->children_head == widget) {
-                        if (widget->next_sibling != NULL) {
-                                widget->parent->children_head = widget->next_sibling;
-                        } else {
-                                widget->parent->children_head = NULL;
-                                widget->parent->children_tail = NULL;
-                        }
-                }  else {
-                        ei_widget_t prev = widget->parent->children_head;
-                        while (prev && prev->next_sibling != widget) {
-                                prev = prev->next_sibling;
-                        }
-                        if (prev) {
-                                prev->next_sibling = widget->next_sibling;
-                                if (widget->parent->children_tail == widget) {
-                                        widget->parent->children_tail = prev;
-                                }
-                        }
-                }
-        }
+        //free(button->text_font);
+        //hw_surface_free(button->img);
 }
 
 void draw_button (button_t * button,

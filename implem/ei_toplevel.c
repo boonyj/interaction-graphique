@@ -9,42 +9,18 @@ ei_widget_t toplevel_allocfunc (){
 
 void toplevel_releasefunc (ei_widget_t	widget){
         toplevel_t * toplevel = (toplevel_t*) widget;
-        free(widget->geom_params->manager);
-        free(widget->geom_params);
-        free(widget->user_data);
-        free(widget->color);
-        free(widget->pick_color);
-        free(widget->wclass);
-        free(toplevel->title);
-        //free(widget->content_rect);
-        //free_widget_and_siblings(&widget, true);
-        widget->user_data = NULL;
-        widget->color = NULL;
-        widget->pick_color = NULL;
-        widget->geom_params = NULL;
-        widget->wclass = NULL;
-        //widget->content_rect = NULL;
-        if(widget->parent){
-                if (widget->parent->children_head == widget) {
-                        if (widget->next_sibling != NULL) {
-                                widget->parent->children_head = widget->next_sibling;
-                        } else {
-                                widget->parent->children_head = NULL;
-                                widget->parent->children_tail = NULL;
-                        }
-                }  else {
-                        ei_widget_t prev = widget->parent->children_head;
-                        while (prev && prev->next_sibling != widget) {
-                                prev = prev->next_sibling;
-                        }
-                        if (prev) {
-                                prev->next_sibling = widget->next_sibling;
-                                if (widget->parent->children_tail == widget) {
-                                        widget->parent->children_tail = prev;
-                                }
-                        }
-                }
-        }
+
+        /*ei_impl_widget_t widget;
+        int border_width;
+        ei_string_t title;
+        ei_color_t title_color;
+        ei_font_t title_font;
+        bool closable;
+        ei_axis_set_t resizable;
+        ei_size_t min_size;*/
+
+        //free(toplevel->title);
+        //free(toplevel->title_font);
 }
 
 void draw_toplevel (toplevel_t * toplevel,
