@@ -45,8 +45,9 @@ void			ei_frame_configure		(ei_widget_t		widget,
         }
 
         if (text != NULL ){
-                frame->text = malloc(sizeof (char*));
+                frame->text = malloc((strlen(*text)+1) * sizeof (char*));
                 strcpy(frame->text, *text);
+                frame->text[strlen(*text)] = '\0';
 
                 if (text_color !=  NULL){
                         frame->text_color.alpha = text_color->alpha;
@@ -117,8 +118,9 @@ void			ei_button_configure		(ei_widget_t		widget,
         }
 
         if (text != NULL){
-                button->text = malloc(sizeof (char*));
+                button->text = malloc((strlen(*text)+1) * sizeof (char*));
                 strcpy(button->text, *text);
+                button->text[strlen(*text)] = '\0';
                 if (text_color !=  NULL){
                         button->text_color.alpha = text_color->alpha;
                         button->text_color.red = text_color->red;
@@ -212,7 +214,9 @@ void			ei_toplevel_configure		(ei_widget_t		widget,
         }
 
         if (title != NULL){
-                toplevel->title = *title;
+                toplevel->title = malloc((strlen(*title)+1) * sizeof (char*));
+                strcpy(toplevel->title, *title);
+                toplevel->title[strlen(*title)] = '\0';
                 toplevel->title_color.red =  0xff;
                 toplevel->title_color.green =  0xff;
                 toplevel->title_color.blue =  0xff;

@@ -159,7 +159,7 @@ void ei_app_run(void) {
         ei_bind(ei_ev_mouse_buttondown, NULL, "all", callback_toplevel_move_front, NULL);
 
         //Main loop here
-        ei_event_t event;
+        ei_event_t event = (ei_event_t){};
         ei_mouse_event_t mouse;
         ei_widget_t widget;
         while ((event.type != ei_ev_close)) {
