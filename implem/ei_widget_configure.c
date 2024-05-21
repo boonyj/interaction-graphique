@@ -75,16 +75,27 @@ void			ei_frame_configure		(ei_widget_t		widget,
                 }
         }
 
-        // 70 est le valeur par default qu'on a decidé
-        if(requested_size == NULL && text!= NULL &&  frame->widget.requested_size.width == 70 && frame->widget.requested_size.height == 70){
+/*        if(requested_size == NULL && text!= NULL){
                 int text_width = 0;
                 int text_height = 0;
                 hw_text_compute_size((ei_const_string_t) text, ei_default_font, &text_width, &text_height);
 
-                //ei_widget_set_requested_size(&(frame->widget), (ei_size_t){text_width*2, text_height});
+                ei_widget_set_requested_size(&(frame->widget), (ei_size_t){text_width*2, text_height});
                 frame->widget.screen_location.size = (ei_size_t){text_width*2, text_height};
                 frame->widget.content_rect->size = (ei_size_t){text_width*2, text_height};
+        }*/
+
+        if(requested_size == NULL && text!= NULL ){
+                int text_width = 0;
+                int text_height = 0;
+                hw_text_compute_size((ei_const_string_t) text, ei_default_font, &text_width, &text_height);
+                ei_size_t size = (ei_size_t){(frame->widget.requested_size.width> text_width*2) ? frame->widget.requested_size.width : text_width*2
+                        , (frame->widget.requested_size.height> text_height )? frame->widget.requested_size.height : text_height};
+                ei_widget_set_requested_size(&(frame->widget), size);
+                frame->widget.screen_location.size = size;
+                frame->widget.content_rect->size = size;
         }
+
 }
 
 void			ei_button_configure		(ei_widget_t		widget,

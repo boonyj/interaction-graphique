@@ -153,8 +153,8 @@ void frame_setdefaultsfunc(ei_widget_t		widget){
         frame->text_font = ei_default_font;
         frame->img = NULL;
         frame->img_anchor = ei_anc_center;
-        frame->widget.requested_size.width = 70;
-        frame->widget.requested_size.height = 70;
+        frame->widget.requested_size.width = 125;
+        frame->widget.requested_size.height = 20;
         frame->widget.screen_location.size.width = 28;
         frame->widget.screen_location.size.height = 28;
         frame->widget.color->red = ei_default_background_color.red;

@@ -150,12 +150,27 @@ ei_geometrymanager_t*	ei_geometrymanager_from_name	(ei_geometrymanager_name_t na
  * @param	widget		The widget to unmap from the screen.
  */
 void			ei_geometrymanager_unmap	(ei_widget_t widget){
-        /*ei_geometrymanager_t* geom_mng = ei_widget_get_geom_manager(widget);
-        geom_mng->releasefunc(widget);
+        if (widget == NULL || widget->geom_params->manager == NULL) {
+                // Widget is not managed, return silently
+                return;
+        }
+
+        // Call the release function of the geometry manager
+        ei_geometrymanager_t* geom_mng = ei_widget_get_geom_manager(widget);
+        if (geom_mng->releasefunc != NULL) {
+                geom_mng->releasefunc(widget);
+        }
+
+        // Free the geom_param field of the widget
         free(widget->geom_params->manager);
+        widget->geom_params->manager = NULL;
         free(widget->geom_params);
+        widget->geom_params = NULL;
+
+        // Reset the screen location of the widget
         widget->screen_location.top_left.x = 0;
-        widget->screen_location.top_left.y = 0;*/
+        widget->screen_location.top_left.y = 0;
+
 }
 
 ei_geometrymanager_t*	ei_widget_get_geom_manager	(ei_widget_t widget){
