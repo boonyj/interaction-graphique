@@ -69,10 +69,20 @@ void			ei_frame_configure		(ei_widget_t		widget,
                 frame->img = hw_surface_create(main_surface,img_size,true );
                 ei_rect_t t= hw_surface_get_rect(*img);
                 ei_copy_surface(frame->img, &t,*img,&t, true);
-                frame->img_rect = img_rect != NULL? **img_rect : frame->img_rect;
+                frame->img_rect = img_rect != NULL? **img_rect : t;
                 if (img_anchor != NULL) {
                         frame->img_anchor = *img_anchor;
                 }
+        }
+
+        if(requested_size == NULL && text!= NULL){
+                int text_width = 0;
+                int text_height = 0;
+                hw_text_compute_size((ei_const_string_t) text, ei_default_font, &text_width, &text_height);
+
+                ei_widget_set_requested_size(&(frame->widget), (ei_size_t){text_width*2, text_height});
+                frame->widget.screen_location.size = (ei_size_t){text_width*2, text_height};
+                frame->widget.content_rect->size = (ei_size_t){text_width*2, text_height};
         }
 }
 
