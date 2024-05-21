@@ -19,13 +19,14 @@ void ei_app_create(ei_size_t main_window_size, bool fullscreen){
         root_size = malloc(sizeof(ei_size_t));
         root_size->width = main_window_size.width;
         root_size->height = main_window_size.height;
-        // Creation of widget class frame (to be registered later)
+
+        // Creation of widget classes
         ei_widgetclass_t* frame_class = create_frame_class();
         ei_widgetclass_t* button_class = create_button_class();
         ei_widgetclass_t* toplevel_class = create_toplevel_class();
         ei_widgetclass_t* entry_class = create_entry_class();
 
-        // Register the widget class frame (to be used later)
+        // Register the widget classes
         ei_widgetclass_register(frame_class);
         ei_widgetclass_register(button_class);
         ei_widgetclass_register(toplevel_class);
@@ -33,24 +34,22 @@ void ei_app_create(ei_size_t main_window_size, bool fullscreen){
 
         // Creation of geometry manager
         ei_geometrymanager_t* placeur_mng = create_placeur_mng();
-
-        // Register placeur (to be used later)
         ei_geometrymanager_register(placeur_mng);
 
-        // Can't two root at the same moment (button_root to test button and frame_root to test_root)
         root = ei_widget_create("frame", NULL, NULL, NULL);
 }
 
+// Function free all binded events in the events list
 void free_event_list() {
         ei_linked_event_t* current = linked_event_list;
         ei_linked_event_t* next_node;
 
         while (current != NULL) {
-                next_node = current->next;  // Save the next node
-                free(current);              // Free the current node
-                current = next_node;        // Move to the next node
+                next_node = current->next;
+                free(current);
+                current = next_node;
         }
-        linked_event_list = NULL;  // Set the head pointer to NULL, indicating the list is empty
+        linked_event_list = NULL;
 }
 
 void ei_app_free(void){
@@ -75,7 +74,7 @@ void clear_invalidated_rects() {
         invalidated_rects_head = NULL;
 }
 
-void exit_button_press(ei_widget_t widget, ei_linked_event_t *head, ei_event_t *event, bool *exit_button_handled) {
+void exit_toplevel_button_press(ei_widget_t widget, ei_linked_event_t *head, ei_event_t *event, bool *exit_button_handled) {
         if (widget->parent != NULL && strcmp(widget->parent->wclass->name, "toplevel") == 0) {
                 if (widget->pick_id == widget->parent->pick_id + 1) {
                         if ((*event).type == ei_ev_mouse_buttonup) {
@@ -137,8 +136,7 @@ void get_event(ei_rect_t *clipper, ei_event_t *event, struct ei_impl_widget_t *w
         }
 }
 
-void get_keydown_event(struct ei_impl_widget_t *widget, ei_linked_event_t *head, ei_rect_t **clipper,
-                       ei_event_t *event) {
+void get_keydown_event(struct ei_impl_widget_t *widget, ei_linked_event_t *head, ei_rect_t **clipper, ei_event_t *event) {
         while (head != NULL) {
                 if (head->eventtype == (*event).type) {
                         head->callback(widget, event, head->user_param);
@@ -190,18 +188,18 @@ void ei_app_run(void) {
         hw_surface_update_rects(main_surface, NULL);
         //hw_surface_update_rects(pick_surface, NULL);
 
-        // Bind the callback function to the mouse button down event on the frame widget
+        // Bind callback functions that are used in every application
         ei_bind(ei_ev_mouse_buttondown, NULL, "button", callback_buttondown_reverse_relief, NULL);
         ei_bind(ei_ev_mouse_buttondown, NULL, "toplevel", callback_buttondown_top_level, NULL);
         ei_bind(ei_ev_mouse_buttondown, NULL, "all", callback_toplevel_move_front, NULL);
 
-        //Main loop here
+        // Main loop
         ei_event_t event = (ei_event_t){};
         ei_mouse_event_t mouse;
         ei_widget_t widget;
         while ((event.type != ei_ev_close)) {
                 event.type = ei_ev_none;
-                //Update screen
+                // Update screen
                 hw_surface_update_rects(main_surface, NULL);
                 //hw_surface_update_rects(pick_surface, NULL);
 
@@ -212,9 +210,8 @@ void ei_app_run(void) {
                 //Wait for event
                 hw_event_wait_next(&event);
 
-                // 1. Get widget in cursor position
+                // Get widget in cursor position
                 mouse = event.param.mouse;
-
                 ei_linked_event_t* head = linked_event_list;
 
                 if (event.type == ei_ev_exposed){
@@ -224,17 +221,16 @@ void ei_app_run(void) {
                                 }
                         }
                         ei_impl_widget_draw_children(root, main_surface, pick_surface, clipper);
-                }
-                else if (event.type == ei_ev_app){
+                } else if (event.type == ei_ev_app){
                         run_ev_app_event(widget,linked_event_list,&clipper,&event);
                 } else  if (event.type != ei_ev_keydown && event.type != ei_ev_keyup) {
-                        //Move to current pixel
+                        // Move to current pixel
                         widget = ei_widget_pick(&(mouse.where));
                         // Flag to check if toplevel exit button's button up callback has been executed
                         bool exit_button_handled = false;
 
                         // Special case for toplevel exit button
-                        exit_button_press(widget, head, &event, &exit_button_handled);
+                        exit_toplevel_button_press(widget, head, &event, &exit_button_handled);
 
                         if (!exit_button_handled) {
                                 get_event(clipper, &event, widget, head);
@@ -250,7 +246,6 @@ void ei_app_run(void) {
 }
 
 void ei_app_invalidate_rect(const ei_rect_t* rect) {
-        // Allocate memory for a new node
         ei_linked_rect_t* new_node = (ei_linked_rect_t*)malloc(sizeof(ei_linked_rect_t));
         if (new_node == NULL) {
                 // Handle memory allocation failure
