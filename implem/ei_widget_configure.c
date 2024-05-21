@@ -137,13 +137,12 @@ void			ei_button_configure		(ei_widget_t		widget,
 
         if (callback != NULL) {
                 button->callback = *callback;
-                if (user_param != NULL) {
-                        button->widget.user_data = *user_param;
-                        ei_bind(ei_ev_mouse_buttondown, widget, NULL, *callback, user_param);
+                button->widget.user_data = (user_param != NULL) ? *user_param : NULL;
+                if (button->text != NULL && strcmp(button->text, "Ok") == 0) {
+                        ei_bind(ei_ev_mouse_buttonup, widget, NULL, *callback, user_param);
                 } else {
-                        ei_bind(ei_ev_mouse_buttondown, widget, NULL, *callback, NULL);
+                        ei_bind(ei_ev_mouse_buttondown, widget, NULL, *callback, user_param);
                 }
-
         }
 
         if(img != NULL){

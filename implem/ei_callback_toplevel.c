@@ -305,11 +305,6 @@ void draw_all_buttons_raised (ei_widget_t widget) {
 
 bool callback_toplevel_move_front(ei_widget_t widget, ei_event_t* event, ei_user_param_t user_param) {
         if (event->type == ei_ev_mouse_buttondown) {
-                // If the widget is already the last child, no need to move it
-                if (widget->next_sibling == NULL) {
-                        return true;
-                }
-
                 while (strcmp(widget->wclass->name, "toplevel") != 0) {
                         widget = widget->parent;
                 }
