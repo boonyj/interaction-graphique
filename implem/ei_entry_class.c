@@ -108,8 +108,8 @@ void draw_entry (entry_t * entry,
                         if(width > entry->widget.screen_location.size.width){
                                 text = truncate_text_to_fit_width(entry->text, entry->text_font, entry->widget.screen_location.size.width);
                         }
-                        draw_text(text, entry->text_font, entry->text_color, entry->widget.screen_location.top_left,
-                                  entry->widget.screen_location.size, surface, clipper);
+                        draw_text(text, entry->text_font, entry->text_color, &(entry->widget.screen_location),
+                                   surface, clipper, ei_anc_northwest);
                 }
 
         }

@@ -53,12 +53,50 @@ void assertion_color(ei_color_t* child_color, ei_color_t color, int mode){
         }
 
 }
-void draw_image_from_surface(ei_surface_t surface, ei_surface_t image, ei_point_t* where,
-                             ei_rect_t* img_rect) {
+
+void draw_image_from_surface(ei_surface_t surface, ei_surface_t image, ei_rect_t * where,
+                             ei_rect_t* img_rect, ei_anchor_t img_anchor) {
 
         ei_rect_t dst_rect = hw_surface_get_rect(surface);
-        dst_rect.top_left.x = where->x;
-        dst_rect.top_left.y = where->y;
+        dst_rect.top_left.x = where->top_left.x;
+        dst_rect.top_left.y = where->top_left.y;
+
+        switch (img_anchor) {
+                case ei_anc_center:
+                        dst_rect.top_left.x += where->size.width / 2 - img_rect->size.width / 2;
+                        dst_rect.top_left.y += where->size.height / 2 - img_rect->size.height / 2;
+                        break;
+                case ei_anc_north:
+                        dst_rect.top_left.x += where->size.width / 2 - img_rect->size.width / 2;
+                        break;
+                case ei_anc_south:
+                        dst_rect.top_left.x += where->size.width / 2 - img_rect->size.width / 2;
+                        dst_rect.top_left.y += where->size.height - img_rect->size.height;
+                        break;
+                case ei_anc_east:
+                        dst_rect.top_left.x += where->size.width - img_rect->size.width;
+                        dst_rect.top_left.y += where->size.height / 2 - img_rect->size.height / 2;
+                        break;
+                case ei_anc_west:
+                        dst_rect.top_left.y += where->size.height / 2 - img_rect->size.height / 2;
+                        break;
+                case ei_anc_northeast:
+                        dst_rect.top_left.x += where->size.width - img_rect->size.width;
+                        break;
+                case ei_anc_northwest:
+                        // No change needed, already top-left corner.
+                        break;
+                case ei_anc_southeast:
+                        dst_rect.top_left.x += where->size.width - img_rect->size.width;
+                        dst_rect.top_left.y += where->size.height - img_rect->size.height;
+                        break;
+                case ei_anc_southwest:
+                        dst_rect.top_left.y += where->size.height - img_rect->size.height;
+                        break;
+                default:
+                        // Handle default case, assume top-left anchor if not specified.
+                        break;
+        }
 
         dst_rect.size.width = img_rect->size.width;
         dst_rect.size.height = img_rect->size.height;
@@ -66,29 +104,56 @@ void draw_image_from_surface(ei_surface_t surface, ei_surface_t image, ei_point_
         ei_copy_surface(surface, &dst_rect, image, img_rect, true);
 }
 
-void ei_draw_image(ei_surface_t		surface,  ei_point_t* where, const ei_rect_t*	clipper, ei_const_string_t filename){
-        ei_surface_t image = hw_image_load(filename, surface);
-        ei_rect_t image_rect = hw_surface_get_rect(image);
-        ei_rect_t dst_rect = hw_surface_get_rect(surface);
-        dst_rect.top_left.x = where->x;
-        dst_rect.top_left.y = where->y;
-
-        //Auto clipper if necessary
-        dst_rect.size.width = image_rect.size.width;
-        dst_rect.size.height = image_rect.size.height;
-
-        ei_copy_surface(surface, &dst_rect, image, &image_rect, true);
-}
-
-void draw_text(ei_string_t text, ei_font_t text_font, ei_color_t text_color, ei_point_t top_left, ei_size_t size, ei_surface_t surface, ei_rect_t* clipper){
+void draw_text(ei_string_t text, ei_font_t text_font, ei_color_t text_color, ei_rect_t * screen_location, ei_surface_t surface,
+               ei_rect_t* clipper, ei_anchor_t text_anchor) {
         int width = 0;
         int height = 0;
-        hw_text_compute_size(text,text_font, &width, &height);
-        ei_point_t where = top_left;
-        where.x += size.width/2 - width/2;
-        where.y += size.height/2 - height/2;
 
-        ei_draw_text(surface, &where, text, text_font, text_color, clipper);
+        // Compute the size of the text.
+        hw_text_compute_size(text, text_font, &width, &height);
+        ei_point_t top_left = screen_location->top_left;
+        ei_size_t size = screen_location->size;
+
+        // Adjust the position based on the anchor type.
+        switch (text_anchor) {
+                case ei_anc_center:
+                        top_left.x += size.width / 2 - width / 2;
+                        top_left.y += size.height / 2 - height / 2;
+                        break;
+                case ei_anc_north:
+                        top_left.x += size.width / 2 - width / 2;
+                        break;
+                case ei_anc_south:
+                        top_left.x += size.width / 2 - width / 2;
+                        top_left.y += size.height - height;
+                        break;
+                case ei_anc_east:
+                        top_left.x += size.width - width;
+                        top_left.y += size.height / 2 - height / 2;
+                        break;
+                case ei_anc_west:
+                        top_left.y += size.height / 2 - height / 2;
+                        break;
+                case ei_anc_northeast:
+                        top_left.x += size.width - width;
+                        break;
+                case ei_anc_northwest:
+                        // No change needed, already top-left corner.
+                        break;
+                case ei_anc_southeast:
+                        top_left.x += size.width - width;
+                        top_left.y += size.height - height;
+                        break;
+                case ei_anc_southwest:
+                        top_left.y += size.height - height;
+                        break;
+                default:
+                        // Handle default case, assume top-left anchor if not specified.
+                        break;
+        }
+
+        // Draw the text at the computed position.
+        ei_draw_text(surface, &top_left, text, text_font, text_color, clipper);
 }
 
 

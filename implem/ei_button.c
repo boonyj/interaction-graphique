@@ -233,11 +233,12 @@ void draw_button (button_t * button,
                                 break;
                 }
                 if (button->text != NULL){
-                        draw_text((button->text), button->text_font, button->text_color, button->widget.screen_location.top_left,
-                                  button->widget.screen_location.size, surface, clipper);
+                        draw_text((button->text), button->text_font, button->text_color, &(button->widget.screen_location), surface,
+                                  clipper, button->text_anchor);
                 }
                 if (button->img != NULL){
-                        draw_image_from_surface(surface, button->img, &(button->widget.screen_location.top_left), &(button->img_rect));
+                        draw_image_from_surface(surface, button->img, &(button->widget.screen_location), &(button->img_rect),
+                                                button->img_anchor);
                 }
         }
 }
@@ -263,7 +264,7 @@ void button_setdefaultsfunc(ei_widget_t		widget){
         button->border_width = k_default_button_border_width;
         button->corner_radius = k_default_button_corner_radius;
         button->text_color = ei_font_default_color;
-        button->text_anchor = ei_anc_none;
+        button->text_anchor = ei_anc_center;
         button->text_font = ei_default_font;
         button->text = NULL;
         button->widget.requested_size.width = 100;
