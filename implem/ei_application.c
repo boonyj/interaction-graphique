@@ -168,6 +168,8 @@ void ei_app_run(void) {
                 event.type = ei_ev_none;
                 //Update screen
                 hw_surface_update_rects(main_surface, NULL);
+                //hw_surface_update_rects(pick_surface, NULL);
+
                 clear_invalidated_rects();
                 hw_surface_lock(main_surface);
                 hw_surface_lock(pick_surface);
@@ -180,7 +182,22 @@ void ei_app_run(void) {
 
                 ei_linked_event_t* head = linked_event_list;
 
-                if (event.type != ei_ev_keydown && event.type != ei_ev_keyup) {
+                if (event.type == ei_ev_exposed){
+                        if (root->wclass != NULL) {
+                                if (root->wclass->drawfunc != NULL) {
+                                        root->wclass->drawfunc(root, main_surface, pick_surface, NULL);
+                                }
+                        }
+                        ei_impl_widget_draw_children(root, main_surface, pick_surface, clipper);
+                }
+                else if (event.type == ei_ev_app){
+                        /*if (root->wclass != NULL) {
+                                if (root->wclass->drawfunc != NULL) {
+                                        root->wclass->drawfunc(root, main_surface, pick_surface, NULL);
+                                }
+                        }
+                        ei_impl_widget_draw_children(root, main_surface, pick_surface, clipper);*/
+                } else  if (event.type != ei_ev_keydown && event.type != ei_ev_keyup) {
                         //Move to current pixel
                         widget = ei_widget_pick(&(mouse.where));
                         // Flag to check if toplevel exit button's button up callback has been executed
@@ -192,13 +209,6 @@ void ei_app_run(void) {
                         if (!exit_button_handled) {
                                 get_event(clipper, &event, widget, head);
                         }
-                } else if (event.type == ei_ev_exposed){
-                        if (root->wclass != NULL) {
-                                if (root->wclass->drawfunc != NULL) {
-                                        root->wclass->drawfunc(root, main_surface, pick_surface, NULL);
-                                }
-                        }
-                        ei_impl_widget_draw_children(root, main_surface, pick_surface, clipper);
                 }
                 else {
                         get_keydown_event(widget, head, &clipper, &event);

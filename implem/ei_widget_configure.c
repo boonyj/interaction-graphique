@@ -243,23 +243,26 @@ void			ei_toplevel_configure		(ei_widget_t		widget,
                 toplevel->min_size = **min_size;
         }
 
-        ei_widget_t button_round = ei_widget_create	("button", &(toplevel->widget), NULL, NULL);
-        ei_button_configure		(button_round, &(size_button_round),
-                                            &(ei_color_t){0xB2, 0x22, 0x22, 0xff},
-                                            &(int){3},
-                                            &(int){9},
-                                            &(ei_relief_t){ei_relief_raised},
-                                            NULL, NULL,
-                                            &(ei_color_t){0x00, 0x00, 0x00, 0xff}, NULL, NULL, NULL, NULL,
-                                            &(ei_callback_t){callback_toplevel_close}, NULL);
+        if(toplevel->widget.children_head == NULL){
+                ei_widget_t button_round = ei_widget_create	("button", &(toplevel->widget), NULL, NULL);
+                ei_button_configure		(button_round, &(size_button_round),
+                                                    &(ei_color_t){0xB2, 0x22, 0x22, 0xff},
+                                                    &(int){3},
+                                                    &(int){9},
+                                                    &(ei_relief_t){ei_relief_raised},
+                                                    NULL, NULL,
+                                                    &(ei_color_t){0x00, 0x00, 0x00, 0xff}, NULL, NULL, NULL, NULL,
+                                                    &(ei_callback_t){callback_toplevel_close}, NULL);
 
-        ei_widget_t button_square = ei_widget_create	("button", &(toplevel->widget), NULL, NULL);
-        ei_button_configure		(button_square, &(size_button_square),
-                                            &(ei_color_t){0x66, 0x66, 0x66, 0xff},
-                                            &(int){2},
-                                            &(int){0},
-                                            &(ei_relief_t){ei_relief_raised},
-                                            NULL, NULL,
-                                            &(ei_color_t){0x00, 0x00, 0x00, 0xff}, NULL, NULL, NULL, NULL,
-                                            &(ei_callback_t){callback_buttondown_resize_toplevel_start}, NULL);
+                ei_widget_t button_square = ei_widget_create	("button", &(toplevel->widget), NULL, NULL);
+                ei_button_configure		(button_square, &(size_button_square),
+                                                    &(ei_color_t){0x66, 0x66, 0x66, 0xff},
+                                                    &(int){2},
+                                                    &(int){0},
+                                                    &(ei_relief_t){ei_relief_raised},
+                                                    NULL, NULL,
+                                                    &(ei_color_t){0x00, 0x00, 0x00, 0xff}, NULL, NULL, NULL, NULL,
+                                                    &(ei_callback_t){callback_buttondown_resize_toplevel_start}, NULL);
+        }
+
 }
