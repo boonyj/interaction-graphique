@@ -127,8 +127,6 @@ char* remove_character_before_pipe(char* str, bool delete_before) {
                 // If '|' is not found, return a copy of the original string
                 return strdup(str);
         }
-        printf("///////////////////////////\n");
-        printf("Source string : %s\n", str);
         // Calculate the position index
         size_t index = pipe_pos - str;
 
@@ -179,10 +177,6 @@ char* remove_character_before_pipe(char* str, bool delete_before) {
         }
 
         new_str[strlen(new_str)] = '\0';
-        printf("///////////////////////////\n");
-
-
-
         return new_str;
 }
 

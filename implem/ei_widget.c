@@ -110,10 +110,7 @@ bool	 		ei_widget_is_displayed		(ei_widget_t		widget){
 
 ei_widget_t find_widget (uint32_t* pixel_pick_surface, ei_widget_t widget) {
         // Check the widget itself first
-        printf("Name: %s, Pick id : %u\n", widget->wclass->name, widget->pick_id);
-
         if (widget->pick_id == *pixel_pick_surface) {
-                //printf("Name: %s, Pick id : %u, Pixel : %u\n", widget->wclass->name, widget->pick_id, *pixel_pick_surface);
                 return widget;
         }
 

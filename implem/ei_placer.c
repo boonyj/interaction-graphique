@@ -51,7 +51,6 @@ void		ei_place	(ei_widget_t		widget,
         }
 
         placeur->geom_mng.manager->runfunc(widget);
-        //printf("x : %d, y : %d\n",placeur->x, placeur->y);
 }
 
 

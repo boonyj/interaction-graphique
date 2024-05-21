@@ -20,7 +20,7 @@
 
 
 static const int		k_tile_size			= 128;
-static ei_string_t		k_default_image_filename	= "misc/unnamed.png";
+static ei_string_t		k_default_image_filename	= "misc/klimt.jpg";
 static ei_point_t		g_toplevel_position		= {30, 10};
 
 struct puzzle_t;
