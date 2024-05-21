@@ -13,6 +13,8 @@ void	ei_fill			(ei_surface_t		surface,
         points[3] = (ei_point_t){rect.top_left.x, rect.top_left.y+size.height};
 
         ei_draw_polygon(surface, points, 4, *color, clipper);
+
+        free(points);
 /*        uint32_t color_mapped = ei_impl_map_rgba(surface, *color);
 
         if (clipper == NULL) {

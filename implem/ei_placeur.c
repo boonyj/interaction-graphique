@@ -4,16 +4,9 @@ void placeur_runfunc(ei_widget_t widget){
         placeur_param* placeur = (placeur_param*) widget->geom_params;
         ei_rect_t* new_location = malloc(sizeof(ei_rect_t));
         if (widget->parent != NULL) {
-                //if (placeur->rel_x != 0.0 && placeur->rel_y != 0.0) {
                         ei_widget_t parent = widget->parent;
                         int parent_width = parent->screen_location.size.width;
                         int parent_height = parent->screen_location.size.height;
-
-                        /*printf("Parent (%s): w = %d, h = %d\n", parent->wclass->name,
-                               parent->screen_location.size.width, parent->screen_location.size.height);
-                        printf("Parent topleft (%s): x = %d, y = %d\n", parent->wclass->name,
-                               parent->screen_location.top_left.x, parent->screen_location.top_left.y);
-                        printf("Placeur REL : x = %f, y = %f\n", placeur->rel_x, placeur->rel_y);*/
 
                         int parent_coordinate_x =
                                 (int) ((float) parent_width * placeur->rel_x) + parent->screen_location.top_left.x;
@@ -68,11 +61,6 @@ void placeur_runfunc(ei_widget_t widget){
                                 case ei_anc_northwest:
                                         new_location->top_left.x = placeur->x + parent_coordinate_x;
                                         new_location->top_left.y = placeur->y + parent_coordinate_y;
-                                        /*printf("NEW PLACER VALUE : x = %d, y = %d\n", placeur->x, placeur->y);
-                                        printf("NEW PARENT COORDINATE : x = %d, y = %d\n", parent_coordinate_x,
-                                               parent_coordinate_y);
-                                        printf("NEW LOCATION : x = %d, y = %d\n", new_location->top_left.x,
-                                               new_location->top_left.y);*/
                                         break;
                                 case ei_anc_none:
                                         break;
@@ -80,15 +68,9 @@ void placeur_runfunc(ei_widget_t widget){
                         new_location->size.width = placeur->width;
                         new_location->size.height = placeur->height;
 
-
-                /*} else {
-                        new_location->top_left.x = widget->screen_location.top_left.x + placeur->x;
-                        new_location->top_left.y = widget->screen_location.top_left.y + placeur->y;
-                        new_location->size.width = placeur->width;
-                        new_location->size.height = placeur->height;
-                }*/
                 ei_geometry_run_finalize(widget, new_location);
         }
+        free(new_location);
 }
 
 void placeur_releasefunc(ei_widget_t widget){

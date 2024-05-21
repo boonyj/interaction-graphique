@@ -245,8 +245,12 @@ void free_event_list() {
         linked_event_list = NULL;  // Set the head pointer to NULL, indicating the list is empty
 }
 
+
 void ei_app_quit_request(void){
         free_event_list();
+        hw_surface_free(main_surface);
+        hw_surface_free(pick_surface);
+        free(root_size);
         ei_widget_destroy(root);
         exit(0);
 }

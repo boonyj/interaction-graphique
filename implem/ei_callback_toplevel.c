@@ -306,7 +306,11 @@ void draw_all_buttons_raised (ei_widget_t widget) {
 bool callback_toplevel_move_front(ei_widget_t widget, ei_event_t* event, ei_user_param_t user_param) {
         if (event->type == ei_ev_mouse_buttondown) {
                 while (strcmp(widget->wclass->name, "toplevel") != 0) {
-                        widget = widget->parent;
+                        if(widget->parent != NULL){
+                                widget = ei_widget_get_parent(widget);
+                        } else {
+                                return true;
+                        }
                 }
 
                 // Remove widget from its current position
