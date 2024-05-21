@@ -1,5 +1,26 @@
-Répertoire "racine" du projet.
+PROJET INTERACTION GRAPHIQUE
 
-Il contient le fichier CMakeLists.txt utilisé par cmake pour construire le projet.
+Minimal - Configuration de projet.
 
-Ne lancez pas cmake directement depuis ce répertoire car cmake génère beaucoup de fichiers. Lancez cmake depuis le répertoire "cmake", ou mieux, construisez votre projet avec CLion (qui s'occupe d'appeler cmake): lisez clion/README.
+Frame - Frame avec relief, gestion de ei_fill.
+
+Button - Boutons arrondis avec relief, gestion des événements de clic et relâchement, affichage de texte sur le bouton.
+
+Hello_world - Toplevel avec configuration de bouton de fermeture et bouton ajustable de fenêtre, gestion du mouvement
+                et de l'agrandissement/réduction de la fenêtre, gestion du plein écran, demi-écran gauche ou droit,
+                gestion du débordement.
+
+Puzzle - Affichage d'images sur les boutons, ouverture et fermeture de plusieurs toplevels avec raccourcis clavier,
+            gestion du focus de toplevel, transparence des images.
+
+two048 - Gestion de la réception des événements clavier, utilisation de ei_destroy pour la gestion des fuites
+            de mémoire avec release_func.
+
+entry - Réception des événements clavier pour les entrées, changement d'entrée avec les raccourcis TAB ou shift-TAB,
+            déplacement du curseur dans l'entrée avec les touches gauche/droite, gestion de l'affichage du texte
+            avec une largeur limitée.
+
+minesweeper - Affichage du jeu Minesweeper, déclenchement du timer pour une partie de jeu, changement de la taille du
+                plateau de jeu.
+
+ext_testclass/ext_testgm - Exécution et ouverture de l'application (petit souci avec le placement des boutons).
