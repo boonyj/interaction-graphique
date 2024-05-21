@@ -2,31 +2,18 @@
 
 ei_widget_t frame_allocfunc (){
         ei_widget_t widget = calloc(1,sizeof(struct frame_t));
-
         return widget;
 }
 
-void frame_releasefunc (ei_widget_t	widget){
+void frame_releasefunc (ei_widget_t widget){
         frame_t * frame = (frame_t*) widget;
-
-        /*ei_impl_widget_t widget;
-        int border_width;
-        ei_relief_t relief;
-        ei_color_t text_color;
-        ei_font_t text_font;
-        char* text;
-        ei_anchor_t text_anchor;
-        ei_surface_t img;
-        ei_rect_t img_rect;
-        ei_anchor_t img_anchor;*/
-
         free(frame->text);
         if (frame->img != NULL) {
                 hw_surface_free(frame->img);
         }
 }
 
-void draw_frame (frame_t* frame,
+void draw_frame (frame_t*               frame,
                  ei_surface_t		surface,
                  ei_surface_t		pick_surface,
                  ei_rect_t*		clipper){
@@ -129,9 +116,9 @@ void draw_frame (frame_t* frame,
         }
 }
 
-void frame_drawfunc (ei_widget_t		widget,
-                     ei_surface_t		surface,
-                     ei_surface_t		pick_surface,
+void frame_drawfunc (ei_widget_t	widget,
+                     ei_surface_t	surface,
+                     ei_surface_t	pick_surface,
                      ei_rect_t*		clipper){
         if (widget != root) {
                 if (ei_widget_is_displayed(widget)) {
@@ -142,7 +129,7 @@ void frame_drawfunc (ei_widget_t		widget,
         }
 }
 
-void frame_setdefaultsfunc(ei_widget_t		widget){
+void frame_setdefaultsfunc(ei_widget_t widget){
         frame_t* frame = (frame_t*) widget;
         frame->widget = *widget;
         frame->relief = ei_relief_none;
@@ -164,9 +151,8 @@ void frame_setdefaultsfunc(ei_widget_t		widget){
 }
 
 void frame_geomnotifyfunc(ei_widget_t		widget){
-
+        //Nothing to be implemented for frame.
 }
-
 
 ei_widgetclass_t* create_frame_class() {
         ei_widgetclass_t* frame = malloc(sizeof(ei_widgetclass_t));
@@ -176,6 +162,5 @@ ei_widgetclass_t* create_frame_class() {
         frame->drawfunc = &frame_drawfunc;
         frame->setdefaultsfunc = &frame_setdefaultsfunc;
         frame->geomnotifyfunc = &frame_geomnotifyfunc;
-
         return frame;
 }

@@ -5,14 +5,22 @@
 #include "ei_widget.h"
 #include "ei_widget_attributes.h"
 
+/**
+ * @brief A list of geometry managers available in the system.
+ *        Each geometry manager is responsible for managing the position and size of widgets.
+ */
 static ei_geometrymanager_t** geo_mgr_list = NULL;
+
+/**
+ * @brief The number of geometry managers in the geo_mgr_list.
+ */
 static size_t geo_mgr_list_size = 0;
 
-size_t		ei_geom_param_size(){
+size_t ei_geom_param_size(){
         return sizeof(ei_impl_geom_param_t);
 }
 
-void	ei_geometry_run_finalize(ei_widget_t widget, ei_rect_t* new_screen_location){
+void ei_geometry_run_finalize(ei_widget_t widget, ei_rect_t* new_screen_location){
         // Vérifier si le widget est valide
         if (widget == NULL || new_screen_location == NULL) {
                 // Gérer l'erreur ou retourner
@@ -21,14 +29,11 @@ void	ei_geometry_run_finalize(ei_widget_t widget, ei_rect_t* new_screen_location
 
         int text_width = 0;
         int text_height = 0;
-        int border_width = 0;
         if(strcmp(widget->wclass->name,"toplevel") == 0){
                 toplevel_t* toplevel = (toplevel_t*) widget;
                 hw_text_compute_size(toplevel->title,toplevel->title_font,&text_width,&text_height);
-                border_width = toplevel->border_width;
 
                 //Border management
-                //if(new_screen_location->size.width < root_size->width){
                         if (new_screen_location->top_left.y - text_height < 0) {
                                 new_screen_location->top_left.y = 0 + text_height;
                         }
@@ -41,7 +46,6 @@ void	ei_geometry_run_finalize(ei_widget_t widget, ei_rect_t* new_screen_location
                         if(new_screen_location->top_left.x <= toplevel->border_width) {
                                 new_screen_location->top_left.x = toplevel->border_width;
                         }
-                //}
 
                 //Size limits
                 switch (toplevel->resizable) {
@@ -80,14 +84,6 @@ void	ei_geometry_run_finalize(ei_widget_t widget, ei_rect_t* new_screen_location
                 }
 
         }
-        /*ei_rect_t old_rect = {widget->screen_location.top_left.x - border_width , widget->screen_location.top_left.y-text_height-border_width,
-                              widget->screen_location.size.width + border_width*2, widget->screen_location.size.height +text_height + border_width*2 };
-        ei_rect_t new_rect = {new_screen_location->top_left.x - border_width, new_screen_location->top_left.y-text_height -border_width ,
-                              new_screen_location->size.width +border_width*2, new_screen_location->size.height +text_height+ border_width*2 };
-
-        ei_app_invalidate_rect(&old_rect);
-        ei_app_invalidate_rect(&new_rect);*/
-
         widget->screen_location = *new_screen_location;
         widget->wclass->geomnotifyfunc(widget);
 
@@ -98,7 +94,7 @@ void	ei_geometry_run_finalize(ei_widget_t widget, ei_rect_t* new_screen_location
         }
 }
 
-void	ei_geometrymanager_register	(ei_geometrymanager_t* geometrymanager){
+void ei_geometrymanager_register (ei_geometrymanager_t* geometrymanager){
         if (geo_mgr_list == NULL) {
                 // Première classe à être enregistrée
                 geo_mgr_list = malloc(sizeof(ei_geometrymanager_t*));
@@ -122,7 +118,7 @@ void	ei_geometrymanager_register	(ei_geometrymanager_t* geometrymanager){
         }
 }
 
-ei_geometrymanager_t*	ei_geometrymanager_from_name	(ei_geometrymanager_name_t name){
+ei_geometrymanager_t* ei_geometrymanager_from_name (ei_geometrymanager_name_t name){
         if (geo_mgr_list != NULL) {
                 for (size_t i = 0; i < geo_mgr_list_size; ++i) {
                         if (strcmp(geo_mgr_list[i]->name, name) == 0) {
@@ -131,6 +127,22 @@ ei_geometrymanager_t*	ei_geometrymanager_from_name	(ei_geometrymanager_name_t na
                 }
         }
         return NULL;
+}
+
+ei_geometrymanager_t* ei_widget_get_geom_manager (ei_widget_t widget){
+        return widget->geom_params->manager;
+}
+
+void ei_widget_set_geom_manager	(ei_widget_t widget, ei_geometrymanager_t* manager){
+        widget->geom_params->manager = manager;
+}
+
+ei_geom_param_t ei_widget_get_geom_params (ei_widget_t widget){
+        return widget->geom_params;
+}
+
+void ei_widget_set_geom_params (ei_widget_t widget, ei_geom_param_t geom_param){
+        widget->geom_params = geom_param;
 }
 
 /**
@@ -170,23 +182,4 @@ void			ei_geometrymanager_unmap	(ei_widget_t widget){
         // Reset the screen location of the widget
         widget->screen_location.top_left.x = 0;
         widget->screen_location.top_left.y = 0;
-
 }
-
-ei_geometrymanager_t*	ei_widget_get_geom_manager	(ei_widget_t widget){
-        return widget->geom_params->manager;
-}
-
-void			ei_widget_set_geom_manager	(ei_widget_t widget, ei_geometrymanager_t* manager){
-        widget->geom_params->manager = manager;
-}
-
-ei_geom_param_t		ei_widget_get_geom_params	(ei_widget_t widget){
-        return widget->geom_params;
-}
-
-void			ei_widget_set_geom_params	(ei_widget_t widget, ei_geom_param_t geom_param){
-        widget->geom_params = geom_param;
-}
-
-

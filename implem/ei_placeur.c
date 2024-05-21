@@ -74,7 +74,7 @@ void placeur_runfunc(ei_widget_t widget){
 }
 
 void placeur_releasefunc(ei_widget_t widget){
-        ei_geometrymanager_t * placeur = (ei_geometrymanager_t*) widget;
+        //Nothing to be implemented
 }
 
 ei_geometrymanager_t* create_placeur_mng (){
@@ -82,6 +82,5 @@ ei_geometrymanager_t* create_placeur_mng (){
         strcpy(placeur->name, "placeur");
         placeur->runfunc =  &placeur_runfunc;
         placeur->releasefunc = &placeur_releasefunc;
-
         return placeur;
 }

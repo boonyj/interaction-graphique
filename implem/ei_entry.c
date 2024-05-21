@@ -1,11 +1,9 @@
 #include "ei_entry.h"
-
 #include <ei_widget_attributes.h>
-
 #include "ei_global.h"
 
-void			ei_entry_set_text		(ei_widget_t		widget,
-                                                              ei_const_string_t 	text) {
+void ei_entry_set_text (ei_widget_t             widget,
+                        ei_const_string_t       text) {
         if((strcmp(widget->wclass->name,"entry")) == 0){
                 entry_t* entry = (entry_t*)widget;
                 if(strlen(text) <= entry->requested_char_size+1) {
@@ -16,7 +14,7 @@ void			ei_entry_set_text		(ei_widget_t		widget,
         }
 }
 
-ei_const_string_t 	ei_entry_get_text		(ei_widget_t		widget) {
+ei_const_string_t ei_entry_get_text (ei_widget_t widget) {
         if((strcmp(widget->wclass->name,"entry")) == 0){
                 entry_t* entry = (entry_t*)widget;
                 return entry->text;
@@ -24,8 +22,7 @@ ei_const_string_t 	ei_entry_get_text		(ei_widget_t		widget) {
         return NULL;
 }
 
-
-void			ei_entry_give_focus		(ei_widget_t		widget) {
+void ei_entry_give_focus (ei_widget_t widget) {
         if((strcmp(widget->wclass->name,"entry")) == 0){
                 entry_t* entry = (entry_t*)widget;
                 entry->in_focus = true;
@@ -312,8 +309,8 @@ bool callback_type_in_focus (ei_widget_t widget, ei_event_t* event, ei_user_para
 
                 entry->widget.wclass->drawfunc(&(entry->widget),main_surface,pick_surface,&entry->widget.screen_location);
                 return true;
-        } else
-                return false;
+        }
+        return false;
 }
 
 bool callback_buttondown_remove_focus_entry (ei_widget_t widget, ei_event_t* event, ei_user_param_t user_param) {
@@ -325,8 +322,8 @@ bool callback_buttondown_remove_focus_entry (ei_widget_t widget, ei_event_t* eve
                 ei_unbind(ei_ev_keydown,NULL,"all",callback_type_in_focus,entry);
                 entry->widget.wclass->drawfunc(&(entry->widget),main_surface,pick_surface,&entry->widget.screen_location);
                 return true;
-        } else
-                return false;
+        }
+        return false;
 }
 
 bool callback_buttondown_focus_entry (ei_widget_t widget, ei_event_t* event, ei_user_param_t user_param) {
@@ -337,16 +334,16 @@ bool callback_buttondown_focus_entry (ei_widget_t widget, ei_event_t* event, ei_
                 ei_bind(ei_ev_mouse_buttondown,NULL,"all",callback_buttondown_remove_focus_entry,entry);
                 ei_bind(ei_ev_keydown,NULL,"all",callback_type_in_focus,entry);
                 return true;
-        } else
-                return false;
+        }
+        return false;
 }
 
-void			ei_entry_configure		(ei_widget_t		widget,
-                                                               int*			requested_char_size,
-                                                               const ei_color_t*	color,
-                                                               int*			border_width,
-                                                               ei_font_t*		text_font,
-                                                               ei_color_t*		text_color){
+void ei_entry_configure (ei_widget_t		widget,
+                        int*			requested_char_size,
+                        const ei_color_t*	color,
+                        int*			border_width,
+                        ei_font_t*		text_font,
+                        ei_color_t*		text_color){
         entry_t * entry = (entry_t*) widget;
         entry->widget = *widget;
 

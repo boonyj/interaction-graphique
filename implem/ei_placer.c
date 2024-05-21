@@ -1,18 +1,39 @@
 #include "ei_placer.h"
 #include "ei_implementation.h"
 #include "ei_placeur.h"
-#include "ei_global.h"
 
+/**
+ * \brief	Places a widget within its parent according to the specified geometry parameters.
+ * 		<ul>
+ * 			<li> If the widget is NULL, the function returns immediately. </li>
+ * 			<li> If the widget's geometry manager's parameters are not set, it initializes them. </li>
+ * 			<li> Allocates memory for the geometry manager and sets its name and function pointers. </li>
+ * 			<li> Sets the placer parameters (anchor, x, y, width, height, rel_x, rel_y, rel_width, rel_height) based on the provided arguments or default values. </li>
+ * 			<li> If the geometry parameters are already set, it updates them with the provided values or retains the existing ones. </li>
+ * 			<li> Calls the run function of the geometry manager to position and size the widget. </li>
+ * 		</ul>
+ *
+ * @param	widget		The widget to be placed.
+ * @param	anchor		Optional, the anchor position for the widget. If NULL, defaults to northwest.
+ * @param	x		Optional, the x coordinate for the widget. If NULL, defaults to 0.
+ * @param	y		Optional, the y coordinate for the widget. If NULL, defaults to 0.
+ * @param	width		Optional, the width of the widget. If NULL, uses the widget's current width or 0.
+ * @param	height		Optional, the height of the widget. If NULL, uses the widget's current height or 0.
+ * @param	rel_x		Optional, the relative x coordinate for the widget. If NULL, defaults to 0.0.
+ * @param	rel_y		Optional, the relative y coordinate for the widget. If NULL, defaults to 0.0.
+ * @param	rel_width	Optional, the relative width of the widget. If NULL, defaults to 0.0.
+ * @param	rel_height	Optional, the relative height of the widget. If NULL, defaults to 0.0.
+ */
 void		ei_place	(ei_widget_t		widget,
-                                     ei_anchor_t*		anchor,
-                                     int*			x,
-                                     int*			y,
-                                     int*			width,
-                                     int*			height,
-                                     float*			rel_x,
-                                     float*			rel_y,
-                                     float*			rel_width,
-                                     float*			rel_height){
+                                ei_anchor_t*		anchor,
+                                int*			x,
+                                int*			y,
+                                int*			width,
+                                int*			height,
+                                float*			rel_x,
+                                float*			rel_y,
+                                float*			rel_width,
+                                float*			rel_height){
         if (widget == NULL) {
                 return;
         }
@@ -52,6 +73,3 @@ void		ei_place	(ei_widget_t		widget,
 
         placeur->geom_mng.manager->runfunc(widget);
 }
-
-
-

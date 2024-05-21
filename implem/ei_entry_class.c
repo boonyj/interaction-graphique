@@ -2,13 +2,19 @@
 
 ei_widget_t entry_allocfunc (){
         ei_widget_t widget = malloc(sizeof(struct entry_t ));
-
         return widget;
 }
 
-void entry_releasefunc (ei_widget_t	widget){
-
+void entry_releasefunc (ei_widget_t widget){
+        //No implementation for entry
 }
+
+/**
+ * @brief Removes the first character from a given string.
+ *
+ * @param str The input string.
+ * @return char* A pointer to the modified string.
+ */
 char* remove_first_char(char* str) {
         if (str == NULL) {
                 return NULL;
@@ -30,6 +36,12 @@ char* remove_first_char(char* str) {
         return new_str;
 }
 
+/**
+ * @brief Removes the last character from a given string.
+ *
+ * @param str The input string.
+ * @return char* A pointer to the modified string.
+ */
 char* remove_last_char(char* str) {
         if (str == NULL) {
                 return NULL;
@@ -52,6 +64,14 @@ char* remove_last_char(char* str) {
         return new_str;
 }
 
+/**
+ * @brief Truncates the text of an entry widget to fit within a specified width.
+ *
+ * @param text The input text.
+ * @param font The font used for text rendering.
+ * @param max_width The maximum width to fit.
+ * @return char* The truncated text.
+ */
 char* truncate_text_to_fit_width(char* text, void* font, int max_width) {
         int width = 0, height = 0;
         hw_text_compute_size(text, font, &width, &height);
@@ -84,6 +104,14 @@ char* truncate_text_to_fit_width(char* text, void* font, int max_width) {
         return text;
 }
 
+/**
+ * @brief Draws the entry widget on the given surface.
+ *
+ * @param entry The entry widget to draw.
+ * @param surface The surface to draw on.
+ * @param pick_surface The pick surface.
+ * @param clipper The clipping rectangle.
+ */
 void draw_entry (entry_t * entry,
                  ei_surface_t		surface,
                  ei_surface_t		pick_surface,
@@ -154,7 +182,7 @@ void entry_setdefaultsfunc(ei_widget_t		widget){
 }
 
 void entry_geomnotifyfunc(ei_widget_t		widget){
-
+        //No implementation for entry.
 }
 
 ei_widgetclass_t* create_entry_class(){

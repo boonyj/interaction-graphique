@@ -14,7 +14,6 @@
 #include "ei_geometrymanager.h"
 #include "ei_event.h"
 
-
 /**
  * \brief	Fields common to all types of widget. Every widget classes specializes this base
  *		class by adding its own fields.
@@ -41,6 +40,49 @@ typedef struct ei_impl_widget_t {
 } ei_impl_widget_t;
 
 
+/**
+ * \brief	Fields common to all geometry managers. Every geometry manager specializes this by adding its own fields.
+ */
+typedef struct ei_impl_geom_param_t {
+	ei_geometrymanager_t*		manager;	///< The geometry managers that manages this widget.
+} ei_impl_geom_param_t;
+
+/**
+ * @brief	Parameters for the placer geometry manager.
+ */
+typedef struct placeur_param {
+        ei_impl_geom_param_t geom_mng;
+        ei_anchor_t anchor;
+        int x;
+        int y;
+        int width;
+        int height;
+        float rel_x;
+        float rel_y;
+        float rel_width;
+        float rel_height;
+} placeur_param;
+
+/**
+ * @brief	Structure for binding events to widgets.
+ */
+typedef struct ei_event_bind_widget_t{
+        ei_event_t* event;
+        ei_impl_widget_t* widget;
+}ei_event_bind_widget_t;
+
+
+/**
+ * @brief	Linked list structure for managing events.
+ */
+typedef struct ei_linked_event_t{
+        ei_eventtype_t eventtype;
+        ei_widget_t widget;
+        ei_callback_t callback;
+        ei_tag_t tag;
+        void* user_param;
+        struct ei_linked_event_t* next;
+}ei_linked_event_t;
 
 /**
  * @brief	Draws the children of a widget.
@@ -58,7 +100,13 @@ void		ei_impl_widget_draw_children	(ei_widget_t		widget,
 						 ei_surface_t		pick_surface,
 						 ei_rect_t*		clipper);
 
-
+/**
+ * @brief	Frees the widget and its siblings.
+ *
+ * @param	widget		The widget to free.
+ * @param	is_root		Indicates if the widget is the root.
+ */
+void free_widget_and_siblings(ei_widget_t* widget, bool is_root);
 
 /**
  * \brief	Converts the red, green, blue and alpha components of a color into a 32 bits integer
@@ -73,42 +121,5 @@ void		ei_impl_widget_draw_children	(ei_widget_t		widget,
  *				alpha channel.
  */
 uint32_t	ei_impl_map_rgba(ei_surface_t surface, ei_color_t color);
-
-void free_widget_and_siblings(ei_widget_t* widget, bool is_root);
-
-/**
- * \brief	Fields common to all geometry managers. Every geometry manager specializes this by adding its own fields.
- */
-typedef struct ei_impl_geom_param_t {
-	ei_geometrymanager_t*		manager;	///< The geometry managers that manages this widget.
-} ei_impl_geom_param_t;
-
-
-typedef struct placeur_param {
-        ei_impl_geom_param_t geom_mng;
-        ei_anchor_t anchor;
-        int x;
-        int y;
-        int width;
-        int height;
-        float rel_x;
-        float rel_y;
-        float rel_width;
-        float rel_height;
-} placeur_param;
-
-typedef struct ei_event_bind_widget_t{
-        ei_event_t* event;
-        ei_impl_widget_t* widget;
-}ei_event_bind_widget_t;
-
-typedef struct ei_linked_event_t{
-        ei_eventtype_t eventtype;
-        ei_widget_t widget;
-        ei_callback_t callback;
-        ei_tag_t tag;
-        void* user_param;
-        struct ei_linked_event_t* next;
-}ei_linked_event_t;
 
 #endif
