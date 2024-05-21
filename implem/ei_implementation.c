@@ -52,7 +52,9 @@ void free_widget_and_siblings(ei_widget_t* widget, bool is_root) {
                 free((*widget)->geom_params);
                 free((*widget)->color);
                 free((*widget)->pick_color);
-                //hw_surface_free((*widget)->content_rect);
+                if ((*widget)->content_rect != NULL) {
+                        free((*widget)->content_rect);
+                }
                 (*widget)->geom_params = NULL;
                 free(*widget);
                 *widget = NULL;

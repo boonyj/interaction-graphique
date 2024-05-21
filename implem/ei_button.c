@@ -22,8 +22,9 @@ void button_releasefunc (ei_widget_t	widget){
         ei_user_param_t	user_param;*/
 
         free(button->text);
-        //free(button->text_font);
-        //hw_surface_free(button->img);
+        if (button->img != NULL) {
+                hw_surface_free(button->img);
+        }
 }
 
 void draw_button (button_t * button,

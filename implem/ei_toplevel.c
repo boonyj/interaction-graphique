@@ -19,7 +19,7 @@ void toplevel_releasefunc (ei_widget_t	widget){
         ei_axis_set_t resizable;
         ei_size_t min_size;*/
 
-        //free(toplevel->title);
+        free(toplevel->title);
         //free(toplevel->title_font);
 }
 
@@ -105,6 +105,10 @@ void draw_toplevel (toplevel_t * toplevel,
         clipper->size.height -= toplevel->border_width*2+height;
         clipper->top_left.x += toplevel->border_width;
         clipper->top_left.y += toplevel->border_width +height;
+
+        free(points);
+        free(center_corner);
+        free(clipper_title);
 }
 
 void toplevel_drawfunc (ei_widget_t		widget,
@@ -128,7 +132,6 @@ void toplevel_setdefaultsfunc(ei_widget_t		widget){
         toplevel->widget.color->alpha = ei_default_background_color.alpha;
         toplevel->widget.requested_size.width = 320;
         toplevel->widget.requested_size.height = 240;
-        toplevel->widget.content_rect = malloc(sizeof (ei_rect_t));
         toplevel->widget.content_rect->size.width = 320;
         toplevel->widget.content_rect->size.height = 240;
         toplevel->widget.screen_location.size.width = 320;

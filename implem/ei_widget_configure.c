@@ -27,6 +27,7 @@ void			ei_frame_configure		(ei_widget_t		widget,
         if (requested_size != NULL){
                 ei_widget_set_requested_size(&(frame->widget), *requested_size);
                 frame->widget.screen_location.size = *requested_size;
+                frame->widget.content_rect->size = *requested_size;
         }
 
         if (color != NULL) {
@@ -96,6 +97,7 @@ void			ei_button_configure		(ei_widget_t		widget,
         if (requested_size != NULL){
                 ei_widget_set_requested_size(&(button->widget), *requested_size);
                 button->widget.screen_location.size = *requested_size;
+                button->widget.content_rect->size = *requested_size;
         }
 
         if (color != NULL) {

@@ -41,7 +41,26 @@ void ei_app_create(ei_size_t main_window_size, bool fullscreen){
         root = ei_widget_create("frame", NULL, NULL, NULL);
 }
 
+void free_event_list() {
+        ei_linked_event_t* current = linked_event_list;
+        ei_linked_event_t* next_node;
+
+        while (current != NULL) {
+                next_node = current->next;  // Save the next node
+                free(current);              // Free the current node
+                current = next_node;        // Move to the next node
+        }
+        linked_event_list = NULL;  // Set the head pointer to NULL, indicating the list is empty
+}
+
 void ei_app_free(void){
+        free_event_list();
+        hw_surface_unlock(main_surface);
+        hw_surface_unlock(pick_surface);
+        hw_surface_free(main_surface);
+        hw_surface_free(pick_surface);
+        free(root_size);
+        ei_widget_destroy(root);
         hw_quit();
 }
 
@@ -66,7 +85,7 @@ void exit_button_press(ei_widget_t widget, ei_linked_event_t *head, ei_event_t *
                                                         head->callback(widget, event, widget->user_data);
                                                         (*exit_button_handled) = true;
                                                         ei_unbind(ei_ev_mouse_buttonup, NULL, "all", callback_buttonup_reverse_relief, widget);
-                                                        ei_unbind(ei_ev_mouse_buttonup, NULL, "all", callback_buttonup_reverse_relief, widget->next_sibling);
+                                                        //ei_unbind(ei_ev_mouse_buttonup, NULL, "all", callback_buttonup_reverse_relief, widget->next_sibling);
                                                         break;
                                                 }
                                         }
@@ -166,6 +185,7 @@ void ei_app_run(void) {
         ei_widget_t widget;
         while ((event.type != ei_ev_close)) {
                 event.type = ei_ev_none;
+
                 //Update screen
                 hw_surface_update_rects(main_surface, NULL);
                 //hw_surface_update_rects(pick_surface, NULL);
@@ -243,25 +263,8 @@ void ei_app_invalidate_rect(const ei_rect_t* rect) {
         }
 }
 
-void free_event_list() {
-        ei_linked_event_t* current = linked_event_list;
-        ei_linked_event_t* next_node;
-
-        while (current != NULL) {
-                next_node = current->next;  // Save the next node
-                free(current);              // Free the current node
-                current = next_node;        // Move to the next node
-        }
-        linked_event_list = NULL;  // Set the head pointer to NULL, indicating the list is empty
-}
-
-
 void ei_app_quit_request(void){
-        free_event_list();
-        hw_surface_free(main_surface);
-        hw_surface_free(pick_surface);
-        free(root_size);
-        ei_widget_destroy(root);
+        ei_app_free();
         exit(0);
 }
 
