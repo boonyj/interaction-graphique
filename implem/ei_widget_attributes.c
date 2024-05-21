@@ -50,7 +50,7 @@ const ei_size_t*	ei_widget_get_requested_size	(ei_widget_t		widget) {
 }
 
 void	 		ei_widget_set_requested_size	(ei_widget_t		widget,
-                                                                 ei_size_t 		requested_size) {
+                                                                 ei_size_t 	requested_size) {
         widget->requested_size.height = requested_size.height;
         widget->requested_size.width = requested_size.width;
 }

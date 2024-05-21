@@ -3,7 +3,7 @@
 #include "ei_global.h"
 #include "ei_widget_attributes.h"
 
-static uint32_t pick_counter = 0;
+static uint32_t pick_counter = 0; //A counter that makes sure that every widget has a different pick ID.
 
 ei_widget_t ei_widget_create(ei_const_string_t class_name,
                              ei_widget_t parent,
@@ -42,14 +42,6 @@ ei_widget_t ei_widget_create(ei_const_string_t class_name,
                         parent->children_tail->next_sibling = widget;
                 }
                 parent->children_tail = widget;
-
-                /*if (parent->children_head != widget) {
-                        ei_widget_t prev_sibling = parent->children_head;
-                        while (prev_sibling->next_sibling != NULL) {
-                                prev_sibling = prev_sibling->next_sibling;
-                        }
-                        prev_sibling->next_sibling = widget;
-                }*/
         }
 
         pick_counter+= 1;
@@ -60,7 +52,7 @@ ei_widget_t ei_widget_create(ei_const_string_t class_name,
         return widget;
 }
 
-void			ei_widget_destroy		(ei_widget_t		widget){
+void ei_widget_destroy(ei_widget_t widget){
         widget->wclass->releasefunc(widget);
         free_widget_and_siblings(&widget, true);
         if(widget->parent){
@@ -101,15 +93,12 @@ void			ei_widget_destroy		(ei_widget_t		widget){
         free(widget);
 }
 
-
-
-bool	 		ei_widget_is_displayed		(ei_widget_t		widget){
+bool ei_widget_is_displayed(ei_widget_t widget){
         if(widget->geom_params != NULL){
                 return true;
         }
         return false;
 }
-
 
 ei_widget_t find_widget (uint32_t* pixel_pick_surface, ei_widget_t widget) {
         // Check the widget itself first
@@ -138,4 +127,3 @@ ei_widget_t		ei_widget_pick			(ei_point_t*		where){
         ei_widget_t widget = find_widget(pixel_pick_surface, root);
         return widget;
 }
-

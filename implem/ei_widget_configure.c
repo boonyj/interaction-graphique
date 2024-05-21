@@ -5,11 +5,9 @@
 #include "ei_button.h"
 #include "ei_toplevel.h"
 #include "ei_event.h"
-#include "ei_global.h"
 #include "ei_callback_toplevel.h"
 
-
-void			ei_frame_configure		(ei_widget_t		widget,
+void			ei_frame_configure		(ei_widget_t		        widget,
                                                                ei_size_t*		requested_size,
                                                                const ei_color_t*	color,
                                                                int*			border_width,
@@ -98,7 +96,7 @@ void			ei_frame_configure		(ei_widget_t		widget,
 
 }
 
-void			ei_button_configure		(ei_widget_t		widget,
+void			ei_button_configure		(ei_widget_t		        widget,
                                                                 ei_size_t*		requested_size,
                                                                 const ei_color_t*	color,
                                                                 int*			border_width,
@@ -183,7 +181,21 @@ void			ei_button_configure		(ei_widget_t		widget,
 
 }
 
-//Callback function for close button in toplevel
+/**
+ * \brief	Callback function to confirm the closing of a toplevel widget when the mouse button is released.
+ * 		<ul>
+ * 			<li> Checks if the event type is ei_ev_mouse_buttonup. </li>
+ * 			<li> If true, destroys the parent widget of the given widget. </li>
+ * 			<li> Redraws the root widget and its children. </li>
+ * 			<li> Unbinds the mouse button up event from this callback. </li>
+ * 			<li> Returns true to indicate the event was handled. </li>
+ * 		</ul>
+ *
+ * @param	widget		The widget that received the event.
+ * @param	event		The event that occurred.
+ * @param	user_param	Additional user parameters.
+ * @return			Returns true if the event was handled, false otherwise.
+ */
 bool callback_toplevel_close_confirmed(ei_widget_t widget, ei_event_t* event, ei_user_param_t user_param){
         if (event->type == ei_ev_mouse_buttonup) {
                 ei_widget_destroy(widget->parent);
@@ -196,6 +208,21 @@ bool callback_toplevel_close_confirmed(ei_widget_t widget, ei_event_t* event, ei
                 return false;
 }
 
+/**
+* \brief	Callback function to initiate the closing of a toplevel widget when the mouse button is pressed down.
+* 		<ul>
+* 			<li> Checks if the event type is ei_ev_mouse_buttondown. </li>
+* 			<li> If true, sets the button's relief to sunken to indicate it is pressed. </li>
+* 			<li> Redraws the button widget. </li>
+* 			<li> Binds the mouse button up event to the callback_toplevel_close_confirmed function. </li>
+* 			<li> Returns true to indicate the event was handled. </li>
+* 		</ul>
+*
+* @param	widget		The widget that received the event.
+* @param	event		The event that occurred.
+* @param	user_param	Additional user parameters.
+* @return			Returns true if the event was handled, false otherwise.
+*/
 bool callback_toplevel_close(ei_widget_t widget, ei_event_t* event, ei_user_param_t user_param){
         if (event->type == ei_ev_mouse_buttondown) {
                 button_t *button = (button_t *) widget;

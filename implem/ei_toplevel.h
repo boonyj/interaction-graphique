@@ -3,9 +3,7 @@
 
 #include "ei_implementation.h"
 #include "ei_draw_tool.h"
-#include "ei_draw.h"
 #include "ei_placer.h"
-#include "ei_event.h"
 
 typedef struct toplevel_t {
         ei_impl_widget_t widget;

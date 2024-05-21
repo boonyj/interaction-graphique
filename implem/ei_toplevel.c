@@ -1,9 +1,7 @@
 #include "ei_toplevel.h"
 
-
 ei_widget_t toplevel_allocfunc (){
         ei_widget_t widget = malloc(sizeof(struct toplevel_t ));
-
         return widget;
 }
 
@@ -24,9 +22,9 @@ void toplevel_releasefunc (ei_widget_t	widget){
 }
 
 void draw_toplevel (toplevel_t * toplevel,
-                    ei_surface_t		surface,
-                    ei_surface_t		pick_surface,
-                    ei_rect_t*		clipper) {
+                    ei_surface_t surface,
+                    ei_surface_t pick_surface,
+                    ei_rect_t* clipper) {
         assertion_pick_color((ei_widget_t) toplevel, surface);
 
         ei_color_t color = {toplevel->widget.color->red, toplevel->widget.color->green, toplevel->widget.color->blue};
@@ -120,7 +118,7 @@ void toplevel_drawfunc (ei_widget_t		widget,
         }
 }
 
-void toplevel_setdefaultsfunc(ei_widget_t		widget){
+void toplevel_setdefaultsfunc(ei_widget_t widget){
         toplevel_t * toplevel = (toplevel_t*) widget;
         toplevel->widget = *widget;
         toplevel->title = NULL;
@@ -146,13 +144,11 @@ void toplevel_setdefaultsfunc(ei_widget_t		widget){
 
 }
 
-void toplevel_geomnotifyfunc(ei_widget_t		widget){
+void toplevel_geomnotifyfunc(ei_widget_t widget){
         toplevel_t * toplevel = (toplevel_t*) widget;
         int width = 0;
         int height = 0;
         hw_text_compute_size(toplevel->title,toplevel->title_font, &width, &height);
-        /*toplevel->widget.screen_location.top_left.x += toplevel->border_width;
-        toplevel->widget.screen_location.top_left.y += toplevel->border_width + height;*/
 
         ei_place			(toplevel->widget.children_head, &(ei_anchor_t){ei_anc_northwest},
                                          &(int){-(toplevel->border_width)+8}, &(int){-(height+toplevel->border_width)+5}, NULL, NULL,
@@ -163,7 +159,6 @@ void toplevel_geomnotifyfunc(ei_widget_t		widget){
                                          &(int){0}, &(int){0}, NULL, NULL,
                                          &(float){1.0f}, &(float){1.0f},
                                          NULL, NULL);
-
 }
 
 ei_widgetclass_t* create_toplevel_class() {
@@ -174,7 +169,5 @@ ei_widgetclass_t* create_toplevel_class() {
         toplevel->drawfunc = &toplevel_drawfunc;
         toplevel->setdefaultsfunc = &toplevel_setdefaultsfunc;
         toplevel->geomnotifyfunc = &toplevel_geomnotifyfunc;
-
         return toplevel;
 }
-
