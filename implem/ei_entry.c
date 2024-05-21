@@ -291,17 +291,17 @@ bool callback_type_in_focus (ei_widget_t widget, ei_event_t* event, ei_user_para
                                 } else {
                                         // If no previous entry is found, start from the last child and find the last entry widget
                                         parc = entry->widget.parent->children_head;
-                                        ei_widget_t* last_entry = NULL;
+                                        ei_widget_t last_entry = NULL;
 
-                                        while (parc != NULL) {
+                                        while (parc != NULL ) {
                                                 if (strcmp(parc->wclass->name, "entry") == 0) {
-                                                        last_entry = &parc;
+                                                        last_entry = parc;
                                                 }
                                                 parc = ei_widget_get_next_sibling(parc);
                                         }
 
                                         if (last_entry != NULL) {
-                                                parc = *last_entry;
+                                                parc = last_entry;
                                         }
                                 }
 
