@@ -295,17 +295,21 @@ bool callback_type_in_focus (ei_widget_t widget, ei_event_t* event, ei_user_para
 
                                         while (parc != NULL) {
                                                 if (strcmp(parc->wclass->name, "entry") == 0) {
-                                                        last_entry = parc;
+                                                        last_entry = &parc;
                                                 }
                                                 parc = ei_widget_get_next_sibling(parc);
                                         }
 
-                                        parc = last_entry;
+                                        if (last_entry != NULL) {
+                                                parc = *last_entry;
+                                        }
                                 }
 
                         }
                         entry_t* new_entry = (entry_t*) parc;
-                        new_entry->in_focus = true;
+                        if (new_entry != NULL) {
+                                new_entry->in_focus = true;
+                        }
                         ei_entry_set_text(&new_entry->widget, get_text_with_char_concatenated(new_entry->text, '|'));
                         ei_bind(ei_ev_mouse_buttondown,NULL,"all",callback_buttondown_remove_focus_entry,new_entry);
                         ei_bind(ei_ev_keydown,NULL,"all",callback_type_in_focus,new_entry);

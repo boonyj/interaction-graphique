@@ -145,6 +145,7 @@ void generate_rounded_corner(ei_point_t center_corner, int radius, float start_a
                 points[start_pos + i].x = points_arc[i].x;
                 points[start_pos + i].y = points_arc[i].y;
         }
+        free(points_arc);
 }
 
 ei_point_t* rounded_frame (ei_rect_t rect, int radius, int partie) {
@@ -216,5 +217,6 @@ ei_point_t* rounded_frame (ei_rect_t rect, int radius, int partie) {
                 center_corner->y = top_left_y + size_height - radius;
                 generate_rounded_corner(*center_corner, radius, 270, 360, points, 2*nb_segments+2);
         }
+        free(center_corner);
         return points;
 }

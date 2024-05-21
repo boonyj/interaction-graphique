@@ -87,7 +87,7 @@ void ei_unbind(ei_eventtype_t eventtype,
                                 previous->next = node_to_remove->next;
                         }
 
-                        free(node_to_remove);
+                        //free(node_to_remove);
 
                         // Exit the function as we've successfully unbound the event
                         //return;

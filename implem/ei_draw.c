@@ -51,6 +51,7 @@ void	ei_draw_text		(ei_surface_t		surface,
         dst_rect.top_left.x = where->x;
         dst_rect.top_left.y = where->y;
         ei_copy_surface(surface, &dst_rect, text_surface, &text_surface_rect, true);
+        hw_surface_free(text_surface);
 }
 
 int	ei_copy_surface		(ei_surface_t		destination,

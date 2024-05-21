@@ -46,6 +46,7 @@ void free_widget_and_siblings(ei_widget_t* widget, bool is_root) {
 
         // Free the current widget unless it's the root widget passed as the parameter
         if (!is_root) {
+                (*widget)->wclass->releasefunc(*widget);
                 free(*widget);
                 *widget = NULL;
         }

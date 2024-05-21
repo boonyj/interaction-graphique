@@ -6,21 +6,43 @@ ei_widget_t button_allocfunc (){
 }
 
 void button_releasefunc (ei_widget_t	widget){
+        button_t * button = (button_t*) widget;
+        free(widget->geom_params->manager);
         free(widget->geom_params);
-        widget->geom_params = NULL;
-        /*free(widget->user_data);
+        free(widget->user_data);
         free(widget->color);
         free(widget->pick_color);
-        free(widget->geom_params);
         free(widget->wclass);
-        free(widget->content_rect);
-        free_widget_and_siblings(&widget, true);
+        free(button->text);
+        //free(widget->content_rect);
+        //free_widget_and_siblings(&widget, true);
         widget->user_data = NULL;
         widget->color = NULL;
         widget->pick_color = NULL;
         widget->geom_params = NULL;
         widget->wclass = NULL;
-        widget->content_rect = NULL;*/
+        //widget->content_rect = NULL;
+        if(widget->parent){
+                if (widget->parent->children_head == widget) {
+                        if (widget->next_sibling != NULL) {
+                                widget->parent->children_head = widget->next_sibling;
+                        } else {
+                                widget->parent->children_head = NULL;
+                                widget->parent->children_tail = NULL;
+                        }
+                }  else {
+                        ei_widget_t prev = widget->parent->children_head;
+                        while (prev && prev->next_sibling != widget) {
+                                prev = prev->next_sibling;
+                        }
+                        if (prev) {
+                                prev->next_sibling = widget->next_sibling;
+                                if (widget->parent->children_tail == widget) {
+                                        widget->parent->children_tail = prev;
+                                }
+                        }
+                }
+        }
 }
 
 void draw_button (button_t * button,
@@ -68,6 +90,8 @@ void draw_button (button_t * button,
 
                                         ei_draw_polygon(surface, points, points_size,
                                                         *button->widget.color, clipper);
+
+                                        free(points);
                                 }
                                 calculate_clipper_avec_border(clipper, button->border_width);
                                 break;
@@ -104,6 +128,8 @@ void draw_button (button_t * button,
                                         assertion_color(button->widget.color, color, 0);
 
                                         ei_fill(surface, button->widget.color, clipper);
+
+                                        free(points);
                                 } else {
                                         // Partie haute
                                         ei_point_t *points = rounded_frame(*clipper, button->corner_radius, 1);
@@ -115,6 +141,7 @@ void draw_button (button_t * button,
                                                 ei_draw_polygon(pick_surface, points, points_size,
                                                                 *button->widget.pick_color, clipper);
                                         }
+                                        free(points);
 
                                         // Partie basse
                                         assertion_color(button->widget.color, color, 2);
@@ -127,6 +154,7 @@ void draw_button (button_t * button,
                                                 ei_draw_polygon(pick_surface, points, points_size,
                                                                 *button->widget.pick_color, clipper);
                                         }
+                                        free(points);
 
                                         // Draw inside button
                                         calculate_clipper_sans_border(clipper, button->border_width);
@@ -138,6 +166,8 @@ void draw_button (button_t * button,
                                         points_size = 4*nb_segments;
                                         ei_draw_polygon(surface, points, points_size,
                                                         *button->widget.color, clipper);
+
+                                        free(points);
                                 }
                                 calculate_clipper_avec_border(clipper, button->border_width);
                                 break;
@@ -176,6 +206,8 @@ void draw_button (button_t * button,
                                         assertion_color(button->widget.color, color, 0);
 
                                         ei_fill(surface, button->widget.color, clipper);
+
+                                        free(points);
                                 } else {
                                         // Partie haute
                                         ei_point_t *points = rounded_frame(*clipper, button->corner_radius, 1);
@@ -187,6 +219,7 @@ void draw_button (button_t * button,
                                                 ei_draw_polygon(pick_surface, points, points_size,
                                                                 *button->widget.pick_color, clipper);
                                         }
+                                        free(points);
 
                                         // Partie basse
                                         assertion_color(button->widget.color, color, 1);
@@ -199,6 +232,7 @@ void draw_button (button_t * button,
                                                 ei_draw_polygon(pick_surface, points, points_size,
                                                                 *button->widget.pick_color, clipper);
                                         }
+                                        free(points);
 
                                         // Draw inside button
                                         calculate_clipper_sans_border(clipper, button->border_width);
@@ -210,6 +244,8 @@ void draw_button (button_t * button,
                                         points_size = 4*nb_segments;
                                         ei_draw_polygon(surface, points, points_size,
                                                         *button->widget.color, clipper);
+
+                                        free(points);
                                 }
                                 calculate_clipper_avec_border(clipper, button->border_width);
                                 break;

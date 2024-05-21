@@ -8,35 +8,43 @@ ei_widget_t toplevel_allocfunc (){
 }
 
 void toplevel_releasefunc (ei_widget_t	widget){
+        toplevel_t * toplevel = (toplevel_t*) widget;
+        free(widget->geom_params->manager);
         free(widget->geom_params);
-        widget->geom_params = NULL;
-        /*free(widget->user_data);
+        free(widget->user_data);
         free(widget->color);
         free(widget->pick_color);
         free(widget->wclass);
-        free(widget->content_rect);
-        free_widget_and_siblings(&widget, true);
+        free(toplevel->title);
+        //free(widget->content_rect);
+        //free_widget_and_siblings(&widget, true);
         widget->user_data = NULL;
         widget->color = NULL;
         widget->pick_color = NULL;
+        widget->geom_params = NULL;
         widget->wclass = NULL;
-        widget->content_rect = NULL;
-        if (widget->parent->children_head == widget) {
-                if (widget->next_sibling != NULL) {
-                        widget->parent->children_head = widget->next_sibling;
-                } else {
-                        widget->parent->children_head = NULL;
-                        widget->parent->children_tail = NULL;
+        //widget->content_rect = NULL;
+        if(widget->parent){
+                if (widget->parent->children_head == widget) {
+                        if (widget->next_sibling != NULL) {
+                                widget->parent->children_head = widget->next_sibling;
+                        } else {
+                                widget->parent->children_head = NULL;
+                                widget->parent->children_tail = NULL;
+                        }
+                }  else {
+                        ei_widget_t prev = widget->parent->children_head;
+                        while (prev && prev->next_sibling != widget) {
+                                prev = prev->next_sibling;
+                        }
+                        if (prev) {
+                                prev->next_sibling = widget->next_sibling;
+                                if (widget->parent->children_tail == widget) {
+                                        widget->parent->children_tail = prev;
+                                }
+                        }
                 }
-        } else if (widget->parent->children_tail == widget) {
-                ei_widget_t* last = &(widget->parent->children_head);
-                while (*last != NULL && (*last)->next_sibling != widget) {
-                        last = &((*last)->next_sibling);
-                }
-                widget->parent->children_tail = *last;
-                widget->parent->children_tail->next_sibling = NULL;
-        }*/
-
+        }
 }
 
 void draw_toplevel (toplevel_t * toplevel,
