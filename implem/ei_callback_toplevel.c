@@ -1,8 +1,8 @@
 #include "ei_callback_toplevel.h"
 
+// Callbacks for toplevel resizing
 
-//Callbacks for toplevel resizing
-
+// Function to move a widget to become the first sibling among its siblings
 void widget_move_to_front(ei_widget_t parent, ei_widget_t widget) {
         if (parent == NULL || widget == NULL || parent->children_head == NULL) return;
 
@@ -35,6 +35,7 @@ void widget_move_to_front(ei_widget_t parent, ei_widget_t widget) {
         }
 }
 
+// Function to draw a resized toplevel (Half screen to the left, Half screen to the right, Fullscreen)
 void draw_resized_toplevel(ei_widget_t widget, int width, int x, ei_callback_t callback) {
         toplevel_t* toplevel = (toplevel_t*) widget;
         if (strcmp(root->children_head->wclass->name, "frame") == 0) {
@@ -153,8 +154,9 @@ bool callback_buttondown_resize_toplevel_start (ei_widget_t widget, ei_event_t* 
                 return false;
 }
 
-//Callbacks for toplevel movement
+// Callbacks for toplevel movement
 
+// Function to draw a temporary frame on the background to indicate that the toplevel will be resized if the left-click of the mouse is released
 void temp_frame(toplevel_t* toplevel, int width, int x, int y, ei_callback_t callback) {
         if (strcmp(root->children_head->wclass->name, "frame") != 0) {
                 ei_widget_t temp_frame = ei_widget_create("frame", root, NULL, NULL);
@@ -269,25 +271,25 @@ bool callback_buttondown_top_level (ei_widget_t widget, ei_event_t* event, ei_us
                 return false;
 }
 
-//Extra functions
+// Callback for toplevel placement
 
 void run_all_ei_place(ei_widget_t widget) {
-    if (widget == NULL) {
+        if (widget == NULL) {
             return;
-    }
+        }
 
-    ei_place(widget,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL);
+        ei_place(widget,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL);
 
-    ei_widget_t child = ei_widget_get_first_child(widget);
-    while (child != NULL) {
+        ei_widget_t child = ei_widget_get_first_child(widget);
+        while (child != NULL) {
         run_all_ei_place(child);
         child = ei_widget_get_next_sibling(child);
-    }
+        }
 }
 
 void draw_all_buttons_raised (ei_widget_t widget) {
-    ei_widget_t child = ei_widget_get_first_child(widget);
-    while (child != NULL) {
+        ei_widget_t child = ei_widget_get_first_child(widget);
+        while (child != NULL) {
         if (strcmp(child->wclass->name, "button") == 0) {
             button_t *button = (button_t *) child;
             button->relief = ei_relief_raised;
@@ -298,7 +300,7 @@ void draw_all_buttons_raised (ei_widget_t widget) {
 
         // Move to the next sibling
         child = ei_widget_get_next_sibling(child);
-    }
+        }
 }
 
 bool callback_toplevel_move_front(ei_widget_t widget, ei_event_t* event, ei_user_param_t user_param) {

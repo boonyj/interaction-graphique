@@ -1,5 +1,6 @@
 #include "ei_callback_button.h"
 
+// Function to find the last widget with the biggest pick_id in the widget hierarchy
 ei_widget_t find_last_widget_in_hierarchy(ei_widget_t widget) {
         if (widget == NULL) {
                 return NULL;
