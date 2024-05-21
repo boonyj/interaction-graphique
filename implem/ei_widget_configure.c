@@ -73,16 +73,6 @@ void			ei_frame_configure		(ei_widget_t		        widget,
                 }
         }
 
-/*        if(requested_size == NULL && text!= NULL){
-                int text_width = 0;
-                int text_height = 0;
-                hw_text_compute_size((ei_const_string_t) text, ei_default_font, &text_width, &text_height);
-
-                ei_widget_set_requested_size(&(frame->widget), (ei_size_t){text_width*2, text_height});
-                frame->widget.screen_location.size = (ei_size_t){text_width*2, text_height};
-                frame->widget.content_rect->size = (ei_size_t){text_width*2, text_height};
-        }*/
-
         if(requested_size == NULL && text!= NULL ){
                 int text_width = 0;
                 int text_height = 0;
@@ -204,8 +194,8 @@ bool callback_toplevel_close_confirmed(ei_widget_t widget, ei_event_t* event, ei
                 ei_impl_widget_draw_children(root, main_surface, pick_surface, clipper);
                 ei_unbind(ei_ev_mouse_buttonup, widget, NULL, callback_toplevel_close_confirmed, NULL);
                 return true;
-        } else
-                return false;
+        }
+        return false;
 }
 
 /**
@@ -230,9 +220,8 @@ bool callback_toplevel_close(ei_widget_t widget, ei_event_t* event, ei_user_para
                 button->widget.wclass->drawfunc(&(button->widget), main_surface, NULL, &(button->widget.screen_location));
                 ei_bind(ei_ev_mouse_buttonup, widget, NULL, callback_toplevel_close_confirmed, NULL);
                 return true;
-        } else {
-                return false;
         }
+        return false;
 }
 
 void			ei_toplevel_configure		(ei_widget_t		widget,

@@ -7,18 +7,7 @@ ei_widget_t toplevel_allocfunc (){
 
 void toplevel_releasefunc (ei_widget_t	widget){
         toplevel_t * toplevel = (toplevel_t*) widget;
-
-        /*ei_impl_widget_t widget;
-        int border_width;
-        ei_string_t title;
-        ei_color_t title_color;
-        ei_font_t title_font;
-        bool closable;
-        ei_axis_set_t resizable;
-        ei_size_t min_size;*/
-
         free(toplevel->title);
-        //free(toplevel->title_font);
 }
 
 void draw_toplevel (toplevel_t * toplevel,
