@@ -45,7 +45,6 @@ void ei_bind(ei_eventtype_t eventtype,
 
         ei_linked_event_t* event_to_bind = malloc(sizeof(ei_linked_event_t));
         if (event_to_bind == NULL) {
-                // Memory allocation failure
                 return;
         }
 
@@ -57,15 +56,12 @@ void ei_bind(ei_eventtype_t eventtype,
         event_to_bind->next = NULL;
 
         if (linked_event_list == NULL) {
-                // First linked event to be registered
                 linked_event_list = event_to_bind;
         } else {
-                // Add new event to the front of the linked list
                 event_to_bind->next = linked_event_list;
                 linked_event_list = event_to_bind;
         }
 }
-
 
 void ei_unbind(ei_eventtype_t eventtype,
                ei_widget_t widget,
@@ -85,17 +81,14 @@ void ei_unbind(ei_eventtype_t eventtype,
                     current->tag == tag &&
                     current->callback == callback) {
 
-                        // Match found, remove the node from the linked list
                         ei_linked_event_t* node_to_remove = current;
                         if (previous == NULL) {
-                                // Removing the head of the list
                                 linked_event_list = node_to_remove->next;
                         } else {
-                                // Removing a node from the middle or end of the list
                                 previous->next = node_to_remove->next;
                         }
 
-                        current = node_to_remove->next; // Move to the next node before freeing
+                        current = node_to_remove->next;
                 } else {
                         previous = current;
                         current = current->next;

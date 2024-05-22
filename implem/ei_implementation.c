@@ -11,10 +11,7 @@ void ei_impl_widget_draw_children(ei_widget_t widget,
                         clipper = &(child->screen_location);
                         child->wclass->drawfunc(child,surface,pick_surface,clipper);
                 }
-                // Recursively draw children of the current child widget
                 ei_impl_widget_draw_children(child, surface, pick_surface, clipper);
-
-                // Move to the next sibling
                 child = ei_widget_get_next_sibling(child);
         }
 }
@@ -23,7 +20,6 @@ uint32_t ei_impl_map_rgba(ei_surface_t surface, ei_color_t color) {
         int ir, ig, ib, ia;
         hw_surface_get_channel_indices(surface, &ir, &ig, &ib, &ia);
 
-        // Construct the 32-bit integer representation of the color
         uint32_t pixel = 0;
         pixel |= (color.red   << (ir * 8));
         pixel |= (color.green << (ig * 8));
@@ -35,7 +31,6 @@ uint32_t ei_impl_map_rgba(ei_surface_t surface, ei_color_t color) {
 void free_widget_and_siblings(ei_widget_t* widget, bool is_root) {
         if (widget == NULL || *widget == NULL) return;
 
-        // Recursively free all children and their siblings
         ei_widget_t child = (*widget)->children_head;
         while (child != NULL) {
                 ei_widget_t next_sibling = child->next_sibling;
@@ -43,7 +38,6 @@ void free_widget_and_siblings(ei_widget_t* widget, bool is_root) {
                 child = next_sibling;
         }
 
-        // Free the current widget unless it's the root widget passed as the parameter
         if (!is_root) {
                 (*widget)->wclass->releasefunc(*widget);
                 free((*widget)->wclass);

@@ -19,19 +19,14 @@ char* remove_first_char(char* str) {
         if (str == NULL) {
                 return NULL;
         }
-
-        // Calculate the lengths
         size_t str_len = strlen(str);
 
-        // Allocate memory for the new string
         // -1 for the removed character, +1 for the null terminator
         char* new_str = malloc((str_len) * sizeof(char));
         if (new_str == NULL) {
-                // Handle memory allocation failure
                 return NULL;
         }
 
-        // Copy the part of the string before the character to be removed
         strcpy(new_str, str + 1);
         return new_str;
 }
@@ -46,20 +41,16 @@ char* remove_last_char(char* str) {
         if (str == NULL) {
                 return NULL;
         }
-
-        // Calculate the lengths
         size_t str_len = strlen(str);
 
-        // Allocate memory for the new string
         // -1 for the removed character, +1 for the null terminator
         char* new_str = malloc((str_len) * sizeof(char));
         if (new_str == NULL) {
-                // Handle memory allocation failure
                 return NULL;
         }
 
         strncpy(new_str, str, str_len - 1);
-        new_str[str_len - 1] = '\0'; // Add the null terminator
+        new_str[str_len - 1] = '\0';
 
         return new_str;
 }
@@ -76,10 +67,8 @@ char* truncate_text_to_fit_width(char* text, void* font, int max_width) {
         int width = 0, height = 0;
         hw_text_compute_size(text, font, &width, &height);
 
-        char* temp = text;
         char* cursor_pos_ptr = strchr(text, '|') ;
 
-        // If text width is greater than the max width, truncate it
         if (width > max_width) {
                 int len = strlen(text);
                 while (len > 0 && width > max_width) {
