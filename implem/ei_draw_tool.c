@@ -25,7 +25,6 @@ void assertion_pick_color(ei_widget_t widget, ei_surface_t surface){
                 int ir, ig, ib, ia;
                 hw_surface_get_channel_indices(surface, &ir, &ig, &ib, &ia);
 
-                // Assign extracted components to the pick_color
                 widget->pick_color->red = p[ir];
                 widget->pick_color->green = p[ig];
                 widget->pick_color->blue = p[ib];
@@ -54,12 +53,10 @@ void draw_text(ei_string_t text, ei_font_t text_font, ei_color_t text_color, ei_
         int width = 0;
         int height = 0;
 
-        // Compute the size of the text.
         hw_text_compute_size(text, text_font, &width, &height);
         ei_point_t top_left = screen_location->top_left;
         ei_size_t size = screen_location->size;
 
-        // Adjust the position based on the anchor type.
         switch (text_anchor) {
                 case ei_anc_center:
                         top_left.x += size.width / 2 - width / 2;
@@ -83,7 +80,6 @@ void draw_text(ei_string_t text, ei_font_t text_font, ei_color_t text_color, ei_
                         top_left.x += size.width - width;
                         break;
                 case ei_anc_northwest:
-                        // No change needed, already top-left corner.
                         break;
                 case ei_anc_southeast:
                         top_left.x += size.width - width;
@@ -93,10 +89,8 @@ void draw_text(ei_string_t text, ei_font_t text_font, ei_color_t text_color, ei_
                         top_left.y += size.height - height;
                         break;
                 default:
-                        // Handle default case, assume top-left anchor if not specified.
                         break;
         }
-        // Draw the text at the computed position.
         ei_draw_text(surface, &top_left, text, text_font, text_color, clipper);
 }
 
@@ -130,7 +124,6 @@ void draw_image_from_surface(ei_surface_t surface, ei_surface_t image, ei_rect_t
                         dst_rect.top_left.x += where->size.width - img_rect->size.width;
                         break;
                 case ei_anc_northwest:
-                        // No change needed, already top-left corner.
                         break;
                 case ei_anc_southeast:
                         dst_rect.top_left.x += where->size.width - img_rect->size.width;
@@ -140,10 +133,8 @@ void draw_image_from_surface(ei_surface_t surface, ei_surface_t image, ei_rect_t
                         dst_rect.top_left.y += where->size.height - img_rect->size.height;
                         break;
                 default:
-                        // Handle default case, assume top-left anchor if not specified.
                         break;
         }
-
         dst_rect.size.width = img_rect->size.width;
         dst_rect.size.height = img_rect->size.height;
 
@@ -178,16 +169,14 @@ void calculate_top_without_corner_radius(ei_point_t *points, ei_rect_t*clipper, 
 }
 
 void arc(ei_point_t center, int radius, double start_angle, double end_angle, int segments, ei_point_t** arc_points) {
-        // Allouer de la mémoire pour le tableau de points de l'arc
         *arc_points = malloc(segments * sizeof(ei_point_t));
-
         double angle_step = (end_angle - start_angle) / segments;
 
         // Générer les points de l'arc en utilisant la formule paramétrique d'un cercle
         for (int i = 0; i < segments; ++i) {
                 double angle = start_angle + angle_step * i;
                 double x = center.x + radius * cos(angle * PI / 180);
-                double y = center.y - radius * sin(angle * PI / 180); // Soustraction car l'axe y est orienté vers le bas sur les écrans
+                double y = center.y - radius * sin(angle * PI / 180);
                 (*arc_points)[i].x = (int)x;
                 (*arc_points)[i].y = (int)y;
         }
@@ -196,7 +185,6 @@ void arc(ei_point_t center, int radius, double start_angle, double end_angle, in
 void generate_rounded_corner(ei_point_t center_corner, int radius, float start_angle, float end_angle,
                              ei_point_t *points, int start_pos) {
         ei_point_t *points_arc = NULL;
-
         arc(center_corner, radius, start_angle, end_angle, nb_segments, &points_arc);
 
         for (int i = 0; i < nb_segments; ++i) {
