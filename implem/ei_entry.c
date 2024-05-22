@@ -91,6 +91,7 @@ char* insert_char_before_pipe(char* str, char ch, int max) {
         new_str[prefix_len] = ch;
         strcpy(new_str + prefix_len + 1, pipe_pos); // Copy the rest of the string, including the '|'
         new_str[strlen(new_str)] = '\0';
+        free(str);
         return new_str;
 }
 
@@ -150,7 +151,7 @@ char* move_pipe_in_text(char* str, bool dir) {
 
         char* pipe_pos = strchr(str, '|');
         if (pipe_pos == NULL) {
-                return strdup(str);
+                return str;
         }
 
         size_t index = pipe_pos - str;
