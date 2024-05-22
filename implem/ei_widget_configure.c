@@ -151,13 +151,9 @@ void ei_button_configure(ei_widget_t            widget,
 
         if (callback != NULL) {
                 button->callback = *callback;
-                if (button->text != NULL && strcmp(button->text, "Ok") == 0) {
+                if (button->text != NULL ) {
                         ei_bind(ei_ev_mouse_buttonup, widget, NULL, *callback, user_param);
-                }
-                else if (button->text != NULL && strcmp(button->text, "Restart") == 0) {
-                        ei_bind(ei_ev_mouse_buttonup, widget, NULL, *callback, user_param);
-                }
-                else {
+                } else {
                         ei_bind(ei_ev_mouse_buttondown, widget, NULL, *callback, user_param);
                 }
         }
