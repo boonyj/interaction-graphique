@@ -10,6 +10,14 @@ void toplevel_releasefunc (ei_widget_t	widget){
         free(toplevel->title);
 }
 
+/**
+ * @brief Draws a toplevel widget on the given surfaces.
+ *
+ * @param toplevel A pointer to the toplevel widget to be drawn.
+ * @param surface The surface on which to draw the widget.
+ * @param pick_surface The picking surface.
+ * @param clipper The clipping rectangle.
+ */
 void draw_toplevel (toplevel_t * toplevel,
                     ei_surface_t surface,
                     ei_surface_t pick_surface,

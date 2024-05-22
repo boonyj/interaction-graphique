@@ -5,10 +5,10 @@
 
 static uint32_t pick_counter = 0; //A counter that makes sure that every widget has a different pick ID.
 
-ei_widget_t ei_widget_create(ei_const_string_t class_name,
-                             ei_widget_t parent,
-                             ei_user_param_t user_data,
-                             ei_widget_destructor_t destructor) {
+ei_widget_t ei_widget_create(ei_const_string_t          class_name,
+                             ei_widget_t                parent,
+                             ei_user_param_t            user_data,
+                             ei_widget_destructor_t     destructor) {
         ei_widgetclass_t* type_widget = ei_widgetclass_from_name(class_name);
         ei_widget_t widget  = type_widget->allocfunc();
         widget->wclass = malloc(sizeof(struct ei_widgetclass_t));
@@ -24,15 +24,15 @@ ei_widget_t ei_widget_create(ei_const_string_t class_name,
         widget->wclass->setdefaultsfunc = type_widget->setdefaultsfunc;
         widget->wclass->geomnotifyfunc = type_widget->geomnotifyfunc;
 
-        widget->parent = parent; // Assign parent
+        widget->parent = parent;
 
-        widget->parent = parent; // Assign parent
-        widget->user_data = user_data; // Assign user_data
-        widget->destructor = destructor; // Assign destructor
+        widget->parent = parent;
+        widget->user_data = user_data;
+        widget->destructor = destructor;
 
-        widget->children_head = NULL; // Initialize children_head
-        widget->children_tail = NULL; // Initialize children_tail
-        widget->next_sibling = NULL; // Initialize next_sibling
+        widget->children_head = NULL;
+        widget->children_tail = NULL;
+        widget->next_sibling = NULL;
 
         if (parent != NULL) {
                 if (parent->children_head == NULL) {
@@ -101,12 +101,10 @@ bool ei_widget_is_displayed(ei_widget_t widget){
 }
 
 ei_widget_t find_widget (uint32_t* pixel_pick_surface, ei_widget_t widget) {
-        // Check the widget itself first
         if (widget->pick_id == *pixel_pick_surface) {
                 return widget;
         }
 
-        // Recursively search among the widget's children
         ei_widget_t child = ei_widget_get_first_child(widget);
         while (child != NULL) {
                 ei_widget_t found_widget = find_widget(pixel_pick_surface, child);
@@ -116,7 +114,6 @@ ei_widget_t find_widget (uint32_t* pixel_pick_surface, ei_widget_t widget) {
                 child = ei_widget_get_next_sibling(child);
         }
 
-        // Return NULL if no matching widget is found
         return NULL;
 }
 
