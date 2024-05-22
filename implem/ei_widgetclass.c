@@ -9,11 +9,9 @@ size_t ei_widget_struct_size() {
 
 void ei_widgetclass_register(ei_widgetclass_t* widgetclass) {
         if (widgetclass_list == NULL) {
-                // First class to be registered
                 widgetclass_list = widgetclass;
                 widgetclass->next = NULL;
         } else {
-                // Check if the class already exists
                 if (ei_widgetclass_from_name(widgetclass->name) == NULL) {
                         widgetclass->next = widgetclass_list;
                         widgetclass_list = widgetclass;
