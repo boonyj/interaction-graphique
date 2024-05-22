@@ -14,6 +14,9 @@
 #include "ei_draw_tool.h"
 #include "ei_placer.h"
 
+/**
+ * @brief Represents a toplevel widget.
+ */
 typedef struct toplevel_t {
         ei_impl_widget_t widget;
         int border_width;
