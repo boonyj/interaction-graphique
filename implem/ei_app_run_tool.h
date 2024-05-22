@@ -74,8 +74,20 @@ void free_event_list();
  */
 void clear_invalidated_rects();
 
+/**
+ * @brief   Signal handler function for SIGSEGV (segmentation fault).
+ *
+ * @param   signum  The signal number.
+ */
 void sigsegv_handler(int signum);
 
+/**
+ * @brief   Checks if a given pointer is a valid memory address.
+ *
+ * @param   ptr     The pointer to be checked.
+ *
+ * @return          1 if the address is valid, 0 otherwise.
+ */
 int is_valid_address(void *ptr);
 
 #endif //PROJETC_IG_EI_APP_RUN_TOOL_H
