@@ -28,3 +28,5 @@ minesweeper - Affichage du jeu Minesweeper, déclenchement du timer pour une par
                 plateau de jeu.
 
 ext_testclass/ext_testgm - Exécution et ouverture de l'application (petit souci avec le placement des boutons).
+
+[NOUVEAU] resize - Test de la redimensionnabilité des toplevels sur les axes x et y.
