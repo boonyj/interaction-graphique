@@ -30,3 +30,5 @@ minesweeper - Affichage du jeu Minesweeper, déclenchement du timer pour une par
 ext_testclass/ext_testgm - Exécution et ouverture de l'application (petit souci avec le placement des boutons).
 
 [NOUVEAU] resize - Test de la redimensionnabilité des toplevels sur les axes x et y.
+
+[NOUVEAU] entry_shift - Test des raccourcis SHIFT et SHIFT+TAB pour naviguer entre les entry.
