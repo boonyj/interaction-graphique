@@ -149,6 +149,11 @@ target_link_libraries(ext_testgm	testgm ei ${PLATFORM_LIB_FLAGS})
 add_executable(resize		${TEST_DIR}/resize.c)
 target_link_libraries(resize ei ${PLATFORM_LIB_FLAGS})
 
+# target entry_shift
+
+add_executable(entry_shift			${TEST_DIR}/entry_shift.c)
+target_link_libraries(entry_shift		ei ${PLATFORM_LIB_FLAGS})
+
 # target parsing
 
 #add_executable(parsing			${TEST_DIR}/parsing.c)
