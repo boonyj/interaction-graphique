@@ -1,3 +1,12 @@
+/**
+ *  @file    ei_frame.h
+ *  @brief   Declares the functions and structures for the frame widget class.
+ *
+ *  \author
+ *  Created by BOON, MOHD NOOR and NAIR on 21.05.24.
+ *
+ */
+
 #ifndef PROJETC_IG_EI_FRAME_H
 #define PROJETC_IG_EI_FRAME_H
 

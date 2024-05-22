@@ -1,3 +1,13 @@
+/**
+ *  @file    ei_app_run_tool.h
+ *  @brief   Provides utility functions for managing and handling events in the application,
+ *           including button press events, drawing widgets, and handling keydown events.
+ *
+ *  \author
+ *  Created by BOON, MOHD NOOR and NAIR on 21.05.24.
+ *
+ */
+
 #ifndef PROJETC_IG_EI_APP_RUN_TOOL_H
 #define PROJETC_IG_EI_APP_RUN_TOOL_H
 

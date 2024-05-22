@@ -7,7 +7,7 @@ ei_widget_t button_allocfunc (){
 
 void button_releasefunc (ei_widget_t	widget){
         button_t * button = (button_t*) widget;
-
+        // Free all the specific attributes for a button
         free(button->text);
         if (button->img != NULL) {
                 hw_surface_free(button->img);
@@ -29,6 +29,7 @@ void draw_button (button_t * button,
                                 assertion_color(button->widget.color, color, 2);
 
                                 if (button->corner_radius == 0) {
+                                        // Button without rounded frame
                                         ei_fill(surface, button->widget.color, clipper);
 
                                         if (pick_surface != NULL) {
@@ -41,6 +42,7 @@ void draw_button (button_t * button,
 
                                         ei_fill(surface, button->widget.color, clipper);
                                 } else {
+                                        // Button with rounded frame
                                         ei_point_t *points = rounded_frame(*clipper, button->corner_radius, 0);
 
                                         size_t points_size = 4*nb_segments;
@@ -68,6 +70,7 @@ void draw_button (button_t * button,
                                 assertion_color(button->widget.color, color, 1);
 
                                 if (button->corner_radius == 0){
+                                        // Button without rounded frame
                                         ei_point_t *points = malloc(5 * sizeof(ei_point_t));
                                         calculate_top_without_corner_radius(points, clipper,
                                                                             button->widget.screen_location.size);
@@ -101,7 +104,8 @@ void draw_button (button_t * button,
 
                                         free(points);
                                 } else {
-                                        // Partie haute
+                                        // Button with rounded frame
+                                        // Top part
                                         ei_point_t *points = rounded_frame(*clipper, button->corner_radius, 1);
                                         size_t points_size = 3*nb_segments+2;
 
@@ -113,7 +117,7 @@ void draw_button (button_t * button,
                                         }
                                         free(points);
 
-                                        // Partie basse
+                                        // Lower part
                                         assertion_color(button->widget.color, color, 2);
 
                                         points = rounded_frame(*clipper, button->corner_radius, 2);
@@ -126,7 +130,7 @@ void draw_button (button_t * button,
                                         }
                                         free(points);
 
-                                        // Draw inside button
+                                        // Inside part
                                         calculate_clipper_without_border(clipper, button->border_width);
 
                                         assertion_color(button->widget.color, color, 0);
@@ -145,6 +149,7 @@ void draw_button (button_t * button,
                                 assertion_color(button->widget.color, color, 2);
 
                                 if (button->corner_radius == 0){
+                                        // Button without rounded frame
                                         ei_point_t *points = malloc(5 * sizeof(ei_point_t));
                                         calculate_top_without_corner_radius(points, clipper,
                                                                             button->widget.screen_location.size);
@@ -180,7 +185,8 @@ void draw_button (button_t * button,
 
                                         free(points);
                                 } else {
-                                        // Partie haute
+                                        // Button without rounded frame
+                                        // Top part
                                         ei_point_t *points = rounded_frame(*clipper, button->corner_radius, 1);
                                         size_t points_size = 3*nb_segments+2;
 
@@ -192,7 +198,7 @@ void draw_button (button_t * button,
                                         }
                                         free(points);
 
-                                        // Partie basse
+                                        // Lower part
                                         assertion_color(button->widget.color, color, 1);
 
                                         points = rounded_frame(*clipper, button->corner_radius, 2);
@@ -205,7 +211,7 @@ void draw_button (button_t * button,
                                         }
                                         free(points);
 
-                                        // Draw inside button
+                                        // Inside part
                                         calculate_clipper_without_border(clipper, button->border_width);
 
                                         assertion_color(button->widget.color, color, 0);
@@ -262,7 +268,6 @@ void button_setdefaultsfunc(ei_widget_t		widget){
         button->img = NULL;
         button->widget.screen_location.top_left.x = 0;
         button->widget.screen_location.top_left.y = 0;
-        //button->img_rect = NULL;
         button->img_anchor = ei_anc_center;
         button->user_param = NULL;
         button->callback =NULL;

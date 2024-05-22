@@ -1,3 +1,12 @@
+/**
+ *  @file    ei_button.h
+ *  @brief   Declares the functions and structures for the button widget class.
+ *
+ *  \author
+ *  Created by BOON, MOHD NOOR and NAIR on 21.05.24.
+ *
+ */
+
 #ifndef PROJETC_IG_EI_BUTTON_H
 #define PROJETC_IG_EI_BUTTON_H
 
@@ -5,6 +14,9 @@
 #include "ei_draw_tool.h"
 #include "ei_widget_configure.h"
 
+/**
+ * @brief Represents a button widget, which can display text or an image.
+ */
 typedef struct button_t {
         ei_impl_widget_t widget;
         int border_width;
@@ -17,7 +29,7 @@ typedef struct button_t {
         ei_surface_t img;
         ei_rect_t img_rect;
         ei_anchor_t img_anchor;
-        ei_callback_t	callback;
+        ei_callback_t callback;
         ei_user_param_t	user_param;
 } button_t;
 

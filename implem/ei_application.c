@@ -13,7 +13,6 @@ void ei_app_create(ei_size_t main_window_size, bool fullscreen){
         // Initialisation of the application
         hw_init();
         main_surface  = hw_create_window(main_window_size, fullscreen);
-        //pick_surface  = hw_create_window(main_window_size, fullscreen);
         pick_surface  = hw_surface_create(main_surface, main_window_size, false);
         root_size = malloc(sizeof(ei_size_t));
         root_size->width = main_window_size.width;
@@ -57,7 +56,6 @@ void ei_app_run(void) {
 
         // Update the screen
         hw_surface_update_rects(main_surface, NULL);
-        //hw_surface_update_rects(pick_surface, NULL);
 
         // Bind callback functions that are used in every application
         ei_bind(ei_ev_mouse_buttondown, NULL, "button", callback_buttondown_reverse_relief, NULL);
@@ -72,13 +70,12 @@ void ei_app_run(void) {
                 event.type = ei_ev_none;
                 // Update screen
                 hw_surface_update_rects(main_surface, NULL);
-                //hw_surface_update_rects(pick_surface, NULL);
 
                 //clear_invalidated_rects();
                 hw_surface_lock(main_surface);
                 hw_surface_lock(pick_surface);
 
-                //Wait for event
+                // Wait for event
                 hw_event_wait_next(&event);
 
                 // Get widget in cursor position
@@ -103,11 +100,13 @@ void ei_app_run(void) {
                         // Special case for toplevel exit button
                         exit_toplevel_button_press(widget, head, &event, &exit_button_handled);
 
+                        // All events except keydown and toplevel exit button
                         if (!exit_button_handled) {
                                 get_event(clipper, &event, widget, head);
                         }
                 }
                 else {
+                        // Keydown events
                         get_keydown_event(widget, head, &clipper, &event);
                 }
 

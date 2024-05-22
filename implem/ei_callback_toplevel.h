@@ -1,3 +1,12 @@
+/**
+ *  @file    ei_callback_button.h
+ *  @brief   Declares callback functions for toplevel widgets that handle user events.
+ *
+ *  \author
+ *  Created by BOON, MOHD NOOR and NAIR on 21.05.24.
+ *
+ */
+
 #ifndef PROJETC_IG_EI_CALLBACK_TOPLEVEL_H
 #define PROJETC_IG_EI_CALLBACK_TOPLEVEL_H
 

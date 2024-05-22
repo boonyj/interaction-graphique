@@ -1,3 +1,12 @@
+/**
+ *  @file    ei_geometrymanager_placeur.c
+ *  @brief   Implements the "placer" geometry manager for widgets.
+ *
+ *  \author
+ *  Created by BOON, MOHD NOOR and NAIR on 21.05.24.
+ *
+ */
+
 #include "ei_geometrymanager.h"
 #include "ei_implementation.h"
 

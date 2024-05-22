@@ -1,3 +1,14 @@
+/**
+ *  @file    ei_draw_tool.h
+ *  @brief   Declares functions and utilities for drawing and rendering graphical elements
+ *           such as text, images, and shapes on surfaces, including handling of color adjustments,
+ *           clipping, and rounded corners.
+ *
+ *  \author
+ *  Created by BOON, MOHD NOOR and NAIR on 21.05.24.
+ *
+ */
+
 #ifndef PROJETC_IG_EI_DRAW_TOOL_H
 #define PROJETC_IG_EI_DRAW_TOOL_H
 

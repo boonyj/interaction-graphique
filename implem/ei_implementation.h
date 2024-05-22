@@ -2,7 +2,10 @@
  * @file	ei_implementation.h
  *
  * @brief 	Private definitions.
- * 
+ *
+ *  \author
+ *  Created by BOON, MOHD NOOR and NAIR on 21.05.24.
+ *
  */
 
 #ifndef EI_IMPLEMENTATION_H
@@ -13,6 +16,7 @@
 #include "ei_widget.h"
 #include "ei_geometrymanager.h"
 #include "ei_event.h"
+#include "ei_widget_attributes.h"
 
 /**
  * \brief	Fields common to all types of widget. Every widget classes specializes this base

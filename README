@@ -1,5 +1,9 @@
 PROJET INTERACTION GRAPHIQUE
 
+BOON Yi Jun
+MOHD NOOR Nur Hakimi
+NAIR Sritesh
+
 Minimal - Configuration de projet.
 
 Frame - Frame avec relief, gestion de ei_fill.
@@ -18,7 +22,7 @@ two048 - Gestion de la réception des événements clavier, utilisation de ei_de
 
 entry - Réception des événements clavier pour les entrées, changement d'entrée avec les raccourcis TAB ou shift-TAB,
             déplacement du curseur dans l'entrée avec les touches gauche/droite, gestion de l'affichage du texte
-            avec une largeur limitée.
+            avec une largeur limitée, suppression de caractère dans l'entrée avec [Backspace et Delete].
 
 minesweeper - Affichage du jeu Minesweeper, déclenchement du timer pour une partie de jeu, changement de la taille du
                 plateau de jeu.

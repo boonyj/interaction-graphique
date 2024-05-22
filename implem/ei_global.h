@@ -1,3 +1,12 @@
+/**
+ *  @file    ei_global.h
+ *  @brief   Declares global variables.
+ *
+ *  \author
+ *  Created by BOON, MOHD NOOR and NAIR on 21.05.24.
+ *
+ */
+
 #include "hw_interface.h"
 #include "ei_implementation.h"
 
