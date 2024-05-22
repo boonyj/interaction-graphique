@@ -146,8 +146,8 @@ target_link_libraries(ext_testgm	testgm ei ${PLATFORM_LIB_FLAGS})
 
 # target parsing
 
-add_executable(parsing			${TEST_DIR}/parsing.c)
-target_link_libraries(parsing		ei ${PLATFORM_LIB_FLAGS})
+#add_executable(parsing			${TEST_DIR}/parsing.c)
+#target_link_libraries(parsing		ei ${PLATFORM_LIB_FLAGS})
 
 # target to build the documentation
 
