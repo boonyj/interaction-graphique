@@ -4,6 +4,8 @@
 #include "ei_implementation.h"
 #include "ei_global.h"
 #include "ei_callback_button.h"
+#include <setjmp.h>
+#include <signal.h>
 
 /**
  * @brief   Handles button press events specifically for toplevel exit buttons.
@@ -62,5 +64,8 @@ void free_event_list();
  */
 void clear_invalidated_rects();
 
+void sigsegv_handler(int signum);
+
+int is_valid_address(void *ptr);
 
 #endif //PROJETC_IG_EI_APP_RUN_TOOL_H

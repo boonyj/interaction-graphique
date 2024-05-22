@@ -52,8 +52,8 @@ void get_event(ei_rect_t *clipper, ei_event_t *event, struct ei_impl_widget_t *w
                                         draw_all_widgets(clipper);
                                 }
                         } else {
-                                if(strcmp(head->tag, widget->wclass->name) == 0 ||
-                                   strcmp(head->tag, "all") == 0){
+                                if(is_valid_address(widget) &&(strcmp(head->tag, "all") == 0||
+                                        strcmp(head->tag, widget->wclass->name) == 0) ){
                                         head->callback(widget, event, head->user_param);
                                 }
                         }
@@ -116,4 +116,27 @@ void clear_invalidated_rects() {
                 current = next;
         }
         invalidated_rects_head = NULL;
+}
+
+sigjmp_buf jump_buffer;
+
+void sigsegv_handler(int signum) {
+        siglongjmp(jump_buffer, 1);
+}
+
+int is_valid_address(void *ptr) {
+        struct sigaction sa;
+        sa.sa_handler = sigsegv_handler;
+        sigemptyset(&sa.sa_mask);
+        sa.sa_flags = 0;
+        sigaction(SIGSEGV, &sa, NULL);
+
+        if (sigsetjmp(jump_buffer, 1) == 0) {
+                // Try to read from the pointer
+                volatile int value = *((volatile int *)ptr);
+                (void)value;
+                return 1; // Address is valid
+        } else {
+                return 0; // Address is not valid
+        }
 }
