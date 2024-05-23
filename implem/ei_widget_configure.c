@@ -159,13 +159,17 @@ void ei_button_configure(ei_widget_t            widget,
         }
 
         if(img != NULL){
-                ei_size_t img_size= hw_surface_get_size(*img);
-                button->img = hw_surface_create(main_surface,img_size,true );
-                ei_rect_t t= hw_surface_get_rect(*img);
-                ei_copy_surface(button->img, &t,*img,&t, true);
-                button->img_rect = (img_rect != NULL) ? **img_rect : t;
-                if (img_anchor != NULL) {
-                        button->img_anchor = *img_anchor;
+                if (*img != NULL) {
+                        ei_size_t img_size= hw_surface_get_size(*img);
+                        button->img = hw_surface_create(main_surface,img_size,true );
+                        ei_rect_t t= hw_surface_get_rect(*img);
+                        ei_copy_surface(button->img, &t,*img,&t, true);
+                        button->img_rect = (img_rect != NULL) ? **img_rect : t;
+                        if (img_anchor != NULL) {
+                                button->img_anchor = *img_anchor;
+                        }
+                } else {
+                        button->img = NULL;
                 }
         }
 }
